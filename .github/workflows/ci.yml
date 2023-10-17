@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+  workflow_dispatch:
+
+env:
+  CI: true
+  RAILS_ENV: test
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgresql:
+        image: odidev/postgis:13-3.1
+        ports:
+          - "5432:5432"
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+      redis:
+        image: redis:7.0.5
+        ports:
+          - "6379:6379"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Go to backend repo
+        run: |
+          cd backend
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Prepare
+        run: |
+          rake db:prepare RAILS_ENV=test
+
+      - name: Test - Rspec
+        run: |
+          rspec
+
