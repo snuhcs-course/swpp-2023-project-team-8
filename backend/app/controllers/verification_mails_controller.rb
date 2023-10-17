@@ -10,7 +10,7 @@ class VerificationMailsController < ApplicationController
     if @token.save
       render json: {message: "Verification email sent"}, status: :created
     else
-      render json: {errors: token.errors.full_messages}, status: :unprocessable_entity
+      render json: {errors: @token.errors.full_messages}, status: :unprocessable_entity
     end
   end
 
@@ -18,6 +18,8 @@ class VerificationMailsController < ApplicationController
 
   # TODO: Send Email Async
   def send_verification_email
+    return unless @token.valid?
+
     MailVerificationTokenMailer
       .with(mail_verification_token: @token)
       .new_mail
