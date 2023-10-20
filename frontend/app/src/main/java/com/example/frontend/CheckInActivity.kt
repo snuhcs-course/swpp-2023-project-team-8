@@ -1,3 +1,4 @@
+
 package com.example.frontend
 
 import android.annotation.SuppressLint
@@ -70,32 +71,35 @@ class CheckInActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            FrontendTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    CheckInUI()
-                }
-            }
-        }
-        // 사용할 권한 array로 저장
+        setContentView(R.layout.activity_check_in)
+//        setContent {
+//            FrontendTheme {
+//                // A surface container using the 'background' color from the theme
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colorScheme.background
+//                ) {
+//                    CheckInUI()
+//
+//               }
+//            }
+//        }
+        // permission array
         val permissions = arrayOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION)
 
-        requirePermissions(permissions, 999) //권환 요쳥
-    }
+        requirePermissions(permissions, 999)
+
+  }
 
     fun startProcess() {
-        // SupportMapFragment를 가져와서 지도가 준비되면 알림을 받습니다.
+        // if map is ready
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
-    /** 권한 요청*/
+    // Permission
     fun requirePermissions(permissions: Array<String>, requestCode: Int) {
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             permissionGranted(requestCode)
@@ -122,12 +126,11 @@ class CheckInActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // 권한이 있는 경우 실행
+
     fun permissionGranted(requestCode: Int) {
-        startProcess() // 권한이 있는 경우 구글 지도를준비하는 코드 실행
+        startProcess()
     }
 
-    // 권한이 없는 경우 실행
     fun permissionDenied(requestCode: Int) {
         Toast.makeText(this
             , "권한 승인이 필요합니다."
@@ -141,8 +144,8 @@ class CheckInActivity : AppCompatActivity(), OnMapReadyCallback {
         updateLocation()
     }
 
-    // 위치 정보를 받아오는 역할
-    @SuppressLint("MissingPermission") //requestLocationUpdates는 권한 처리가 필요한데 현재 코드에서는 확인 할 수 없음. 따라서 해당 코드를 체크하지 않아도 됨.
+    //
+    @SuppressLint("MissingPermission")
     fun updateLocation() {
         val locationRequest = LocationRequest.create()
         locationRequest.run {
@@ -183,25 +186,7 @@ class CheckInActivity : AppCompatActivity(), OnMapReadyCallback {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckInUI() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(80.dp))
-        Text(
-            text = "HELL",
-            style = TextStyle(
-                fontSize = 40.sp,
-                fontWeight = FontWeight(400),
-                color = Color(0xFF000000),
-                textAlign = TextAlign.Center,
-            ),
-            modifier = Modifier
-                .width(284.dp)
-                .height(50.dp)
-        )
-        Spacer(modifier = Modifier.height(85.dp))
 
-    }
 
 }
 

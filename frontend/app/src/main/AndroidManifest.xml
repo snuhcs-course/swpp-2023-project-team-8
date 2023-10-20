@@ -37,7 +37,9 @@
         <activity
             android:name=".CheckInActivity"
             android:exported="false"
-            android:label="@string/title_activity_check_in" />
+            android:label="@string/title_activity_check_in"
+            android:theme ="@style/Theme.AppCompat"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
