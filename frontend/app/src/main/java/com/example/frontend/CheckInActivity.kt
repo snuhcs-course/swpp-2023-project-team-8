@@ -60,6 +60,34 @@ import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.theme.LightPurple
 import com.google.android.gms.location.LocationRequest
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.vector.ImageVector
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
+import androidx.compose.material.Scaffold
+
+
+import androidx.compose.runtime.remember
+
+
+
+
 class CheckInActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
@@ -180,28 +208,96 @@ class CheckInActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
 }
+
+@Composable
+fun IconToggleButton(
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(36.dp)
+            .clickable { onClick() }
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Composable
+fun BottomBar() {
+    val icons = listOf(
+        Icons.Default.Star,
+        Icons.Outlined.AccountCircle,
+        Icons.Outlined.CheckCircle,
+        Icons.Outlined.Settings
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .background(Color(0xFFF3EDF7))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 37.dp, end = 37.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            icons.forEach { icon ->
+                IconToggleButton(icon = icon) {
+                    // Implement icon button click action here
+                    when(icon){
+                        icons[0] -> {
+                            //
+
+                        }
+                        icons[1] -> {
+                            //
+
+                        }
+                        icons[2] -> {
+                            //
+
+                        }
+                        icons[3] -> {
+                            //
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckInUI() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(80.dp))
-        Text(
-            text = "HELL",
-            style = TextStyle(
-                fontSize = 40.sp,
-                fontWeight = FontWeight(400),
-                color = Color(0xFF000000),
-                textAlign = TextAlign.Center,
-            ),
-            modifier = Modifier
-                .width(284.dp)
-                .height(50.dp)
-        )
-        Spacer(modifier = Modifier.height(85.dp))
+    App()
+    MaterialTheme {
+        Column {
+            // Your main content goes here
 
+            Spacer(modifier = Modifier.weight(1f))
+
+            BottomBar()
+        }
     }
+
 
 }
 
@@ -218,3 +314,52 @@ fun CheckInUIPreview() {
         }
     }
 }
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun App() {
+    //checkin이 true일 때 체크인 화면 성공, false일 때 체크인 화면 실패
+    var checkin by remember { mutableStateOf(true) }
+    val scaffoldState : ScaffoldState = rememberScaffoldState()
+    val coroutineScope : CoroutineScope = rememberCoroutineScope()
+
+
+    if(checkin){
+        LaunchedEffect(checkin) {
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = "체크인에 성공했어요! 메인 화면으로 이동해요.",
+                actionLabel = null,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }else{
+        LaunchedEffect(!checkin) {
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = "체크인에 실패했어요!",
+                actionLabel = "재시도",
+                duration = SnackbarDuration.Short
+            )
+        }
+
+    }
+
+
+
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        modifier = Modifier.offset(y = (-90).dp),
+        content = {
+
+
+
+        }
+    )
+
+
+}
+
+
+
+
