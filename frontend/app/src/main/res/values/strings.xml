@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">frontend</string>
     <string name="title_activity_check_in">CheckInActivity</string>
+    <string name="title_activity_map">MapActivity</string>
 </resources>

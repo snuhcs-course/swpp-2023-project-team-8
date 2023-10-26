@@ -1,6 +1,7 @@
 package com.example.frontend
 
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -159,10 +160,16 @@ fun loginButtonHandler(
     val authAPI = retrofit.create(AuthAPI::class.java)
     val loginModel = LoginModel(email, password)
     val call = authAPI.login(loginModel)
+    ///////////////////////////////////////////////////////////
+    // Login 기능 완성 전에 CheckInActivity로 넘어가기
+    val nextIntent = Intent(context, MapActivity::class.java)
+    context.startActivity(nextIntent)
+    ////////////////////////////////////////////////////////////
     call!!.enqueue(object : Callback<LoginModel?> {
         override fun onResponse(call: Call<LoginModel?>, response: Response<LoginModel?>) {
             result.value = "Response Code: " + response.code()
-            Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
+            val nextIntent = Intent(context, MapActivity::class.java)
+            context.startActivity(nextIntent)
         }
 
         override fun onFailure(call: Call<LoginModel?>, t: Throwable) {
