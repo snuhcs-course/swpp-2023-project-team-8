@@ -1,11 +1,12 @@
 package com.example.frontend
 
+
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,11 +43,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import com.example.frontend.api.AuthAPI
 import com.example.frontend.model.LoginModel
 import com.example.frontend.ui.theme.FrontendTheme
@@ -56,6 +57,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,11 +69,18 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginUI()
+                    LoginUI(this)
                 }
             }
         }
+
     }
+
+    fun moveToMainVeiw(){
+        val intent = Intent(this, MapActivity::class.java)
+        startActivity(intent)
+    }
+
 }
 
 
@@ -79,7 +88,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginUI() {
+fun LoginUI(context: Context) {
     var context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -163,8 +172,11 @@ fun LoginUI() {
         ) {
             Text(text = "Login", fontSize = 20.sp)
         }
+
+
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -175,7 +187,7 @@ fun LoginUIPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            LoginUI()
+            LoginUI(LocalContext.current)
         }
     }
 }
@@ -189,10 +201,17 @@ fun loginButtonHandler(context: Context, email: String, password: String, result
     val authAPI = retrofit.create(AuthAPI::class.java)
     val loginModel = LoginModel(email,password)
     val call = authAPI.login(loginModel)
+    ///////////////////////////////////////////////////////////
+    // Login 기능 완성 전에 CheckInActivity로 넘어가기
+    val nextIntent = Intent(context, MapActivity::class.java)
+    context.startActivity(nextIntent)
+    ////////////////////////////////////////////////////////////
     call!!.enqueue(object : Callback<LoginModel?> {
         override fun onResponse(call: Call<LoginModel?>, response: Response<LoginModel?>) {
             result.value = "Response Code: " + response.code()
             Toast.makeText(context,result.value,Toast.LENGTH_LONG).show()
+            val nextIntent = Intent(context, MapActivity::class.java)
+            context.startActivity(nextIntent)
         }
 
         override fun onFailure(call: Call<LoginModel?>, t: Throwable) {
