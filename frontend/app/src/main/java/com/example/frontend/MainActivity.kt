@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
     }
 
     fun moveToMainVeiw(){
-        val intent = Intent(this, CheckInActivity::class.java)
+        val intent = Intent(this, MapActivity::class.java)
         startActivity(intent)
     }
 
@@ -210,7 +210,7 @@ fun loginButtonHandler(context: Context, email: String, password: String, result
         override fun onResponse(call: Call<LoginModel?>, response: Response<LoginModel?>) {
             result.value = "Response Code: " + response.code()
             Toast.makeText(context,result.value,Toast.LENGTH_LONG).show()
-            val nextIntent = Intent(context, CheckInActivity::class.java)
+            val nextIntent = Intent(context, MapActivity::class.java)
             context.startActivity(nextIntent)
         }
 
