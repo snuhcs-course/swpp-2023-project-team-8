@@ -150,14 +150,9 @@ fun loginButtonHandler(
     context: Context,
     email: String,
     password: String,
-    result: MutableState<String>
+    result: MutableState<String>,
+    authAPI: AuthAPI = defaultAuthAPI()
 ) {
-    var url = "http://10.0.2.2:3000"
-    val retrofit = Retrofit.Builder()
-        .baseUrl(url)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val authAPI = retrofit.create(AuthAPI::class.java)
     val loginModel = LoginModel(email, password)
     val call = authAPI.login(loginModel)
     ///////////////////////////////////////////////////////////
@@ -177,6 +172,15 @@ fun loginButtonHandler(
             Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
         }
     })
+}
+
+fun defaultAuthAPI(): AuthAPI {
+    var url = "http://10.0.2.2:3000"
+    val retrofit = Retrofit.Builder()
+        .baseUrl(url)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    return retrofit.create(AuthAPI::class.java)
 }
 
 @Composable
