@@ -171,14 +171,9 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
 fun sendButtonHandler(
     context: Context,
     email: String,
-    result: MutableState<String>
+    result: MutableState<String>,
+    authAPI: AuthAPI = defaultAuthAPI()
 ) {
-    var url = "http://10.0.2.2:3000"
-    val retrofit = Retrofit.Builder()
-        .baseUrl(url)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val authAPI = retrofit.create(AuthAPI::class.java)
     val emailModel = EmailModel(email)
     val call = authAPI.verifyEmail(emailModel)
     call!!.enqueue(object : Callback<EmailModel?> {
@@ -201,14 +196,9 @@ fun registerButtonHandler(
     name: String,
     password: String,
     result: MutableState<String>,
-    onSwitchToLogin: () -> Unit
+    onSwitchToLogin: () -> Unit,
+    authAPI: AuthAPI = defaultAuthAPI()
 ) {
-    var url = "http://10.0.2.2:3000"
-    val retrofit = Retrofit.Builder()
-        .baseUrl(url)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val authAPI = retrofit.create(AuthAPI::class.java)
     val registerModel = RegisterModel(email, code, name, password)
     val call = authAPI.register(registerModel)
     call!!.enqueue(object : Callback<RegisterModel?> {
