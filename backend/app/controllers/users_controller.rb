@@ -8,7 +8,7 @@ class UsersController < ApplicationController
 
   def create
     unless MailVerificationToken.valid_code?(params[:email_verification_code])
-      return render json: {errors: ["Invalid email verification code"]}, status: :unprocessable_entity
+      return render json: { errors: ["Invalid email verification code"] }, status: :unprocessable_entity
     end
 
     @user = User.new(user_params.merge(password_confirmation: user_params[:password]))
@@ -16,12 +16,22 @@ class UsersController < ApplicationController
     if @user.save
       render json: @user, status: :created
     else
-      render json: {errors: @user.errors.full_messages}, status: :unprocessable_entity
+      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def destroy
     current_user.destroy!
+  end
+
+  def search
+    users = User.search_by_email_local_part(params[:email])
+
+    if users.any?
+      render json: users
+    else
+      render json: { error: 'No users found with the provided email keyword' }, status: :not_found
+    end
   end
 
   private
