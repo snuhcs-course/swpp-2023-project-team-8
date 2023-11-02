@@ -6,4 +6,8 @@ class Friendship < ApplicationRecord
 
   scope :confirmed , -> { where(confirmed: true) }
   scope :pending, -> { where(confirmed: false) }
+
+  def confirm
+    update(confirmed: true)
+  end
 end

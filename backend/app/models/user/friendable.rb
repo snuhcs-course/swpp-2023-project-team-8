@@ -25,7 +25,7 @@ module User::Friendable
 
   def confirm_friendship(user)
     friendship = inverse_friendships.find_by(user: user)
-    friendship.update(confirmed: true) if friendship
+    friendship.confirm if friendship
   end
 
   def friends
