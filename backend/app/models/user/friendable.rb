@@ -29,9 +29,9 @@ module User::Friendable
     friendship.confirm if friendship
   end
 
-  # TODO(heka1024): 수정하기
+  # TODO(heka1024): Union 써서 수정하기
   def all_friends
-    User.where(id: friendships.confirmed.select("friend_id as id").or(requested_friendships.confirmed.select("user_id as id")))
+    confirmed_friends + inverse_confirmed_friends
   end
 
   def confirmed_friends
