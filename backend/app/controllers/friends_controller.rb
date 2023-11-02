@@ -5,11 +5,6 @@ class FriendsController < ApplicationController
     render json: current_user.friends
   end
 
-  def pending_requests
-    @pending_requests = current_user.pending_friend_requests
-    render json: @pending_requests
-  end
-
   def create
     if current_user.befriend(@friend)
       render json: { message: 'Friend request sent.' }, status: :created
