@@ -15,10 +15,7 @@ class User < ApplicationRecord
   has_many :inverse_friendships, class_name: "Friendship", foreign_key: "friend_id", dependent: :destroy
   has_many :inverse_friends, through: :inverse_friendships, source: :user
 
-  # Class method to search users by email's local part (before the "@")
-  def self.search_by_email_local_part(keyword)
-    where('email LIKE ?', "#{keyword}%")
-  end
+  scope :search_by_email_local_part, ->(keyword) { where('email LIKE ?', "#{keyword}%") }
 
   def befriend(user)
     unless self == user || self.friends.include?(user)
