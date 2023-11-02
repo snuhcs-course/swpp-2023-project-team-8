@@ -19,7 +19,7 @@ class User < ApplicationRecord
 
   def befriend(user)
     return if user.id == id
-    friendships.create_or_find_by!(friend_id: user.id)
+    friendships.create_or_find_by(friend_id: user.id)
   end
 
   def unfriend(user)
