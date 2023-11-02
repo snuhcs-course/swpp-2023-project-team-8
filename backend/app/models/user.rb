@@ -18,9 +18,8 @@ class User < ApplicationRecord
   scope :search_by_email_local_part, ->(keyword) { where('email LIKE ?', "#{keyword}%") }
 
   def befriend(user)
-    unless self == user || self.friends.include?(user)
-      self.friendships.create(friend: user)
-    end
+    return if user.id == id
+    friendships.create_or_find_by!(friend_id: user.id)
   end
 
   def unfriend(user)
@@ -58,5 +57,4 @@ class User < ApplicationRecord
   def trim_email!
     self.email = email.strip unless email.nil?
   end
-
 end
