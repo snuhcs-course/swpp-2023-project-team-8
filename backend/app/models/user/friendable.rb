@@ -9,8 +9,8 @@ module User::Friendable
     has_many :friends, through: :friendships
 
     # Friendships where this user is the friend_id
-    has_many :inverse_friendships, class_name: "Friendship", foreign_key: "friend_id", dependent: :destroy
-    has_many :inverse_friends, through: :inverse_friendships, source: :user
+    has_many :requested_friendships, class_name: "Friendship", foreign_key: "friend_id", dependent: :destroy
+    has_many :inverse_friends, through: :requested_friendships, source: :user
   end
 
   def befriend(user)
@@ -21,11 +21,11 @@ module User::Friendable
 
   def unfriend(user)
     friendships.find_by(friend: user)&.destroy
-    inverse_friendships.find_by(user: user)&.destroy
+    requested_friendships.find_by(user: user)&.destroy
   end
 
   def confirm_friendship(user)
-    friendship = inverse_friendships.find_by(user: user)
+    friendship = requested_friendships.find_by(user: user)
     friendship.confirm if friendship
   end
 
@@ -38,11 +38,11 @@ module User::Friendable
   end
 
   def inverse_confirmed_friends
-    inverse_friendships.confirmed.map(&:user)
+    requested_friendships.confirmed.map(&:user)
   end
 
   def pending_friendships
-    inverse_friendships.pending
+    requested_friendships.pending
   end
 
   private
