@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# 친구 관련된 관심사를 담당한다
 module User::Friendable
   extend ActiveSupport::Concern
 
