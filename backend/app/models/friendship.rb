@@ -3,4 +3,7 @@ class Friendship < ApplicationRecord
   belongs_to :friend, class_name: 'User'
 
   validates :user_id, uniqueness: { scope: :friend_id }
+
+  scope :confirmed , -> { where(confirmed: true) }
+  scope :pending, -> { where(confirmed: false) }
 end

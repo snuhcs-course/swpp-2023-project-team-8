@@ -33,15 +33,15 @@ module User::Friendable
   end
 
   def confirmed_friends
-    friendships.where(confirmed: true).map(&:friend)
+    friendships.confirmed.map(&:friend)
   end
 
   def inverse_confirmed_friends
-    inverse_friendships.where(confirmed: true).map(&:user)
+    inverse_friendships.confirmed.map(&:user)
   end
 
   def pending_friend_requests
-    inverse_friendships.where(confirmed: false).map(&:user)
+    inverse_friendships.pending.map(&:user)
   end
 
   private
