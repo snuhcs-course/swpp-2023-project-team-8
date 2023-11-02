@@ -4,7 +4,7 @@ class Users::PendingRequestsController < ApplicationController
   before_action :set_user
 
   def index
-    @pending_requests = current_user.pending_friend_requests
+    @pending_requests = current_user.pending_friendships.map(&:user)
     render json: @pending_requests
   end
 

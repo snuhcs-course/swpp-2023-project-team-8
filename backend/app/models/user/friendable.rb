@@ -40,8 +40,8 @@ module User::Friendable
     inverse_friendships.confirmed.map(&:user)
   end
 
-  def pending_friend_requests
-    inverse_friendships.pending.map(&:user)
+  def pending_friendships
+    inverse_friendships.pending
   end
 
   private
