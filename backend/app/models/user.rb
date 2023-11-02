@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   include Authenticatable
+  include Friendable
 
   has_secure_password
 
@@ -7,6 +8,8 @@ class User < ApplicationRecord
   validates :name, presence: true, uniqueness: true
 
   before_validation :trim_name!, :trim_email!
+
+  scope :search_by_email_local_part, ->(keyword) { where('email LIKE ?', "#{keyword}%") }
 
   private
 
