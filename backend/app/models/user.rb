@@ -18,7 +18,8 @@ class User < ApplicationRecord
   scope :search_by_email_local_part, ->(keyword) { where('email LIKE ?', "#{keyword}%") }
 
   def befriend(user)
-    return if user.id == id
+    return if user.id == id || already_friend?(user)
+
     friendships.create_or_find_by(friend_id: user.id)
   end
 
@@ -49,6 +50,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def already_friend?(user)
+    friends.include?(user) || inverse_friends.include?(user)
+  end
 
   def trim_name!
     self.name = name.strip unless name.nil?
