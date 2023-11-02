@@ -1,4 +1,4 @@
-class FriendshipsController < ApplicationController
+class FriendsController < ApplicationController
   before_action :set_friend, only: [:create, :confirm, :destroy]
 
   def index

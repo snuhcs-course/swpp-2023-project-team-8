@@ -4,7 +4,11 @@ Rails.application.routes.draw do
   resources :verification_mails, only: [:create]
   post '/auth/login', to: 'authentication#create'
 
-  resources :friends, controller: 'friendships', only: [:index, :create, :destroy] do
+  resources :users, only: [:show, :create, :destroy] do
+    resources :pending_requests, controller: "users/pending_requests", only: [:index]
+  end
+
+  resources :friends, only: [:index, :create, :destroy] do
     post 'confirm', on: :member
   end
   get 'friends/pending_requests', to: 'friendships#pending_requests'
