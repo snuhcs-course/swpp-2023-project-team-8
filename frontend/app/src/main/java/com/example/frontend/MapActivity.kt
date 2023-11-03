@@ -57,6 +57,7 @@ class MapActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentLocation by mutableStateOf<LatLng?>(null)
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -72,6 +73,9 @@ class MapActivity : ComponentActivity() {
                 }
             }
         }
+        val intent = Intent(this, PlaceRecActivity::class.java)
+        intent.putExtra("userLocation", currentLocation)
+        startActivity(intent)
 
         requestLocationUpdates()
     }
