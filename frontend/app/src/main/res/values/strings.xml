@@ -4,4 +4,6 @@
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_place_rec">PlaceRecActivity</string>
     <string name="title_activity_user_info">UserInfoActivity</string>
+    <string name="title_activity_mission">MissionActivity</string>
+    <string name="title_activity_edit_profile">EditProfileActivity</string>
 </resources>
