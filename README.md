@@ -1,28 +1,15 @@
-# SNU-SWPP-Template
+# 샤프 - 이거팔조?
 
-You can use the README file to showcase and promote your mobile app. The template provided below is just a starting point. Feel free to craft your README as you see fit. 
+When I take classes at school, I sometimes feel like I want to meet my friends. I want to make an appointment with my friend, or I want to run into my friend by chance while walking down the street. I also want to know where my friends live even if I don't meet them in person. However, since each of my friends takes different subjects, it is difficult to know where they are currently. This problen was solved by sharing the location with friends without having to ask them where they are every time. 'ShafShaf' app will be an app that increases interaction between people within Seoul National University. If you are inside Seoul National University, you can find out the current location of your friends by displaying your location and the locations of your friends inside Seoul National University on the map. Sharing your location with friends will help you build friendships. You can schedule meetings with friends through the app. Additionally, there is a function that generates a notification when a friend is nearby and a function that allows you to collect badges through various missions.
 
-Please note that the README doesn't affect your grade and is not included in documentation(Wiki).
+# Tech Stack
+## Client
+## Server
+- Android Jetpack Compose
+- Kotlin
 
-# [Your Application Name]
-
-[Short application description here]
-
-![Application Screenshot](path_to_screenshot.png)
-
-## Features
-
-- Feature 1: Brief description
-- Feature 2: Brief description
-- ...
-
-## Getting Started
-
-### Prerequisites
-
-- Android Studio [version, e.g., 4.2.1]
-- Minimum Android SDK Version [e.g., 21]
-
-### Installation
-
-[Installation link here]
+## Server
+- Ruby on rails
+- Sidekiq
+- PostgreSQL
+- Redis
