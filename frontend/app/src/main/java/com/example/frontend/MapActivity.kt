@@ -1,34 +1,9 @@
 package com.example.frontend
-
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.frontend.ui.theme.FrontendTheme
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.rememberCameraPositionState
-import androidx.compose.material3.Text
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,27 +23,40 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import androidx.core.location.LocationManagerCompat.requestLocationUpdates
+import androidx.core.content.ContextCompat
 import com.example.frontend.ui.theme.FrontendTheme
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.android.gms.location.*
-import kotlinx.coroutines.CoroutineScope
+
 
 
 class MapActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentLocation by mutableStateOf<LatLng?>(null)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,14 +73,42 @@ class MapActivity : ComponentActivity() {
                 }
             }
         }
+        val intent = Intent(this, PlaceRecActivity::class.java)
+        intent.putExtra("userLocation", currentLocation)
+        startActivity(intent)
 
         requestLocationUpdates()
     }
+
 
     private fun requestLocationUpdates() {
         val locationRequest = LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(1000)
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    locationResult.locations.firstOrNull()?.let {
+                        currentLocation = LatLng(it.latitude, it.longitude)
+                    }
+                }
+            }
+
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        } else {
+            // Request location permission
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION_PERMISSION
+            )
+        }
+
 
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
@@ -113,6 +129,26 @@ class MapActivity : ComponentActivity() {
             return
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, you can now request location updates
+                requestLocationUpdates()
+            } else {
+                // Permission denied, handle this case as needed
+            }
+        }
+    }
+
+    companion object {
+        private const val REQUEST_LOCATION_PERMISSION = 1
     }
 }
 
@@ -175,6 +211,7 @@ fun IconToggleButton(
 
 @Composable
 fun BottomBar() {
+    var context = LocalContext.current
     val icons = listOf(
         Icons.Default.Star,
         Icons.Outlined.AccountCircle,
@@ -196,16 +233,19 @@ fun BottomBar() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             icons.forEach { icon ->
+
                 IconToggleButton(icon = icon) {
                     // Implement icon button click action here
                     when(icon){
                         icons[0] -> {
                             //
 
+
                         }
                         icons[1] -> {
-                            //
-
+                            // userInfo로 이동
+                            val nextIntent = Intent(context, UserInfoActivity::class.java)
+                            context.startActivity(nextIntent)
                         }
                         icons[2] -> {
                             //
