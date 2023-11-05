@@ -1,8 +1,13 @@
 package com.example.frontend
+
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -11,7 +16,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,9 +26,12 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,11 +59,57 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 
-
 class MapActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentLocation by mutableStateOf<LatLng?>(null)
 
+    private fun hasBackgroundLocationPermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            ContextCompat.checkSelfPermission(
+                context, Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            // Background location access is not needed or is granted by default on devices running OS versions prior to Android 11
+            true
+        }
+    }
+
+    private fun showPermissionExplanation() {
+        // Update your UI to show the explanation message
+        setContent {
+            FrontendTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AlertDialog(
+                        onDismissRequest = {},
+                        title = { Text("백그라운드 위치 권한 허용 요청") },
+                        text = {
+                            Text(
+                                "저희 앱은 백그라운드 위치 권한을 필요로 합니다. " +
+                                        "권한->위치->항상 허용"
+                            )
+                        },
+                        confirmButton = {
+                            Button(onClick = {
+                                openAppSettings()
+                            }) {
+                                Text("설정")
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,18 +126,52 @@ class MapActivity : ComponentActivity() {
                 }
             }
         }
-        val intent = Intent(this, PlaceRecActivity::class.java)
-        intent.putExtra("userLocation", currentLocation)
-        startActivity(intent)
+//        val intent = Intent(this, PlaceRecActivity::class.java)
+//        intent.putExtra("userLocation", currentLocation)
+//        startActivity(intent)
 
-        requestLocationUpdates()
+        checkAndRequestLocationPermissions()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        setContent {
+            FrontendTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    MapUI("Android", currentLocation)
+                }
+            }
+        }
+
+        checkAndRequestLocationPermissions()
+    }
+
+    private fun checkAndRequestLocationPermissions() {
+        when {
+            hasBackgroundLocationPermission(this) -> {
+                // Background location access granted.
+                requestLocationUpdates()
+            }
+
+            else -> {
+                // Show a UI to explain why the permission is needed.
+                showPermissionExplanation()
+            }
+        }
     }
 
 
     private fun requestLocationUpdates() {
-        val locationRequest = LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setInterval(1000)
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 1000
+        }
 
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -131,22 +218,6 @@ class MapActivity : ComponentActivity() {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, you can now request location updates
-                requestLocationUpdates()
-            } else {
-                // Permission denied, handle this case as needed
-            }
-        }
-    }
-
     companion object {
         private const val REQUEST_LOCATION_PERMISSION = 1
     }
@@ -155,29 +226,34 @@ class MapActivity : ComponentActivity() {
 @Composable
 fun MapUI(name: String, currentLocation: LatLng?, modifier: Modifier = Modifier) {
 
-    currentLocation?.let { location ->
-        val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(location, 10f)
-        }
-
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState
-        ) {
-            Marker(
-                state = MarkerState(position = location),
-                title = "Current Location",
-                snippet = "You are here"
-            )
-        }
-    }
-    // App()
     MaterialTheme {
         Column {
-            // Your main content goes here
+            // The map takes up all the space minus the bottom bar
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                currentLocation?.let { location ->
+                    val cameraPositionState = rememberCameraPositionState {
+                        position = CameraPosition.fromLatLngZoom(location, 15f)
+                    }
 
-            Spacer(modifier = Modifier.weight(1f))
+                    GoogleMap(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        cameraPositionState = cameraPositionState
+                    ) {
+                        Marker(
+                            state = MarkerState(position = location),
+                            title = "Current Location",
+                            snippet = "You are here"
+                        )
+                    }
+                }
+            }
 
+            // Bottom bar at the bottom
             BottomBar()
         }
     }
@@ -236,21 +312,24 @@ fun BottomBar() {
 
                 IconToggleButton(icon = icon) {
                     // Implement icon button click action here
-                    when(icon){
+                    when (icon) {
                         icons[0] -> {
                             //
 
 
                         }
+
                         icons[1] -> {
                             // userInfo로 이동
                             val nextIntent = Intent(context, UserInfoActivity::class.java)
                             context.startActivity(nextIntent)
                         }
+
                         icons[2] -> {
                             //
 
                         }
+
                         icons[3] -> {
                             //
 
