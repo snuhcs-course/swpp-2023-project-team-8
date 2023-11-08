@@ -24,7 +24,7 @@ class AddFriendActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BottomAppBar()
-            //SearchFriend()
+            SearchFriend()
         }
     }
 }
@@ -46,11 +46,8 @@ fun BottomAppBar() {
                     }
 
 
-
                     Icon(imageVector = Icons.Default.Person, contentDescription = "프로필")
                     Text(text = "My Name",Modifier.offset(5.dp,0.dp))
-
-
 
                     // 돋보기 눌렀을 때 친구검색 창 띄우기 , Composable 함수를 호출하기 위해 buttonClicked = true
                     IconButton(
