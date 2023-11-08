@@ -14,13 +14,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -28,13 +29,21 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +67,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.launch
 
 
 class MapActivity : ComponentActivity() {
@@ -224,52 +234,94 @@ class MapActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldSnackbarDemo() {
+    // [START android_compose_layout_material_snackbar]
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(snackbarHostState) {
+        snackbarHostState.showSnackbar("Snackbar")
+    }
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
+    ) { contentPadding ->
+        // Screen content
+        // [START_EXCLUDE silent]
+//        Row(modifier = Modifier.padding(contentPadding))
+        Text("asdf", modifier = Modifier.padding(contentPadding))
+//        Box(modifier = Modifier.padding(contentPadding)
+//            .height(0.dp)
+//            .align(Alignment.TopCenter)
+//            )) { /* ... */ }
+        // [END_EXCLUDE]
+       //s BottomBar()
+
+    }
+    // [END android_compose_layout_material_snackbar]
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapUI(name: String, currentLocation: LatLng?, modifier: Modifier = Modifier) {
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    currentLocation?.let { location ->
-        val locations = listOf(
-            LatLng(37.469020, 126.952321),
-            LatLng(37.467113, 126.947597),
-            LatLng(37.461482, 126.948941),
-            LatLng(37.459540, 126.947481),
-            LatLng(37.455836, 126.948220),
-            LatLng(37.450913, 126.949656),
-            LatLng(37.447540, 126.949270),
-            LatLng(37.447097, 126.951417),
-            LatLng(37.453400, 126.953478),
-            LatLng(37.457326, 126.956584),
-            LatLng(37.462478, 126.959963),
-            LatLng(37.467095, 126.960976),
-            LatLng(37.468567, 126.957310),
-        )
-
-        val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(location, 15f)
-        }
-
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState
-        ) {
-            Polygon(
-                points = locations,
-                fillColor = Color(0x89CFF0FF)
-            )
-            Marker(
-                state = MarkerState(position = location),
-                title = "Current Location",
-                snippet = "You are here"
-            )
-        }
+    LaunchedEffect(snackbarHostState) {
+        snackbarHostState.showSnackbar("Snackbar")
     }
-    // App()
-    MaterialTheme {
-        Column {
-            // Your main content goes here
 
-            // Bottom bar at the bottom
-            BottomBar()
+
+    MaterialTheme {
+
+        Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
+            bottomBar = { BottomBar()}
+
+        ) { contentPadding ->
+
+            currentLocation?.let { location ->
+                val locations = listOf(
+                    LatLng(37.469020, 126.952321),
+                    LatLng(37.467113, 126.947597),
+                    LatLng(37.461482, 126.948941),
+                    LatLng(37.459540, 126.947481),
+                    LatLng(37.455836, 126.948220),
+                    LatLng(37.450913, 126.949656),
+                    LatLng(37.447540, 126.949270),
+                    LatLng(37.447097, 126.951417),
+                    LatLng(37.453400, 126.953478),
+                    LatLng(37.457326, 126.956584),
+                    LatLng(37.462478, 126.959963),
+                    LatLng(37.467095, 126.960976),
+                    LatLng(37.468567, 126.957310),
+                )
+
+                val cameraPositionState = rememberCameraPositionState {
+                    position = CameraPosition.fromLatLngZoom(location, 15f)
+                }
+                Spacer(modifier = Modifier.padding(contentPadding))
+                GoogleMap(
+                    modifier = Modifier.fillMaxSize(),
+                    cameraPositionState = cameraPositionState
+                ) {
+                    Polygon(
+                        points = locations,
+                        fillColor = Color(0x89CFF0FF)
+                    )
+                    Marker(
+                        state = MarkerState(position = location),
+                        title = "Current Location",
+                        snippet = "You are here"
+                    )
+                }
+            }
         }
     }
 }
@@ -329,32 +381,35 @@ fun BottomBar() {
                     // Implement icon button click action here
                     when (icon) {
                         icons[0] -> {
-                            //
+                            /////////////// PlaceRec 확인용
+                            val nextIntent = Intent(context, PlaceRecActivity::class.java)
+                            context.startActivity(nextIntent)
 
 
                         }
 
                         icons[1] -> {
-                            // userInfo로 이동
-                            val nextIntent = Intent(context, UserInfoActivity::class.java)
+                            /////////////// PlaceRec 확인용
+                            val nextIntent = Intent(context, AddFriendActivity::class.java)
                             context.startActivity(nextIntent)
                         }
 
                         icons[2] -> {
-                            /////////////// PlaceRec 확인용
-                            val nextIntent = Intent(context, PlaceRecActivity::class.java)
-                            context.startActivity(nextIntent)
+
 
                         }
 
                         icons[3] -> {
-                            //
+                            // userInfo로 이동
+                            val nextIntent = Intent(context, UserInfoActivity::class.java)
+                            context.startActivity(nextIntent)
 
                         }
                     }
                 }
             }
         }
+
     }
 }
 
