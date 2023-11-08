@@ -39,6 +39,11 @@
             android:exported="false"
             android:label="@string/title_activity_map"
             android:theme="@style/Theme.Frontend" />
+        <activity
+            android:name=".AddFriendActivity"
+            android:exported="false"
+            android:label="AddFriendActivity"
+            android:theme="@style/Theme.Frontend" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
