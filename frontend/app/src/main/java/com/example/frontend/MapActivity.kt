@@ -272,7 +272,7 @@ fun MapUI(name: String, currentLocation: LatLng?, modifier: Modifier = Modifier)
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(snackbarHostState) {
-        snackbarHostState.showSnackbar("Snackbar")
+        snackbarHostState.showSnackbar("체크인 성공!")
     }
 
 
