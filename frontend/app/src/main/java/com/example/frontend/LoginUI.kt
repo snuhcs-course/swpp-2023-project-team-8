@@ -41,8 +41,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
+//import androidx.security.crypto.EncryptedSharedPreferences
+//import androidx.security.crypto.MasterKey
 import com.example.frontend.api.AuthAPI
 import com.example.frontend.model.AuthResponse
 import com.example.frontend.model.LoginModel
@@ -161,67 +161,67 @@ fun loginButtonHandler(
     val call = authAPI.login(loginModel)
     ///////////////////////////////////////////////////////////
     // TODO: 배포 이후 제거
-//    val nextIntent = Intent(context, MapActivity::class.java)
-//    context.startActivity(nextIntent)
-//    if (context is Activity) {
-//        context.finish()
-//    }
+    val nextIntent = Intent(context, MapActivity::class.java)
+    context.startActivity(nextIntent)
+    if (context is Activity) {
+        context.finish()
+    }
     ////////////////////////////////////////////////////////////
-    call!!.enqueue(object : Callback<AuthResponse?> {
-        override fun onResponse(call: Call<AuthResponse?>, response: Response<AuthResponse?>) {
-            if (response.isSuccessful && response.body() != null) {
-                val authToken = response.body()?.token
-                if (authToken != null) {
-                    saveAuthToken(context, authToken)
-                }
-                result.value = "Logged in successfully"
-
-                val nextIntent = Intent(context, MapActivity::class.java)
-                context.startActivity(nextIntent)
-
-                if (context is Activity) {
-                    context.finish()
-                }
-            } else {
-                // Handle login failure
-                result.value = "Login failed: " + response.errorBody()?.string()
-                Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
-            }
-        }
-
-        override fun onFailure(call: Call<AuthResponse?>, t: Throwable) {
-            result.value = "Login error: " + t.message
-            Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
-        }
-    })
+//    call!!.enqueue(object : Callback<AuthResponse?> {
+//        override fun onResponse(call: Call<AuthResponse?>, response: Response<AuthResponse?>) {
+//            if (response.isSuccessful && response.body() != null) {
+//                val authToken = response.body()?.token
+//                if (authToken != null) {
+//                    saveAuthToken(context, authToken)
+//                }
+//                result.value = "Logged in successfully"
+//
+//                val nextIntent = Intent(context, MapActivity::class.java)
+//                context.startActivity(nextIntent)
+//
+//                if (context is Activity) {
+//                    context.finish()
+//                }
+//            } else {
+//                // Handle login failure
+//                result.value = "Login failed: " + response.errorBody()?.string()
+//                Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
+//            }
+//        }
+//
+//        override fun onFailure(call: Call<AuthResponse?>, t: Throwable) {
+//            result.value = "Login error: " + t.message
+//            Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
+//        }
+//    })
 }
 
 // To save the auth token securely when logging in
 fun saveAuthToken(context: Context, authToken: String) {
-    val masterKey = MasterKey.Builder(context)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
-
-    val sharedPreferences = EncryptedSharedPreferences.create(
-        context,
-        "secure_app_prefs",
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-
-    // Save auth token securely
-    with(sharedPreferences.edit()) {
-        putString("AUTH_TOKEN", authToken)
-        apply()
-    }
-
-    // Update login state
-    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-    with(appPrefs.edit()) {
-        putBoolean("IS_LOGGED_IN", true)
-        apply()
-    }
+//    val masterKey = MasterKey.Builder(context)
+//        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+//        .build()
+//
+//    val sharedPreferences = EncryptedSharedPreferences.create(
+//        context,
+//        "secure_app_prefs",
+//        masterKey,
+//        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+//        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+//    )
+//
+//    // Save auth token securely
+//    with(sharedPreferences.edit()) {
+//        putString("AUTH_TOKEN", authToken)
+//        apply()
+//    }
+//
+//    // Update login state
+//    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+//    with(appPrefs.edit()) {
+//        putBoolean("IS_LOGGED_IN", true)
+//        apply()
+//    }
 }
 
 fun defaultAuthAPI(): AuthAPI {
