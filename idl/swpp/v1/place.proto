@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package swpp.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service PlaceService {
+  rpc ListPlaces(ListPlacesRequest) returns (ListPlacesResponse) {}
+}
+
+message ListPlacesRequest {
+  double latitude = 1;
+  double longitude = 2;
+  google.protobuf.Timestamp requested_at = 3;
+}
+
+message ListPlacesResponse {
+  repeated int32 place_ids = 1;
+}
