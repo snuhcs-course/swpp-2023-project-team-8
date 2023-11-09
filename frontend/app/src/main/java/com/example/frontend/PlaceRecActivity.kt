@@ -52,23 +52,30 @@ class PlaceRecActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        // PlaceRecUI (상단 부분)
-                        PlaceRecUI("Android")
 
-                        // MapUI (하단 부분, 화면의 아래 반절)
-                        Box(
+                    Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .weight(1f)
-                        ) {
-                            MapUI("Android", LatLng(1.35, 103.87))
-                            //MapUI("Android", userLocationReceived)
+                        )
+                        {
+                            // PlaceRecUI
+                          PlaceRecUI("Android", modifier = Modifier.align(Alignment.TopCenter))
+
+                          Box(
+                              modifier = Modifier
+                                  .fillMaxSize()
+                                  .height(300.dp)
+                                  .padding(top = 250.dp)
+                            ) {
+                                MapUI("Android", LatLng(1.35, 103.87))
+                                //MapUI("Android", userLocationReceived)
+                            }
                         }
+
+
+
                     }
-                }
+
             }
         }
 
