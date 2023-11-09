@@ -24,5 +24,6 @@ jobs:
 
       - name: Generate protobuf
         run: |
+          cd idl
           buf generate
 
