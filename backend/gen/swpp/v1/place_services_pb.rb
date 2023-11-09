@@ -16,6 +16,7 @@ module Swpp
         self.service_name = 'swpp.v1.PlaceService'
 
         rpc :ListPlaces, ::Swpp::V1::ListPlacesRequest, ::Swpp::V1::ListPlacesResponse
+        rpc :Ping, ::Swpp::V1::PingRequest, ::Swpp::V1::PingResponse
       end
 
       Stub = Service.rpc_stub_class

@@ -8,7 +8,7 @@ require 'google/protobuf/timestamp_pb'
 require 'google/type/latlng_pb'
 
 
-descriptor_data = "\n\x13swpp/v1/place.proto\x12\x07swpp.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x18google/type/latlng.proto\"\x83\x01\n\x11ListPlacesRequest\x12/\n\x08location\x18\x01 \x01(\x0b\x32\x13.google.type.LatLngR\x08location\x12=\n\x0crequested_at\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x0brequestedAt\"1\n\x12ListPlacesResponse\x12\x1b\n\tplace_ids\x18\x01 \x03(\x05R\x08placeIds2W\n\x0cPlaceService\x12G\n\nListPlaces\x12\x1a.swpp.v1.ListPlacesRequest\x1a\x1b.swpp.v1.ListPlacesResponse\"\x00\x62\x06proto3"
+descriptor_data = "\n\x13swpp/v1/place.proto\x12\x07swpp.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x18google/type/latlng.proto\"\x83\x01\n\x11ListPlacesRequest\x12/\n\x08location\x18\x01 \x01(\x0b\x32\x13.google.type.LatLngR\x08location\x12=\n\x0crequested_at\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x0brequestedAt\"1\n\x12ListPlacesResponse\x12\x1b\n\tplace_ids\x18\x01 \x03(\x05R\x08placeIds\"\r\n\x0bPingRequest\"(\n\x0cPingResponse\x12\x18\n\x07message\x18\x01 \x01(\tR\x07message2\x8e\x01\n\x0cPlaceService\x12G\n\nListPlaces\x12\x1a.swpp.v1.ListPlacesRequest\x1a\x1b.swpp.v1.ListPlacesResponse\"\x00\x12\x35\n\x04Ping\x12\x14.swpp.v1.PingRequest\x1a\x15.swpp.v1.PingResponse\"\x00\x62\x06proto3"
 
 pool = Google::Protobuf::DescriptorPool.generated_pool
 
@@ -40,5 +40,7 @@ module Swpp
   module V1
     ListPlacesRequest = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("swpp.v1.ListPlacesRequest").msgclass
     ListPlacesResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("swpp.v1.ListPlacesResponse").msgclass
+    PingRequest = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("swpp.v1.PingRequest").msgclass
+    PingResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("swpp.v1.PingResponse").msgclass
   end
 end
