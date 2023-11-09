@@ -6,3 +6,5 @@ plugins:
     out: ../backend/gen
   - plugin: buf.build/grpc/python:v1.59.2
     out: ../ml/gen/
+  - plugin: buf.build/protocolbuffers/python
+    out: ../ml/gen/
