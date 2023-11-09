@@ -1,5 +1,4 @@
 package com.example.frontend
-
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -50,8 +49,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
+
 
 
 class MapActivity : ComponentActivity() {
@@ -157,34 +156,14 @@ class MapActivity : ComponentActivity() {
 fun MapUI(name: String, currentLocation: LatLng?, modifier: Modifier = Modifier) {
 
     currentLocation?.let { location ->
-        val locations = listOf(
-            LatLng(37.469020, 126.952321),
-            LatLng(37.467113, 126.947597),
-            LatLng(37.461482, 126.948941),
-            LatLng(37.459540, 126.947481),
-            LatLng(37.455836, 126.948220),
-            LatLng(37.450913, 126.949656),
-            LatLng(37.447540, 126.949270),
-            LatLng(37.447097, 126.951417),
-            LatLng(37.453400, 126.953478),
-            LatLng(37.457326, 126.956584),
-            LatLng(37.462478, 126.959963),
-            LatLng(37.467095, 126.960976),
-            LatLng(37.468567, 126.957310),
-        )
-
         val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(location, 15f)
+            position = CameraPosition.fromLatLngZoom(location, 10f)
         }
 
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState
         ) {
-            Polygon(
-                points = locations,
-                fillColor = Color(0x89CFF0FF)
-            )
             Marker(
                 state = MarkerState(position = location),
                 title = "Current Location",
@@ -257,24 +236,21 @@ fun BottomBar() {
 
                 IconToggleButton(icon = icon) {
                     // Implement icon button click action here
-                    when (icon) {
+                    when(icon){
                         icons[0] -> {
                             //
 
 
                         }
-
                         icons[1] -> {
                             // userInfo로 이동
                             val nextIntent = Intent(context, UserInfoActivity::class.java)
                             context.startActivity(nextIntent)
                         }
-
                         icons[2] -> {
                             //
 
                         }
-
                         icons[3] -> {
                             //
 
