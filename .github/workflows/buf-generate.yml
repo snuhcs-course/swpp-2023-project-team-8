@@ -26,4 +26,5 @@ jobs:
         run: |
           cd idl
           buf generate
+          echo $(git diff)
 
