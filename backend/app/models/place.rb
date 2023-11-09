@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
 class Place
-  PLACE_CODE_MAP = {
-    "도서관": 1,
-    "식당": 4,
-    "카페/편의점": 5,
-    "학습공간": 46,
-  }.with_indifferent_access.freeze
+  include SnuAdapter
+  include ActiveModel::Model
+  include ActiveModel::Attributes
 
-  class << self
-    def fetch_snu_code(name)
-      PLACE_CODE_MAP[name]
-    end
-  end
+  attribute :id
+  attribute :name # 어차피 이게 Unique할 거 같긴 한데?
+  attribute :latitude, :float
+  attribute :longitude, :float
+  attribute :kind # 도서관, 식당, 카페/편의점, 학습공간
 end

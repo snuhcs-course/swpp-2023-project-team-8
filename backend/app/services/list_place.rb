@@ -12,6 +12,7 @@ class ListPlace
   end
 
   def get
-    @http.get("/api/amenities.action", PARAMS)
+    response = @http.get("/api/amenities.action", PARAMS)
+    response["rows"].map { |h| Place.from_snu_hash(h) }
   end
 end
