@@ -3,15 +3,15 @@ syntax = "proto3";
 package swpp.v1;
 
 import "google/protobuf/timestamp.proto";
+import "google/type/latlng.proto";
 
 service PlaceService {
   rpc ListPlaces(ListPlacesRequest) returns (ListPlacesResponse) {}
 }
 
 message ListPlacesRequest {
-  double latitude = 1;
-  double longitude = 2;
-  google.protobuf.Timestamp requested_at = 3;
+  google.type.LatLng location = 1;
+  google.protobuf.Timestamp requested_at = 2;
 }
 
 message ListPlacesResponse {
