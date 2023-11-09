@@ -1,0 +1,28 @@
+name: Generate Stub on proto changes
+
+on:
+  push:
+    branches:
+      - main
+      - idl # For testing
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup buf action
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Generate protobuf
+        run: |
+          buf generate
+
