@@ -74,9 +74,9 @@ class MapActivity : ComponentActivity() {
                 }
             }
         }
-        //val intent = Intent(this, PlaceRecActivity::class.java)
-        //intent.putExtra("userLocation", currentLocation)
-        //startActivity(intent)
+        val intent = Intent(this, PlaceRecActivity::class.java)
+        intent.putExtra("userLocation", currentLocation)
+        startActivity(intent)
 
         requestLocationUpdates()
     }
@@ -271,9 +271,7 @@ fun BottomBar() {
                         }
 
                         icons[2] -> {
-                            /////////////// PlaceRec 확인용
-                            val nextIntent = Intent(context, PlaceRecActivity::class.java)
-                            context.startActivity(nextIntent)
+                            //
 
                         }
 

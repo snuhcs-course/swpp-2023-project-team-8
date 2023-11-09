@@ -52,19 +52,17 @@ class PlaceRecActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                    )
-                    {
-                        // PlaceRecUI
-                        PlaceRecUI("Android", modifier = Modifier.align(Alignment.TopCenter))
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        // PlaceRecUI (상단 부분)
+                        PlaceRecUI("Android")
 
+                        // MapUI (하단 부분, 화면의 아래 반절)
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .height(300.dp)
-                                .padding(top = 250.dp)
+                                .weight(1f)
                         ) {
                             MapUI("Android", LatLng(1.35, 103.87))
                             //MapUI("Android", userLocationReceived)
@@ -73,6 +71,7 @@ class PlaceRecActivity : ComponentActivity() {
                 }
             }
         }
+
     }
 }
 
@@ -82,13 +81,13 @@ fun PlaceRecUI(name: String, modifier: Modifier = Modifier) {
 
     // user name 받아오기
     var username by remember { mutableStateOf("") }
-
-
+    
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
 
-    ) {
+    ){
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
@@ -152,11 +151,9 @@ fun PlaceRecUI(name: String, modifier: Modifier = Modifier) {
                 .padding(start = 8.dp)
         )
 
-        Spacer(
-            modifier = Modifier
-                .height(200.dp)
-                .width(300.dp)
-        )
+        Spacer(modifier = Modifier
+                       .height(200.dp)
+                       .width(300.dp))
 
 
     }
