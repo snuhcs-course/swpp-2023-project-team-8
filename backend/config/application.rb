@@ -28,3 +28,6 @@ module SwppBackend
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end
+
+# Load lib files
+Dir[Rails.root.join("lib/**/*.rb")].sort.each { |file| require file }
