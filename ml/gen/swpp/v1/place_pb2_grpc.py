@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import place_pb2 as swpp_dot_v1_dot_place__pb2
+from swpp.v1 import place_pb2 as swpp_dot_v1_dot_place__pb2
 
 
 class PlaceServiceStub(object):
