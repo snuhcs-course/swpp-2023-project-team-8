@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package swpp.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/type/latlng.proto";
+
+service PlaceService {
+  rpc ListPlaces(ListPlacesRequest) returns (ListPlacesResponse) {}
+  rpc Ping(PingRequest) returns (PingResponse) {}
+}
+
+message ListPlacesRequest {
+  google.type.LatLng location = 1;
+  google.protobuf.Timestamp requested_at = 2;
+}
+
+message ListPlacesResponse {
+  repeated int32 place_ids = 1;
+}
+
+message PingRequest {}
+
+message PingResponse {
+  string message = 1;
+}
