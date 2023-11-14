@@ -56,5 +56,5 @@ jobs:
       - name: Test - Rspec
         run: |
           cd backend
-          rspec
+          bundle exec rspec RAILS_ENV=test
 
