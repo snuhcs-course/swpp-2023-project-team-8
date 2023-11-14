@@ -35,7 +35,7 @@ jobs:
         env:
           SHORT_SHA: ${{ env.SHORT_SHA }}
         with:
-          context: .
+          context: ml/
           pull: true
           push: true
           tags: ghcr.io/snuhcs-course/swpp-2023-project-team-8/ml:${{ env.SHORT_SHA }}
