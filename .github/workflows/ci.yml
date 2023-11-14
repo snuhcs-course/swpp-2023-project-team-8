@@ -38,10 +38,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Go to backend repo
-        run: |
-          cd backend
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
@@ -49,10 +45,11 @@ jobs:
 
       - name: Prepare
         run: |
-          pwd
+          cd backend
           rake db:prepare RAILS_ENV=test
 
       - name: Test - Rspec
         run: |
+          cd backend
           rspec
 
