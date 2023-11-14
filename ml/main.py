@@ -2,8 +2,8 @@ from concurrent import futures
 
 import grpc
 
-from gen.swpp.v1 import place_pb2
-from gen.swpp.v1.place_pb2_grpc import PlaceServiceServicer, add_PlaceServiceServicer_to_server
+from swpp.v1 import place_pb2
+from swpp.v1.place_pb2_grpc import PlaceServiceServicer, add_PlaceServiceServicer_to_server
 
 
 class PlaceService(PlaceServiceServicer):
