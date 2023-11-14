@@ -47,6 +47,11 @@ jobs:
         run: |
           ruby --version
 
+      - name: Apt install
+        run: |
+          apt-get update -qq && \
+            apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
+
       - name: Bundle install
         run: |
           cd backend
@@ -55,7 +60,8 @@ jobs:
       - name: Prepare
         run: |
           cd backend
-          rake db:prepare RAILS_ENV=test
+          rake db:create RAILS_ENV=test
+          rake db:migrate RAILS_ENV=test
 
       - name: Test - Rspec
         run: |
