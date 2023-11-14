@@ -1,3 +1,4 @@
+import os
 from concurrent import futures
 
 import grpc
@@ -17,9 +18,11 @@ class PlaceService(PlaceServiceServicer):
 
 
 if __name__ == '__main__':
-    # Create Unary Server
+    port = os.getenv("PORT", "50051")
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_PlaceServiceServicer_to_server(PlaceService(), server)
-    server.add_insecure_port('[::]:50051')
+    server.add_insecure_port(f"[::]:{port}")
     server.start()
+    print(f"Server started on port {port}")
     server.wait_for_termination()
