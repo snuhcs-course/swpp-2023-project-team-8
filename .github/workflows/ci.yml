@@ -49,6 +49,7 @@ jobs:
 
       - name: Prepare
         run: |
+          pwd
           rake db:prepare RAILS_ENV=test
 
       - name: Test - Rspec
