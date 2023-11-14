@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - ml/github-action-for-build
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Go to ml repo
+        run: |
+          cd ml
+
+      - name: Add SHORT_SHA
+        run: |
+          echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+          echo ${SHORT_SHA}
+
+      - name: Docker build & push
+        uses: docker/build-push-action@v3
+        env:
+          SHORT_SHA: ${{ env.SHORT_SHA }}
+        with:
+          context: .
+          pull: true
+          push: true
+          tags: ghcr.io/snuhcs-course/swpp-2023-project-team-8/ml:${{ env.SHORT_SHA }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
