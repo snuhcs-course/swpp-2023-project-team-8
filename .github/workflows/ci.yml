@@ -43,6 +43,11 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
+      - name: Bundle install
+        run: |
+          cd backend
+          bundle install
+
       - name: Prepare
         run: |
           cd backend
