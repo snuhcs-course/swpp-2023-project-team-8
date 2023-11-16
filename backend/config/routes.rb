@@ -11,5 +11,7 @@ Rails.application.routes.draw do
     post 'confirm', on: :member
   end
 
+  resources :missions, only: [:index]
+
   get "up" => "rails/health#show", as: :rails_health_check
 end
