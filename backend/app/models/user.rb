@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   include Authenticatable
   include Friendable
+  include CheckInable
 
   has_secure_password
 
