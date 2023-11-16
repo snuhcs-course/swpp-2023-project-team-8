@@ -12,4 +12,6 @@ Rails.application.routes.draw do
   end
 
   get "up" => "rails/health#show", as: :rails_health_check
+
+  resources :check_ins, only: [:index, :create]
 end
