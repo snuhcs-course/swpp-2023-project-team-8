@@ -10,4 +10,8 @@ module User::CheckInable
   def check_in!(latitude:, longitude:)
     CheckIn.create!(user_id: id, latitude:, longitude:)
   end
+
+  def latest_check_in
+    check_ins.order(created_at: :desc).first!
+  end
 end

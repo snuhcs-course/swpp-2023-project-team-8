@@ -15,4 +15,15 @@ RSpec.describe User::CheckInable do
       end
     end
   end
+
+  describe "#latest_check_in" do
+    context "여러 개의 체크인이 있을 때" do
+      it "가장 최근의 것을 반환한다" do
+        user.check_in!(latitude: 126.1, longitude: 37.1)
+        user.check_in!(latitude: 120.1, longitude: 37.1)
+
+        expect(user.latest_check_in.latitude).to eq(120.1)
+      end
+    end
+  end
 end
