@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
       return User.find_by(id: user_id)
     end
 
-    @current_user = User.find_by(auth_token: request.headers['Authorization'].to_s)
+    @current_user = User.find_by(auth_token: request.headers["HTTP_AUTHORIZATION"].to_s)
   end
 
   def bypass_authorization?
