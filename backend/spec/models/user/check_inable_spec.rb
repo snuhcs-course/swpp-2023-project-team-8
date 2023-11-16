@@ -4,7 +4,6 @@ require "rails_helper"
 
 RSpec.describe User::CheckInable do
   let!(:user) { User.create!(email: "valid@snu.ac.kr", name: "test", password: "1234") }
-  described_class = User
 
   describe "#check_in!" do
     context "위, 경도가 주어지면" do
