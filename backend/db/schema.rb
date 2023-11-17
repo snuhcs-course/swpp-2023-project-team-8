@@ -43,6 +43,13 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_14_051038) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "places", force: :cascade do |t|
+    t.string "name"
+    t.string "kind"
+    t.float "latitude"
+    t.float "longitude"
+  end
+
   create_table "regions", force: :cascade do |t|
     t.geometry "geom", limit: { :srid => 4326, :type => "multi_polygon" }, null: false
     t.string "name"

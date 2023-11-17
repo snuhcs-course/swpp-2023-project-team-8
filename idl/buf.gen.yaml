@@ -5,6 +5,6 @@ plugins:
   - plugin: buf.build/protocolbuffers/ruby
     out: ../backend/gen
   - plugin: buf.build/grpc/python:v1.59.2
-    out: ../ml/gen/
+    out: ../ml/
   - plugin: buf.build/protocolbuffers/python
-    out: ../ml/gen/
+    out: ../ml/
