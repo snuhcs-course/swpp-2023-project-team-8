@@ -32,13 +32,13 @@ def recommend_venues(gdf, kmeans, longitude, latitude):
 
     distances = cluster_venues.apply(lambda row: haversine(latitude, longitude, row['latitude'], row['longitude']),
                                      axis=1)
-    min_distance_index = distances.idxmin()
+    # min_distance_index = distances.idxmin()
+    min_distance_index = distances.nsmallest(4).index
 
     # Get the recommended venue name
-    venue_name = gdf.loc[min_distance_index, 'spotname']
-
-    msg = 'What about visiting the ' + venue_name + '?'
-    return msg
+    # venue_name = gdf.loc[min_distance_index, 'spotname']
+    venue_ids = list(gdf.loc[min_distance_index, 'spotid'].values)
+    return venue_ids
 
 
 # recommendation = recommend_venues(venues, kmeans, 37.4552, 126.95206)
