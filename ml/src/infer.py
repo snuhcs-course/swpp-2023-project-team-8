@@ -1,25 +1,10 @@
-from math import radians, sin, cos, sqrt, atan2
-
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 from sklearn.cluster import KMeans
 
+from src.utils import haversine
+
 
 # Assuming df is your dataframe containing venue information, and kmeans is your KMeans model.
-
-def haversine(lat1, lon1, lat2, lon2):
-    # Function to calculate the distance between two points on the Earth's surface using Haversine formula
-    R = 6371  # Radius of the Earth in kilometers
-
-    dlat = radians(lat2 - lat1)
-    dlon = radians(lon2 - lon1)
-
-    a = sin(dlat / 2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) ** 2
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
-    distance = R * c  # Distance in kilometers
-    return distance
-
-
 # Assuming kmeans is your trained KMeans model and X_sample contains the longitude and latitude.
 
 def recommend_venues(gdf, kmeans, longitude, latitude):
@@ -39,10 +24,6 @@ def recommend_venues(gdf, kmeans, longitude, latitude):
     # venue_name = gdf.loc[min_distance_index, 'spotname']
     venue_ids = list(gdf.loc[min_distance_index, 'spotid'].values)
     return venue_ids
-
-
-# recommendation = recommend_venues(venues, kmeans, 37.4552, 126.95206)
-# print(recommendation)
 
 
 class Infer:
