@@ -11,6 +11,6 @@ RUN poetry config virtualenvs.create false && \
 
 COPY . .
 
-CMD python main.py
+CMD python grpc_server.py
 
 
