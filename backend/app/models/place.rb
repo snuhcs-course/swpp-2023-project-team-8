@@ -2,4 +2,5 @@
 
 class Place < ApplicationRecord
   include SnuAdapter
+  include IdInOrdered
 end
