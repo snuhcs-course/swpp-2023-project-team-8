@@ -200,14 +200,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
             )
 
 
-//            Icon(
-//                imageVector = Icons.Outlined.AddCircle,
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .size(30.dp)
-//                    .offset(x = 60.dp, y = (-90).dp),
-//                tint = Color(0xFF6750A4)
-//            )
+
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

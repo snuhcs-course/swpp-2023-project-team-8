@@ -37,14 +37,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.frontend.model.PlaceModel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.maps.model.LatLng
 
-class PlaceRecActivity(averagedLocation: LatLng?) : ComponentActivity() {
+class PlaceRecActivity() : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 사용자의 현재 위치 받아오기!
-        val userLocationReceived = intent.getParcelableExtra<LatLng>("userLocation")
+
+        // averagedLocation 넘겨 받기
+        val averagedLocation: LatLng? = intent.getParcelableExtra("averagedLocation")
+
+        val placeModel = PlaceModel(averagedLocation)
 
         setContent {
             FrontendTheme {
@@ -67,7 +71,7 @@ class PlaceRecActivity(averagedLocation: LatLng?) : ComponentActivity() {
                                 .height(300.dp)
                                 .padding(top = 250.dp)
                         ) {
-                            MapUI("Android", LatLng(1.35, 103.87))
+                            MapUI("Android", LatLng(126.9511, 37.4594))
                             //MapUI("Android", userLocationReceived)
                         }
 
