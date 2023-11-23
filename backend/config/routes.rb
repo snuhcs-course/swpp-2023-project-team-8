@@ -9,6 +9,10 @@ Rails.application.routes.draw do
 
   resources :friends, only: [:index, :create, :destroy] do
     post 'confirm', on: :member
+
+    collection do
+      resources "nearby", controller: "friends/nearby", only: [:index]
+    end
   end
 
   get "up" => "rails/health#show", as: :rails_health_check
