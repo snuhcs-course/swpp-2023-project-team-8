@@ -61,7 +61,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 class MapActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var currentLocation by mutableStateOf<LatLng?>(null)
+    var currentLocation by mutableStateOf<LatLng?>(null)
 
     private fun hasBackgroundLocationPermission(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -254,7 +254,7 @@ fun MapUI(name: String, currentLocation: LatLng?, modifier: Modifier = Modifier)
             }
 
             // Bottom bar at the bottom
-            BottomBar()
+            BottomBar(currentLocation)
         }
     }
 }
@@ -286,8 +286,9 @@ fun IconToggleButton(
 }
 
 @Composable
-fun BottomBar() {
+fun BottomBar(currentLocation: LatLng?) {
     var context = LocalContext.current
+
     val icons = listOf(
         Icons.Default.Star,
         Icons.Outlined.AccountCircle,
@@ -313,25 +314,33 @@ fun BottomBar() {
                 IconToggleButton(icon = icon) {
                     // Implement icon button click action here
                     when (icon) {
+
                         icons[0] -> {
-                            //
+                            // MeetUp 생성으로 이동
+                            val nextIntent = Intent(context, MeetupActivity::class.java)
+                            nextIntent.putExtra("currentLocation", currentLocation)
+                            context.startActivity(nextIntent)
 
 
                         }
 
                         icons[1] -> {
-                            // userInfo로 이동
-                            val nextIntent = Intent(context, UserInfoActivity::class.java)
-                            context.startActivity(nextIntent)
+                            // Friend List 이동
+                           // val nextIntent = Intent(context, ::class.java)
+                           // context.startActivity(nextIntent)
+
                         }
 
                         icons[2] -> {
-                            //
-
+                            // MissionActivity 이동
+                            val nextIntent = Intent(context, MissionActivity::class.java)
+                            context.startActivity(nextIntent)
                         }
 
                         icons[3] -> {
-                            //
+                            // userInfo로 이동
+                            val nextIntent = Intent(context, UserInfoActivity::class.java)
+                            context.startActivity(nextIntent)
 
                         }
                     }

@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.maps.model.LatLng
 
-class PlaceRecActivity : ComponentActivity() {
+class PlaceRecActivity(averagedLocation: LatLng?) : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 사용자의 현재 위치 받아오기!

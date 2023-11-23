@@ -4,7 +4,10 @@ package com.example.frontend
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -56,6 +59,7 @@ import com.example.frontend.model.LoginModel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.LightPurple
 import com.example.frontend.ui.theme.Purple80
+import com.google.android.gms.maps.model.LatLng
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -63,10 +67,27 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Calendar
 
+class MeetupActivity : ComponentActivity() {
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Retrieve the currentLocation from the intent
+        val currentLocation: LatLng? = intent.getParcelableExtra("currentLocation")
+
+        setContent {
+            FrontendTheme {
+                MeetupUI(currentLocation) {
+                    // Handle switch to register
+                }
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MeetupUI(onSwitchToRegister: () -> Unit) {
+fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
 
     var title by remember { mutableStateOf("") }
     var hour by remember { mutableStateOf("") }
@@ -221,13 +242,19 @@ fun MeetupUI(onSwitchToRegister: () -> Unit) {
         Spacer(modifier = Modifier.height(20.dp))
 
 
-
-
+        // (현재 유저 위치) currentLocation
+        // averagedLocation: 친구들 위치와 현재 유저 위치의 평균 값
+        ///////////////////////////////////////////////////////////////////
+        //
+        val averagedLocation: LatLng? = LatLng(1.35, 103.87)
+        ///////////////////////////////////////////////////////////////////
         CustomButton(
             buttonText = "장소 선택",
             onClickHandler = {
                 val nextIntent = Intent(context, PlaceRecActivity::class.java)
+                nextIntent.putExtra("averagedLocation", averagedLocation)
                 context.startActivity(nextIntent)
+
             })
     }
 }
@@ -244,7 +271,7 @@ fun MeetupUIPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            MeetupUI {
+            MeetupUI(LatLng(1.35, 103.87)) {
 
             }
         }

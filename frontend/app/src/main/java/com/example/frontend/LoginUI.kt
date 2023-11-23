@@ -240,6 +240,7 @@ fun CustomButton(
     modifier: Modifier = Modifier
 ) {
     Button(
+
         colors = ButtonDefaults.buttonColors(Purple80),
         onClick = onClickHandler,
         modifier = modifier
