@@ -39,4 +39,25 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#nearby_friends" do
+    let!(:user1) { User.create!(email: "user1@snu.ac.kr", name: "user1", password: "1234") }
+    let!(:user2) { User.create!(email: "user2@snu.ac.kr", name: "user2", password: "1234") }
+    let!(:user3) { User.create!(email: "user3@snu.ac.kr", name: "user3", password: "1234") }
+    let!(:user4) { User.create!(email: "user4@snu.ac.kr", name: "user4", password: "1234") }
+    let!(:check_in1) { CheckIn.create!(user: user1, latitude: 126.1, longitude: 37.1) }
+    let!(:check_in2) { CheckIn.create!(user: user2, latitude: 120.1, longitude: 37.1) }
+    let!(:check_in3) { CheckIn.create!(user: user3, latitude: 130.1, longitude: 40.1) }
+    let!(:check_in4) { CheckIn.create!(user: user3, latitude: 126.1, longitude: 37.1) }
+    let!(:friendship1) { Friendship.create!(user: user1, friend: user2, confirmed: true) }
+    let!(:friendship2) { Friendship.create!(user: user1, friend: user3, confirmed: true) }
+
+    it "returns nearby friends of a user" do
+      expect(user1.nearby_friends).to include(user2)
+    end
+
+    it "does not return users that are not friend" do
+      expect(user1.nearby_friends).not_to include(user4)
+    end
+  end
 end

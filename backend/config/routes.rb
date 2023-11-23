@@ -9,6 +9,10 @@ Rails.application.routes.draw do
 
   resources :friends, only: [:index, :create, :destroy] do
     post 'confirm', on: :member
+
+    collection do
+      resources "nearby", controller: "friends/nearby", only: [:index]
+    end
   end
 
   resources :places do
@@ -16,4 +20,6 @@ Rails.application.routes.draw do
   end
 
   get "up" => "rails/health#show", as: :rails_health_check
+
+  resources :check_ins, only: [:index, :create]
 end
