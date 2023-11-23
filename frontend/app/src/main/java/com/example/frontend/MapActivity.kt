@@ -137,6 +137,7 @@ class MapActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        val userName: String? = intent.getStringExtra("userName")
 
         setContent {
             FrontendTheme {
@@ -145,7 +146,7 @@ class MapActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapUI("Android", currentLocation)
+                    MapUI(userName, currentLocation)
                 }
             }
         }
@@ -225,7 +226,7 @@ class MapActivity : ComponentActivity() {
 }
 
 @Composable
-fun MapUI(name: String, currentLocation: LatLng?, modifier: Modifier = Modifier) {
+fun MapUI(userName: String?, currentLocation: LatLng?, modifier: Modifier = Modifier) {
 
     MaterialTheme {
         Column {
@@ -255,7 +256,7 @@ fun MapUI(name: String, currentLocation: LatLng?, modifier: Modifier = Modifier)
             }
 
             // Bottom bar at the bottom
-            BottomBar(currentLocation)
+            BottomBar(currentLocation, userName)
         }
     }
 }
@@ -287,7 +288,7 @@ fun IconToggleButton(
 }
 
 @Composable
-fun BottomBar(currentLocation: LatLng?) {
+fun BottomBar(currentLocation: LatLng?, userName:String?) {
     var context = LocalContext.current
 
     val icons = listOf(
@@ -320,6 +321,7 @@ fun BottomBar(currentLocation: LatLng?) {
                             // MeetUp 생성으로 이동
                             val nextIntent = Intent(context, MeetupActivity::class.java)
                             nextIntent.putExtra("currentLocation", currentLocation)
+                            nextIntent.putExtra("userName", userName)
                             context.startActivity(nextIntent)
 
 

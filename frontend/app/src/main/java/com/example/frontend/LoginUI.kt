@@ -171,12 +171,15 @@ fun loginButtonHandler(
         override fun onResponse(call: Call<AuthResponse?>, response: Response<AuthResponse?>) {
             if (response.isSuccessful && response.body() != null) {
                 val authToken = response.body()?.token
+                val userName = response.body()?.userName
+
                 if (authToken != null) {
                     saveAuthToken(context, authToken)
                 }
                 result.value = "Logged in successfully"
 
                 val nextIntent = Intent(context, MapActivity::class.java)
+                nextIntent.putExtra("userName", userName)
                 context.startActivity(nextIntent)
 
                 if (context is Activity) {

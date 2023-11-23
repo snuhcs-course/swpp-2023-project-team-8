@@ -54,6 +54,7 @@ class PlaceRecActivity() : ComponentActivity() {
 
         // averagedLocation 넘겨 받기
         val averagedLocation: LatLng? = intent.getParcelableExtra("averagedLocation")
+        val userName: String? = intent.getStringExtra("userName")
         val call = defaultRecAPI().recommend(averagedLocation)
 
         call.enqueue(object : Callback<List<PlaceModel>> {
@@ -90,7 +91,7 @@ class PlaceRecActivity() : ComponentActivity() {
                                 .height(300.dp)
                                 .padding(top = 250.dp)
                         ) {
-                            MapUI("Android", LatLng(126.9511, 37.4594))
+                            MapUI(userName, LatLng(126.9511, 37.4594))
                             //MapUI("Android", userLocationReceived)
                         }
 
@@ -112,12 +113,10 @@ fun defaultRecAPI(): PlaceAPI {
 }
 
 @Composable
-fun PlaceRecUI(name: String, modifier: Modifier = Modifier) {
+fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
     var context = LocalContext.current
 
-    // user name 받아오기
-    var username by remember { mutableStateOf("") }
-    
+
     
     Box(
         modifier = Modifier
@@ -173,8 +172,8 @@ fun PlaceRecUI(name: String, modifier: Modifier = Modifier) {
         }
         Spacer(modifier = Modifier.height(30.dp))
 
-        Text( // 닉네임 받아오기
-            text = "{username}님, 이런 장소는 어때요?",
+        Text(
+            text = userName?.let { "$userName 님, 이런 장소는 어때요?" } ?: "알 수 없는 사용자",
             style = TextStyle(
                 fontSize = 18.sp,
                 lineHeight = 24.sp,
