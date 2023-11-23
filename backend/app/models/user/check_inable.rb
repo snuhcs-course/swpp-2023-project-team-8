@@ -14,4 +14,6 @@ module User::CheckInable
   def latest_check_in
     check_ins.order(created_at: :desc).first!
   end
+
+  alias_method :last_check_in, :latest_check_in
 end
