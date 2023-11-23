@@ -21,7 +21,7 @@
         <activity
             android:name=".MeetupActivity"
             android:exported="false"
-            android:label="@MeetupActivity"
+            android:label="MeetupActivity"
             android:theme="@style/Theme.Frontend" />
         <activity
             android:name=".MissionActivity"

@@ -53,7 +53,6 @@ class MeetupActivity : ComponentActivity() {
         val currentLocation: LatLng? = intent.getParcelableExtra("currentLocation")
         setContent {
             FrontendTheme {
-              //  MeetupUI(LatLng(1.35, 103.87)) {
                 MeetupUI(currentLocation) {
                     // Handle switch to register
                 }
@@ -228,9 +227,9 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
         CustomButton(
             buttonText = "장소 선택",
             onClickHandler = {
-                val nextIntent = Intent(context, PlaceRecActivity::class.java)
-                nextIntent.putExtra("averagedLocation", averagedLocation)
-                context.startActivity(nextIntent)
+//                val nextIntent = Intent(context, PlaceRecActivity::class.java)
+//                nextIntent.putExtra("averagedLocation", averagedLocation)
+//                context.startActivity(nextIntent)
 
             })
     }
