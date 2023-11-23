@@ -43,6 +43,7 @@ import com.google.android.gms.maps.model.LatLng
 class PlaceRecActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 사용자의 현재 위치 받아오기!
         val userLocationReceived = intent.getParcelableExtra<LatLng>("userLocation")
 
         setContent {
@@ -52,26 +53,29 @@ class PlaceRecActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        // PlaceRecUI (상단 부분)
-                        PlaceRecUI("Android")
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                    {
+                        // PlaceRecUI
+                        PlaceRecUI("Android", modifier = Modifier.align(Alignment.TopCenter))
 
-                        // MapUI (하단 부분, 화면의 아래 반절)
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .weight(1f)
+                                .height(300.dp)
+                                .padding(top = 250.dp)
                         ) {
                             MapUI("Android", LatLng(1.35, 103.87))
                             //MapUI("Android", userLocationReceived)
                         }
+
                     }
                 }
             }
-        }
 
+        }
     }
 }
 

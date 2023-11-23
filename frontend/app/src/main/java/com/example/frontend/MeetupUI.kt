@@ -73,6 +73,7 @@ fun MeetupUI(onSwitchToRegister: () -> Unit) {
     var minute by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
     var explain by remember { mutableStateOf("") }
+    var context = LocalContext.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -181,7 +182,9 @@ fun MeetupUI(onSwitchToRegister: () -> Unit) {
 
 
                 Button(
-                    onClick = {},
+                    onClick = {
+
+                    },
                     modifier = Modifier
                         .align(Alignment.CenterVertically) // Center the button vertically inside the Row
                         .offset(y = (-19).dp)
@@ -222,7 +225,10 @@ fun MeetupUI(onSwitchToRegister: () -> Unit) {
 
         CustomButton(
             buttonText = "장소 선택",
-            onClickHandler = {  })
+            onClickHandler = {
+                val nextIntent = Intent(context, PlaceRecActivity::class.java)
+                context.startActivity(nextIntent)
+            })
     }
 }
 

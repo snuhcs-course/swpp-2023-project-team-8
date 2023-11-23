@@ -1,5 +1,6 @@
 package com.example.frontend
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -108,6 +109,10 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     .clickable {
                         val nextIntent = Intent(context, MapActivity::class.java)
                         context.startActivity(nextIntent)
+                        // finish current activity
+                        if (context is Activity) {
+                            context.finish()
+                        }
                     }
             )
             Spacer(modifier = Modifier.width(8.dp))
