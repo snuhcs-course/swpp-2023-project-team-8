@@ -25,4 +25,22 @@ RSpec.describe User::CheckInable do
       end
     end
   end
+
+  describe "#latitude" do
+    it "가장 최근의 체크인의 위도를 반환한다" do
+      user.check_in!(latitude: 126.1, longitude: 37.1)
+      user.check_in!(latitude: 120.1, longitude: 37.1)
+
+      expect(user.latitude).to eq(120.1)
+    end
+  end
+
+  describe "#longitude" do
+    it "가장 최근의 체크인의 경도를 반환한다" do
+      user.check_in!(latitude: 126.1, longitude: 37.1)
+      user.check_in!(latitude: 120.1, longitude: 37.1)
+
+      expect(user.longitude).to eq(37.1)
+    end
+  end
 end

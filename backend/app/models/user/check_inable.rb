@@ -12,8 +12,10 @@ module User::CheckInable
   end
 
   def latest_check_in
-    check_ins.order(created_at: :desc).first!
+    @latest_check_in ||= check_ins.order(created_at: :desc).first!
   end
+
+  delegate :latitude, :longitude, to: :latest_check_in
 
   alias_method :last_check_in, :latest_check_in
 end
