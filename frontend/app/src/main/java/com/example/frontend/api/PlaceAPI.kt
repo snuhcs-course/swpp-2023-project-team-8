@@ -10,11 +10,12 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface PlaceAPI {
     @POST("/sendlocation")
     fun send(@Body placeModel: PlaceModel?): Call<PlaceModel>?
 
     @GET("/recommend")
-    fun recommend(@Body averagedLocation: LatLng?): Call<List<PlaceModel>>
+    fun recommend(@Query("averagedLocation") averagedLocation: LatLng?): Call<List<PlaceModel>>
 }
