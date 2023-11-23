@@ -5,6 +5,7 @@ import com.example.frontend.model.EmailModel
 import com.example.frontend.model.LoginModel
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.model.RegisterModel
+import com.google.android.gms.maps.model.LatLng
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -14,6 +15,6 @@ interface PlaceAPI {
     @POST("/sendlocation")
     fun send(@Body placeModel: PlaceModel?): Call<PlaceModel>?
 
-    //@GET("/recommend")
-   // fun recommend():
+    @GET("/recommend")
+    fun recommend(@Body averagedLocation: LatLng?): Call<List<PlaceModel>>
 }

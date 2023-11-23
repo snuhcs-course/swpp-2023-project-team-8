@@ -37,9 +37,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.frontend.api.AuthAPI
+import com.example.frontend.api.PlaceAPI
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.maps.model.LatLng
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class PlaceRecActivity() : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,8 +54,20 @@ class PlaceRecActivity() : ComponentActivity() {
 
         // averagedLocation 넘겨 받기
         val averagedLocation: LatLng? = intent.getParcelableExtra("averagedLocation")
+        val call = defaultRecAPI().recommend(averagedLocation)
 
-        val placeModel = PlaceModel(averagedLocation)
+        call.enqueue(object : Callback<List<PlaceModel>> {
+            override fun onResponse(call: Call<List<PlaceModel>>, response: Response<List<PlaceModel>>) {
+                if (response.isSuccessful) {
+                    val placeModels: List<PlaceModel>? = response.body()
+                } else {
+
+                }
+            }
+
+            override fun onFailure(call: Call<List<PlaceModel>>, t: Throwable) {
+            }
+        })
 
         setContent {
             FrontendTheme {
@@ -81,6 +100,15 @@ class PlaceRecActivity() : ComponentActivity() {
 
         }
     }
+}
+
+fun defaultRecAPI(): PlaceAPI {
+    var url = "http://10.0.2.2:3000"
+    val retrofit = Retrofit.Builder()
+        .baseUrl(url)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    return retrofit.create(PlaceAPI::class.java)
 }
 
 @Composable
