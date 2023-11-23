@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
@@ -113,6 +114,26 @@ fun defaultRecAPI(): PlaceAPI {
 }
 
 @Composable
+fun PlaceList(placeModels: List<PlaceModel>, modifier: Modifier = Modifier) {
+    LazyColumn(
+        modifier = modifier
+    ) {
+//        items(placeModels) { placeModel ->
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(100.dp)
+//                    .background(color = Color.Gray)
+//            ) {
+//
+//                //Text(text = placeModel)
+//
+//            }
+//        }
+    }
+}
+
+@Composable
 fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
     var context = LocalContext.current
 
@@ -201,3 +222,4 @@ fun PlaceRecUIPreview() {
         PlaceRecUI("Android")
     }
 }
+
