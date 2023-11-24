@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
@@ -37,13 +38,41 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.frontend.api.AuthAPI
+import com.example.frontend.api.PlaceAPI
+import com.example.frontend.model.PlaceModel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.maps.model.LatLng
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-class PlaceRecActivity : ComponentActivity() {
+class PlaceRecActivity() : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val userLocationReceived = intent.getParcelableExtra<LatLng>("userLocation")
+
+        // averagedLocation 넘겨 받기
+        val averagedLocation: LatLng? = intent.getParcelableExtra("averagedLocation")
+        val userName = getUsername(this)
+        val authToken = getAuthtoken(this)
+        val call = defaultRecAPI(authToken).recommend(averagedLocation)
+
+        call.enqueue(object : Callback<List<PlaceModel>> {
+            override fun onResponse(call: Call<List<PlaceModel>>, response: Response<List<PlaceModel>>) {
+                if (response.isSuccessful) {
+                    val placeModels: List<PlaceModel>? = response.body()
+                } else {
+
+                }
+            }
+
+            override fun onFailure(call: Call<List<PlaceModel>>, t: Throwable) {
+            }
+        })
 
         setContent {
             FrontendTheme {
@@ -52,37 +81,82 @@ class PlaceRecActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        // PlaceRecUI (상단 부분)
-                        PlaceRecUI("Android")
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                    {
+                        // PlaceRecUI
+                        PlaceRecUI(userName, modifier = Modifier.align(Alignment.TopCenter))
 
-                        // MapUI (하단 부분, 화면의 아래 반절)
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .weight(1f)
+                                .height(300.dp)
+                                .padding(top = 250.dp)
                         ) {
-                            MapUI("Android", LatLng(1.35, 103.87))
-                            //MapUI("Android", userLocationReceived)
+                            MapUI(userName, LatLng(126.9511, 37.4594))
+
                         }
+
                     }
                 }
             }
-        }
 
+        }
+    }
+}
+
+class AuthInterceptor(private val authToken: String) : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        val request = chain.request().newBuilder()
+            .addHeader("Authorization", "Bearer $authToken")
+            .build()
+        return chain.proceed(request)
+    }
+}
+
+fun createAuthenticatedRetrofit(authToken: String): Retrofit {
+    val httpClient = OkHttpClient.Builder()
+        .addInterceptor(AuthInterceptor(authToken))
+        .build()
+
+    return Retrofit.Builder()
+        .baseUrl("http://10.0.2.2:3000") // Adjust the base URL accordingly
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(httpClient)
+        .build()
+}
+
+fun defaultRecAPI(authToken: String): PlaceAPI {
+    val retrofit = createAuthenticatedRetrofit(authToken)
+    return retrofit.create(PlaceAPI::class.java)
+}
+
+@Composable
+fun PlaceList(placeModels: List<PlaceModel>, modifier: Modifier = Modifier) {
+    LazyColumn(
+        modifier = modifier
+    ) {
+//        items(placeModels) { placeModel ->
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(100.dp)
+//                    .background(color = Color.Gray)
+//            ) {
+//
+//                //Text(text = placeModel)
+//
+//            }
+//        }
     }
 }
 
 @Composable
-fun PlaceRecUI(name: String, modifier: Modifier = Modifier) {
+fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
     var context = LocalContext.current
 
-    // user name 받아오기
-    var username by remember { mutableStateOf("") }
-    
-    
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -137,8 +211,8 @@ fun PlaceRecUI(name: String, modifier: Modifier = Modifier) {
         }
         Spacer(modifier = Modifier.height(30.dp))
 
-        Text( // 닉네임 받아오기
-            text = "{username}님, 이런 장소는 어때요?",
+        Text(
+            text = userName?.let { "$userName 님, 이런 장소는 어때요?" } ?: "알 수 없는 사용자",
             style = TextStyle(
                 fontSize = 18.sp,
                 lineHeight = 24.sp,
@@ -163,6 +237,7 @@ fun PlaceRecUI(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun PlaceRecUIPreview() {
     FrontendTheme {
-        PlaceRecUI("Android")
+        PlaceRecUI(getUsername(LocalContext.current))
     }
 }
+

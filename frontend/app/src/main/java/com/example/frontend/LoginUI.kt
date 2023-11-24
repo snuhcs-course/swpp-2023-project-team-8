@@ -171,8 +171,10 @@ fun loginButtonHandler(
         override fun onResponse(call: Call<AuthResponse?>, response: Response<AuthResponse?>) {
             if (response.isSuccessful && response.body() != null) {
                 val authToken = response.body()?.token
+                val userName = response.body()?.userName
+
                 if (authToken != null) {
-                    saveAuthToken(context, authToken)
+                    saveAuthToken(context, authToken, userName)
                 }
                 result.value = "Logged in successfully"
 
@@ -197,7 +199,7 @@ fun loginButtonHandler(
 }
 
 // To save the auth token securely when logging in
-fun saveAuthToken(context: Context, authToken: String) {
+fun saveAuthToken(context: Context, authToken: String, userName: String?) {
     val masterKey = MasterKey.Builder(context)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
         .build()
@@ -213,6 +215,7 @@ fun saveAuthToken(context: Context, authToken: String) {
     // Save auth token securely
     with(sharedPreferences.edit()) {
         putString("AUTH_TOKEN", authToken)
+        putString("USERNAME", userName)
         apply()
     }
 
@@ -220,10 +223,21 @@ fun saveAuthToken(context: Context, authToken: String) {
     val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     with(appPrefs.edit()) {
         putBoolean("IS_LOGGED_IN", true)
+        putString("USERNAME", userName)
         apply()
     }
 }
 
+fun getUsername(context: Context): String? {
+    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    return appPrefs.getString("USERNAME", "User0")
+}
+
+
+fun getAuthtoken(context: Context): String {
+    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    return appPrefs.getString("AUTH_TOKEN", "")?:""
+}
 fun defaultAuthAPI(): AuthAPI {
     var url = "http://10.0.2.2:3000"
     val retrofit = Retrofit.Builder()
@@ -240,6 +254,7 @@ fun CustomButton(
     modifier: Modifier = Modifier
 ) {
     Button(
+
         colors = ButtonDefaults.buttonColors(Purple80),
         onClick = onClickHandler,
         modifier = modifier

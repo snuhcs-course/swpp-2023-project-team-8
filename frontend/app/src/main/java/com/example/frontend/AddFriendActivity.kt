@@ -1,5 +1,7 @@
 package com.example.frontend
 
+import android.app.Activity
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -33,13 +36,18 @@ class AddFriendActivity : ComponentActivity() {
 @Composable
 fun BottomAppBar() {
     var buttonClicked by remember { mutableStateOf(false) }
+    var context = LocalContext.current
     Scaffold(
         bottomBar = {
             BottomAppBar(
                 actions = {
                     IconButton(
                         onClick = {
-                            // 뒤로가기 버튼 동작
+                            val nextIntent = Intent(context, MapActivity::class.java)
+                            context.startActivity(nextIntent)
+                            if (context is Activity) {
+                                context.finish()
+                            }
                         }
                     ) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "뒤로 가기")
