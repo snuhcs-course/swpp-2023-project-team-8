@@ -232,6 +232,12 @@ fun getUsername(context: Context): String? {
     val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     return appPrefs.getString("USERNAME", "User0")
 }
+
+
+fun getAuthtoken(context: Context): String {
+    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    return appPrefs.getString("AUTH_TOKEN", "")?:""
+}
 fun defaultAuthAPI(): AuthAPI {
     var url = "http://10.0.2.2:3000"
     val retrofit = Retrofit.Builder()

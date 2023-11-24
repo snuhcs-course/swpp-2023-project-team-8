@@ -43,6 +43,8 @@ import com.example.frontend.api.PlaceAPI
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.maps.model.LatLng
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -56,7 +58,8 @@ class PlaceRecActivity() : ComponentActivity() {
         // averagedLocation 넘겨 받기
         val averagedLocation: LatLng? = intent.getParcelableExtra("averagedLocation")
         val userName = getUsername(this)
-        val call = defaultRecAPI().recommend(averagedLocation)
+        val authToken = getAuthtoken(this)
+        val call = defaultRecAPI(authToken).recommend(averagedLocation)
 
         call.enqueue(object : Callback<List<PlaceModel>> {
             override fun onResponse(call: Call<List<PlaceModel>>, response: Response<List<PlaceModel>>) {
@@ -93,7 +96,7 @@ class PlaceRecActivity() : ComponentActivity() {
                                 .padding(top = 250.dp)
                         ) {
                             MapUI(userName, LatLng(126.9511, 37.4594))
-                            //MapUI("Android", userLocationReceived)
+
                         }
 
                     }
@@ -104,12 +107,29 @@ class PlaceRecActivity() : ComponentActivity() {
     }
 }
 
-fun defaultRecAPI(): PlaceAPI {
-    var url = "http://10.0.2.2:3000"
-    val retrofit = Retrofit.Builder()
-        .baseUrl(url)
-        .addConverterFactory(GsonConverterFactory.create())
+class AuthInterceptor(private val authToken: String) : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        val request = chain.request().newBuilder()
+            .addHeader("Authorization", "Bearer $authToken")
+            .build()
+        return chain.proceed(request)
+    }
+}
+
+fun createAuthenticatedRetrofit(authToken: String): Retrofit {
+    val httpClient = OkHttpClient.Builder()
+        .addInterceptor(AuthInterceptor(authToken))
         .build()
+
+    return Retrofit.Builder()
+        .baseUrl("http://10.0.2.2:3000") // Adjust the base URL accordingly
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(httpClient)
+        .build()
+}
+
+fun defaultRecAPI(authToken: String): PlaceAPI {
+    val retrofit = createAuthenticatedRetrofit(authToken)
     return retrofit.create(PlaceAPI::class.java)
 }
 
@@ -217,7 +237,7 @@ fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
 @Composable
 fun PlaceRecUIPreview() {
     FrontendTheme {
-        PlaceRecUI("Android")
+        PlaceRecUI(getUsername(LocalContext.current))
     }
 }
 
