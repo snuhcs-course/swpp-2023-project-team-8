@@ -174,12 +174,11 @@ fun loginButtonHandler(
                 val userName = response.body()?.userName
 
                 if (authToken != null) {
-                    saveAuthToken(context, authToken)
+                    saveAuthToken(context, authToken, userName)
                 }
                 result.value = "Logged in successfully"
 
                 val nextIntent = Intent(context, MapActivity::class.java)
-                nextIntent.putExtra("userName", userName)
                 context.startActivity(nextIntent)
 
                 if (context is Activity) {
@@ -200,7 +199,7 @@ fun loginButtonHandler(
 }
 
 // To save the auth token securely when logging in
-fun saveAuthToken(context: Context, authToken: String) {
+fun saveAuthToken(context: Context, authToken: String, userName: String?) {
     val masterKey = MasterKey.Builder(context)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
         .build()
@@ -216,6 +215,7 @@ fun saveAuthToken(context: Context, authToken: String) {
     // Save auth token securely
     with(sharedPreferences.edit()) {
         putString("AUTH_TOKEN", authToken)
+        putString("USERNAME", userName)
         apply()
     }
 
@@ -223,10 +223,15 @@ fun saveAuthToken(context: Context, authToken: String) {
     val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     with(appPrefs.edit()) {
         putBoolean("IS_LOGGED_IN", true)
+        putString("USERNAME", userName)
         apply()
     }
 }
 
+fun getUsername(context: Context): String? {
+    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    return appPrefs.getString("USERNAME", "User0")
+}
 fun defaultAuthAPI(): AuthAPI {
     var url = "http://10.0.2.2:3000"
     val retrofit = Retrofit.Builder()

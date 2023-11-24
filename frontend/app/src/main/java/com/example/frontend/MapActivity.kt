@@ -137,7 +137,7 @@ class MapActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        val userName: String? = intent.getStringExtra("userName")
+        val userName = getUsername(this)
 
         setContent {
             FrontendTheme {
@@ -321,7 +321,6 @@ fun BottomBar(currentLocation: LatLng?, userName:String?) {
                             // MeetUp 생성으로 이동
                             val nextIntent = Intent(context, MeetupActivity::class.java)
                             nextIntent.putExtra("currentLocation", currentLocation)
-                            nextIntent.putExtra("userName", userName)
                             context.startActivity(nextIntent)
 
 

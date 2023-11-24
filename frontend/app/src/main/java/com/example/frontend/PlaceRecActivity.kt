@@ -55,7 +55,7 @@ class PlaceRecActivity() : ComponentActivity() {
 
         // averagedLocation 넘겨 받기
         val averagedLocation: LatLng? = intent.getParcelableExtra("averagedLocation")
-        val userName: String? = intent.getStringExtra("userName")
+        val userName = getUsername(this)
         val call = defaultRecAPI().recommend(averagedLocation)
 
         call.enqueue(object : Callback<List<PlaceModel>> {
@@ -84,7 +84,7 @@ class PlaceRecActivity() : ComponentActivity() {
                     )
                     {
                         // PlaceRecUI
-                        PlaceRecUI("Android", modifier = Modifier.align(Alignment.TopCenter))
+                        PlaceRecUI(userName, modifier = Modifier.align(Alignment.TopCenter))
 
                         Box(
                             modifier = Modifier
@@ -137,8 +137,6 @@ fun PlaceList(placeModels: List<PlaceModel>, modifier: Modifier = Modifier) {
 fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
     var context = LocalContext.current
 
-
-    
     Box(
         modifier = Modifier
             .fillMaxSize()
