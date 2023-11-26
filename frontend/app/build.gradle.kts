@@ -87,6 +87,9 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.0")
     implementation("io.coil-kt:coil-compose:1.4.0")
     implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
-
+    debugImplementation("androidx.databinding:databinding-adapters:4.1.0")
+    debugImplementation("androidx.databinding:databinding-common:4.1.0")
+    debugImplementation("androidx.databinding:databinding-runtime:4.1.0")
+    implementation("androidx.databinding:databinding-runtime:4.1.0")
 
 }
