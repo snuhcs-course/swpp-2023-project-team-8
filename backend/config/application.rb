@@ -26,8 +26,12 @@ module SwppBackend
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    config.autoload_lib(ignore: %w(assets tasks swpp))
   end
 end
 
-# Load lib files
-Dir[Rails.root.join("lib/**/*.rb")].sort.each { |file| require file }
+# Require swpp recursively
+Dir.glob(Rails.root.join("lib", "swpp", "**", "*.rb")).each do |file|
+  require file
+end

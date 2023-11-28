@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -61,7 +62,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 class MapActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var currentLocation by mutableStateOf<LatLng?>(null)
+    var currentLocation by mutableStateOf<LatLng?>(null)
 
     private fun hasBackgroundLocationPermission(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -136,6 +137,7 @@ class MapActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        val userName = getUsername(this)
 
         setContent {
             FrontendTheme {
@@ -144,7 +146,7 @@ class MapActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapUI("Android", currentLocation)
+                    MapUI(userName, currentLocation)
                 }
             }
         }
@@ -224,7 +226,7 @@ class MapActivity : ComponentActivity() {
 }
 
 @Composable
-fun MapUI(name: String, currentLocation: LatLng?, modifier: Modifier = Modifier) {
+fun MapUI(userName: String?, currentLocation: LatLng?, modifier: Modifier = Modifier) {
 
     MaterialTheme {
         Column {
@@ -254,7 +256,7 @@ fun MapUI(name: String, currentLocation: LatLng?, modifier: Modifier = Modifier)
             }
 
             // Bottom bar at the bottom
-            BottomBar()
+            BottomBar(currentLocation, userName)
         }
     }
 }
@@ -286,8 +288,9 @@ fun IconToggleButton(
 }
 
 @Composable
-fun BottomBar() {
+fun BottomBar(currentLocation: LatLng?, userName:String?) {
     var context = LocalContext.current
+
     val icons = listOf(
         Icons.Default.Star,
         Icons.Outlined.AccountCircle,
@@ -313,25 +316,33 @@ fun BottomBar() {
                 IconToggleButton(icon = icon) {
                     // Implement icon button click action here
                     when (icon) {
+
                         icons[0] -> {
-                            //
+                            // MeetUp 생성으로 이동
+                            val nextIntent = Intent(context, MeetupActivity::class.java)
+                            nextIntent.putExtra("currentLocation", currentLocation)
+                            context.startActivity(nextIntent)
 
 
                         }
 
                         icons[1] -> {
-                            // userInfo로 이동
-                            val nextIntent = Intent(context, UserInfoActivity::class.java)
-                            context.startActivity(nextIntent)
+                            // Friend List 이동
+                           // val nextIntent = Intent(context, ::class.java)
+                           // context.startActivity(nextIntent)
+
                         }
 
                         icons[2] -> {
-                            //
-
+                            // MissionActivity 이동
+                            val nextIntent = Intent(context, MissionActivity::class.java)
+                            context.startActivity(nextIntent)
                         }
 
                         icons[3] -> {
-                            //
+                            // userInfo로 이동
+                            val nextIntent = Intent(context, UserInfoActivity::class.java)
+                            context.startActivity(nextIntent)
 
                         }
                     }

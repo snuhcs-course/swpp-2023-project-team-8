@@ -22,6 +22,18 @@ require 'rspec/rails'
 #
 # Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
 
+module RequestHelper
+  def parsed_body
+    JSON.parse(response.body)
+  end
+
+  def auth_header(user)
+    {
+      "Authorization": "#{user.auth_token}"
+    }
+  end
+end
+
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
@@ -60,4 +72,6 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.include RequestHelper, type: :request
 end

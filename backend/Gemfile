@@ -21,6 +21,10 @@ gem "importmap-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
+gem 'google-protobuf', '~> 3.25', '>= 3.25.1'
+gem 'googleapis-common-protos-types', '~> 1.0'
+gem 'grpc'
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
