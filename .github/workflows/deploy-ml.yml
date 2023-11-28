@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-      - ml/github-action-for-build
+    pathes:
+      - 'idl/**'
   workflow_dispatch:
 
 concurrency:
