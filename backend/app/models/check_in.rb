@@ -1,4 +1,7 @@
 class CheckIn < ApplicationRecord
+  validates :latitude, presence: true
+  validates :longitude, presence: true
+
   belongs_to :user
 
   scope :order_by_distance, -> (latitude, longitude) {
