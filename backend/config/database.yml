@@ -18,7 +18,7 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: postgres
+  username: <%= ENV.fetch("POSTGRES_USERNAME", "postgres") %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD", "postgres") %>
   host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
 
@@ -83,5 +83,3 @@ test:
 production:
   <<: *default
   database: swpp_backend_production
-  username: swpp_backend
-  password: <%= ENV["SWPP_BACKEND_DATABASE_PASSWORD"] %>
