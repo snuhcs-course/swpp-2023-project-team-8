@@ -62,7 +62,10 @@ class PlaceRecActivity() : ComponentActivity() {
         val call = defaultRecAPI(authToken).recommend(averagedLocation)
 
         call.enqueue(object : Callback<List<PlaceModel>> {
-            override fun onResponse(call: Call<List<PlaceModel>>, response: Response<List<PlaceModel>>) {
+            override fun onResponse(
+                call: Call<List<PlaceModel>>,
+                response: Response<List<PlaceModel>>
+            ) {
                 if (response.isSuccessful) {
                     val placeModels: List<PlaceModel>? = response.body()
                 } else {
@@ -95,7 +98,7 @@ class PlaceRecActivity() : ComponentActivity() {
                                 .height(300.dp)
                                 .padding(top = 250.dp)
                         ) {
-                            MapUI(userName, LatLng(126.9511, 37.4594))
+                            MapUI(LatLng(126.9511, 37.4594), emptyList())
 
                         }
 
@@ -161,7 +164,7 @@ fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
 
-    ){
+    ) {
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
@@ -225,9 +228,11 @@ fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
                 .padding(start = 8.dp)
         )
 
-        Spacer(modifier = Modifier
-                       .height(200.dp)
-                       .width(300.dp))
+        Spacer(
+            modifier = Modifier
+                .height(200.dp)
+                .width(300.dp)
+        )
 
 
     }
