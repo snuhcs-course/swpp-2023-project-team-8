@@ -64,6 +64,8 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlin.random.Random
 
 
@@ -292,8 +294,11 @@ fun FriendsMapUI(currentLocation: LatLng?) {
     val viewModel: FriendsViewModel = viewModel()
     val friendsList by viewModel.friendsList.observeAsState(emptyList())
 
-    LaunchedEffect(key1 = true) {
-        viewModel.fetchFriends()
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            viewModel.fetchFriends()
+            delay(3000)
+        }
     }
 
     MapUI(currentLocation, friendsList)
