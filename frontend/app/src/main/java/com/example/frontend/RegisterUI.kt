@@ -173,18 +173,18 @@ fun sendButtonHandler(
     authService: AuthService = defaultAuthService()
 ) {
     val emailModel = EmailModel(email)
-    val call = authService.verifyEmail(emailModel)
-    call!!.enqueue(object : Callback<EmailModel?> {
-        override fun onResponse(call: Call<EmailModel?>, response: Response<EmailModel?>) {
-            result.value = "Response Code: " + response.code()
-            Toast.makeText(context, "이메일을 확인해주세요", Toast.LENGTH_LONG).show()
-        }
-
-        override fun onFailure(call: Call<EmailModel?>, t: Throwable) {
-            result.value = "Error: " + t.message
-            Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
-        }
-    })
+//    val call = authService.verifyEmail(emailModel)
+//    call!!.enqueue(object : Callback<EmailModel?> {
+//        override fun onResponse(call: Call<EmailModel?>, response: Response<EmailModel?>) {
+//            result.value = "Response Code: " + response.code()
+//            Toast.makeText(context, "이메일을 확인해주세요", Toast.LENGTH_LONG).show()
+//        }
+//
+//        override fun onFailure(call: Call<EmailModel?>, t: Throwable) {
+//            result.value = "Error: " + t.message
+//            Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
+//        }
+//    })
 }
 
 fun registerButtonHandler(
