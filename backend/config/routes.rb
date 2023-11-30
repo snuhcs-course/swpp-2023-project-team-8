@@ -19,6 +19,8 @@ Rails.application.routes.draw do
     get :recommend, on: :collection
   end
 
+  resources :missions, only: [:index]
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   resources :check_ins, only: [:index, :create]

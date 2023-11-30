@@ -42,6 +42,15 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_16_082551) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "missions", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "mission_type"
+    t.integer "target"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "places", force: :cascade do |t|
     t.string "name"
     t.string "kind"
@@ -50,10 +59,21 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_16_082551) do
   end
 
   create_table "regions", force: :cascade do |t|
-    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_polygon"}, null: false
+    t.geometry "geom", limit: { :srid => 4326, :type => "multi_polygon" }, null: false
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "user_missions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "mission_id", null: false
+    t.integer "progress", default: 0
+    t.boolean "completed", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mission_id"], name: "index_user_missions_on_mission_id"
+    t.index ["user_id"], name: "index_user_missions_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -66,4 +86,6 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_16_082551) do
     t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
   end
 
+  add_foreign_key "user_missions", "missions"
+  add_foreign_key "user_missions", "users"
 end
