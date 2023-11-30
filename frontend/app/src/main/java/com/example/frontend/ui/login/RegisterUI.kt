@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.example.frontend.ui.login
 
 import android.content.Context
 import android.widget.Toast
@@ -32,8 +32,6 @@ import androidx.compose.ui.unit.sp
 import com.example.frontend.api.AuthService
 import com.example.frontend.model.EmailModel
 import com.example.frontend.model.RegisterModel
-import com.example.frontend.ui.login.CustomButton
-import com.example.frontend.ui.login.defaultAuthAPI
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
 import retrofit2.Call
