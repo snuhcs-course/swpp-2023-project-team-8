@@ -3,7 +3,6 @@ package com.example.frontend.ui.login
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,49 +51,6 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(80.dp))
-        Text(
-            text = "Register",
-            style = TextStyle(
-                fontSize = 40.sp,
-                fontWeight = FontWeight(400),
-                color = Color(0xFF000000),
-                textAlign = TextAlign.Center,
-            ),
-            modifier = Modifier
-                .width(284.dp)
-                .height(50.dp)
-        )
-        Spacer(modifier = Modifier.height(40.dp))
-        Row {
-            Text(
-                text = "Login",
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFFA6A6A6),
-                    textAlign = TextAlign.Center
-                ),
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(40.dp)
-                    .clickable { onSwitchToLogin() }
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = "Register",
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFFDFD5EC),
-                ),
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(40.dp)
-            )
-
-        }
-        Spacer(modifier = Modifier.height(30.dp))
         Text(
             text = "이메일을 인증해주세요.",
             style = TextStyle(
