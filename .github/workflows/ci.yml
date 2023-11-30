@@ -26,7 +26,7 @@ jobs:
         image: odidev/postgis:13-3.1
         ports:
           - "5432:5432"
-        environment:
+        env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
@@ -38,20 +38,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Go to backend repo
-        run: |
-          cd backend
-
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: '3.2.2'
           bundler-cache: true
+
+      - name: Echo ruby version
+        run: |
+          ruby --version
+
+      - name: Apt install
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            build-essential \
+            git \
+            libpq-dev \
+            libvips \
+            pkg-config
+
+      - name: Bundle install
+        run: |
+          cd backend
+          bundle install
 
       - name: Prepare
         run: |
-          rake db:prepare RAILS_ENV=test
+          cd backend
+          rake db:create RAILS_ENV=test
+          rake db:migrate RAILS_ENV=test
 
       - name: Test - Rspec
         run: |
-          rspec
+          cd backend
+          RAILS_ENV=test bundle exec rspec 
 

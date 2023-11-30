@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Button
+
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -37,7 +38,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,12 +52,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.frontend.model.UserWithLocationModel
+import com.example.frontend.repository.FriendsViewModel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -62,8 +69,13 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import org.w3c.dom.Text
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlin.random.Random
 
 
+@AndroidEntryPoint
 class MapActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var currentLocation by mutableStateOf<LatLng?>(null)
@@ -127,7 +139,7 @@ class MapActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapUI("Android", currentLocation)
+                    FriendsMapUI(currentLocation)
                 }
             }
         }
@@ -141,7 +153,6 @@ class MapActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        val userName = getUsername(this)
 
         setContent {
             FrontendTheme {
@@ -150,7 +161,7 @@ class MapActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapUI(userName, currentLocation)
+                    FriendsMapUI(currentLocation)
                 }
             }
         }
@@ -230,7 +241,11 @@ class MapActivity : ComponentActivity() {
 }
 
 @Composable
-fun MapUI(userName: String?, currentLocation: LatLng?, modifier: Modifier = Modifier) {
+fun MapUI(
+    currentLocation: LatLng?,
+    friends: List<UserWithLocationModel>,
+    modifier: Modifier = Modifier
+) {
 
     MaterialTheme {
         Column {
@@ -255,21 +270,52 @@ fun MapUI(userName: String?, currentLocation: LatLng?, modifier: Modifier = Modi
                             title = "Current Location",
                             snippet = "You are here"
                         )
+
+                        // Friends location markers
+                        friends.forEach { friend ->
+                            Marker(
+                                state = MarkerState(
+                                    position = LatLng(
+                                        friend.latitude,
+                                        friend.longitude
+                                    )
+                                ),
+                                title = friend.name,
+                                snippet = friend.email,
+                                icon = BitmapDescriptorFactory.defaultMarker(Random.nextFloat() * 360)
+                            )
+                        }
                     }
                 }
             }
 
             // Bottom bar at the bottom
-            BottomBar(currentLocation, userName)
+            BottomBar(currentLocation)
         }
     }
 }
+
+@Composable
+fun FriendsMapUI(currentLocation: LatLng?) {
+    val viewModel: FriendsViewModel = viewModel()
+    val friendsList by viewModel.friendsList.observeAsState(emptyList())
+
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            viewModel.fetchFriends()
+            delay(3000)
+        }
+    }
+
+    MapUI(currentLocation, friendsList)
+}
+
 
 @Preview(showBackground = true)
 @Composable
 fun MapUIPreview() {
     FrontendTheme {
-        MapUI("Android", LatLng(1.35, 103.87))
+        MapUI(LatLng(1.35, 103.87), emptyList())
     }
 }
 
@@ -292,7 +338,7 @@ fun IconToggleButton(
 }
 
 @Composable
-fun BottomBar(currentLocation: LatLng?, userName:String?) {
+fun BottomBar(currentLocation: LatLng?) {
     var context = LocalContext.current
 
     val icons = listOf(
@@ -334,6 +380,7 @@ fun BottomBar(currentLocation: LatLng?, userName:String?) {
                             // Friend List 이동
                             val nextIntent = Intent(context, AddFriendActivity::class.java)
                             context.startActivity(nextIntent)
+
 
                         }
 

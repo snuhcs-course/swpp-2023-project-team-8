@@ -3,6 +3,9 @@ class User < ApplicationRecord
   include Friendable
   include CheckInable
 
+  has_many :user_missions
+  has_many :missions, through: :user_missions
+
   has_secure_password
 
   validates :email, presence: true, uniqueness: true, snu_mail: true

@@ -49,10 +49,18 @@ class MissionActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
          setContent {
+             val authToken = getAuthtoken(this)
+             val missionApi = defaultMissionAPI(authToken)
+             val missions by remember { mutableStateOf(emptyList<MissionModel>()) }
+
+             LaunchedEffect(Unit) {
+                 val missionList = missionApi.getMissionList()
+                 missions = missionList
+             }
+
             FrontendTheme {
-                ShowMissionUI() {
+                ShowMissionUI(missions = missions) {
                     // Handle switch to register
                 }
             }
@@ -66,31 +74,19 @@ fun defaultMissionAPI(authToken: String): MissionAPI {
 }
 
 @Composable
-fun ShowMissionUI(onSwitchToRegister: () -> Unit) {
+fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) {
     var title by remember { mutableStateOf("") }
-    val showMoreDescriptions = remember { mutableStateOf(items.associate { it.first to false }) }
-
-    val items = listOf(
-        "미션1" to "친구와 우연히 만나기",
-        "미션2" to "친구와 약속 잡기",
-        "미션3" to "친구와 약속 장소 정하기",
-        "미션4" to "자하연 근처에서 친구 마주치기",
-        "미션5" to "관악산 등산하기",
-        "미션6" to "도서관에 한 시간 머물기",
-        "미션7" to "친구 세 명과 만나기",
-        "미션8" to "친구 스무 명 추가하기"
-    )
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color(0xFFDFD5EC)
     ) {
-        GridItems(items = items) { (missionTitle, missionDescription) ->
+        GridItems(items = missions.map { it.title to it.description }) { (missionTitle, missionDescription) ->
             Box(
                 modifier = Modifier
                     .padding(top = 24.dp, start = 23.dp)
                     .size(160.dp, 170.dp)
-                    .background(Color(0xFFF3EDF7), shape = MaterialTheme.shapes.medium)
+                    .background(mission.color, shape = MaterialTheme.shapes.medium)
             ) {
                 Column {
                     Spacer(modifier = Modifier.height(144.dp))
@@ -156,10 +152,10 @@ fun ShowMissionUI(onSwitchToRegister: () -> Unit) {
                         )
                     }
                 }
-                if (showMoreDescription) {
+                if (showMoreDescriptions[missionTitle] == true) {
                     ShowMoreDescriptionDialog(
                         title = missionTitle,
-                        description = getMoreDescription(missionTitle),
+                        description = getMoreDescription(missionTitle, missions),
                         onDismissRequest = { showMoreDescriptions[missionTitle] = false }
                     )
                 }
@@ -169,22 +165,31 @@ fun ShowMissionUI(onSwitchToRegister: () -> Unit) {
     }
 }
 
-@Composable
-fun getMoreDescription(missionTitle: String): String {
-    // Provide different descriptions based on the mission title
-    return when (missionTitle) {
-        "미션1" -> "예상치 못한 장소에서 친구와 마주쳐 보세요!"
-        "미션2" -> "친구와 약속을 잡아 보세요!"
-        "미션3" -> "3명 이상의 친구와 약속을 잡아 보세요!"
-        "미션4" -> "자하연에서 친구와 마주쳐 보세요!"
-        "미션5" -> "관악산에 올라가 보세요!"
-        "미션6" -> "도서관에 머물며 책을 읽는 시간을 가져 보세요!"
-        "미션7" -> "친구 세 명과 약속을 잡아 보세요!"
-        "미션8" -> "친구 20 명을 추가해 보세요!"
+fun getMoreDescription(missionTitle: String, missions: List<MissionModel>): String {
+    // Find the MissionModel for the given missionTitle
+    val mission = missions.find { it.title == missionTitle }
 
-        else -> "$missionTitle 상세 설명"
-    }
+    // Provide different descriptions based on the mission title
+    return mission?.description ?: "$missionTitle 상세 설명"
 }
+
+//
+//@Composable
+//fun getMoreDescription(missionTitle: String): String {
+//    // Provide different descriptions based on the mission title
+//    return when (missionTitle) {
+//        "미션1" -> "예상치 못한 장소에서 친구와 마주쳐 보세요!"
+//        "미션2" -> "친구와 약속을 잡아 보세요!"
+//        "미션3" -> "3명 이상의 친구와 약속을 잡아 보세요!"
+//        "미션4" -> "자하연에서 친구와 마주쳐 보세요!"
+//        "미션5" -> "관악산에 올라가 보세요!"
+//        "미션6" -> "도서관에 머물며 책을 읽는 시간을 가져 보세요!"
+//        "미션7" -> "친구 세 명과 약속을 잡아 보세요!"
+//        "미션8" -> "친구 20 명을 추가해 보세요!"
+//
+//        else -> "$missionTitle 상세 설명"
+//    }
+//}
 
 
 @Composable

@@ -11,11 +11,11 @@ import retrofit2.http.POST
 
 interface
 MissionAPI {
-    @POST("/complete")
+    @POST("/mission_completed")
     fun completed(@Body confirmed: Boolean): Boolean
 
-    @GET("/")
-    fun getMission()
+    @GET("/missions")
+    fun getMissionList() misions: Call<List<MissionModel>>
 
 
 }
