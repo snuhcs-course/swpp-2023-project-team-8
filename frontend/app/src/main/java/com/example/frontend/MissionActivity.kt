@@ -68,7 +68,7 @@ fun defaultMissionAPI(authToken: String): MissionAPI {
 @Composable
 fun ShowMissionUI(onSwitchToRegister: () -> Unit) {
     var title by remember { mutableStateOf("") }
-    var showMoreDescription by remember { mutableStateOf(false) }
+    val showMoreDescriptions = remember { mutableStateOf(items.associate { it.first to false }) }
 
     val items = listOf(
         "미션1" to "친구와 우연히 만나기",
@@ -160,7 +160,7 @@ fun ShowMissionUI(onSwitchToRegister: () -> Unit) {
                     ShowMoreDescriptionDialog(
                         title = missionTitle,
                         description = getMoreDescription(missionTitle),
-                        onDismissRequest = { showMoreDescription = false }
+                        onDismissRequest = { showMoreDescriptions[missionTitle] = false }
                     )
                 }
 
