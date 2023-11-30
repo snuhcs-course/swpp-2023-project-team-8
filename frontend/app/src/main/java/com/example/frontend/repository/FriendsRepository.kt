@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.frontend.api.FriendAPI
+import com.example.frontend.api.FriendService
 import com.example.frontend.callback.FriendLocationCallback
 import com.example.frontend.interceptor.AuthInterceptor
 import com.example.frontend.model.UserWithLocationModel
@@ -22,10 +22,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
-class FriendsRepository(private val friendAPI: FriendAPI) {
+class FriendsRepository(private val friendService: FriendService) {
 
     fun getNearbyFriends(callback: FriendLocationCallback) {
-        val call = friendAPI.getNearbyFriends()
+        val call = friendService.getNearbyFriends()
 
         call.enqueue(object : Callback<List<UserWithLocationModel>> {
             override fun onResponse(
@@ -85,12 +85,12 @@ object AppModule {
     }
 
     @Provides
-    fun provideFriendsRepository(api: FriendAPI): FriendsRepository {
+    fun provideFriendsRepository(api: FriendService): FriendsRepository {
         return FriendsRepository(api)
     }
 
     @Provides
-    fun provideFriendAPI(retrofit: Retrofit): FriendAPI {
-        return retrofit.create(FriendAPI::class.java)
+    fun provideFriendAPI(retrofit: Retrofit): FriendService {
+        return retrofit.create(FriendService::class.java)
     }
 }

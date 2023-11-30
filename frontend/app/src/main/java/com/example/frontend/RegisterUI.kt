@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.frontend.api.AuthAPI
+import com.example.frontend.api.AuthService
 import com.example.frontend.model.EmailModel
 import com.example.frontend.model.RegisterModel
 import com.example.frontend.ui.theme.FrontendTheme
@@ -37,8 +37,6 @@ import com.example.frontend.ui.theme.Purple80
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -172,21 +170,21 @@ fun sendButtonHandler(
     context: Context,
     email: String,
     result: MutableState<String>,
-    authAPI: AuthAPI = defaultAuthAPI()
+    authService: AuthService = defaultAuthService()
 ) {
     val emailModel = EmailModel(email)
-    val call = authAPI.verifyEmail(emailModel)
-    call!!.enqueue(object : Callback<EmailModel?> {
-        override fun onResponse(call: Call<EmailModel?>, response: Response<EmailModel?>) {
-            result.value = "Response Code: " + response.code()
-            Toast.makeText(context, "이메일을 확인해주세요", Toast.LENGTH_LONG).show()
-        }
-
-        override fun onFailure(call: Call<EmailModel?>, t: Throwable) {
-            result.value = "Error: " + t.message
-            Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
-        }
-    })
+//    val call = authService.verifyEmail(emailModel)
+//    call!!.enqueue(object : Callback<EmailModel?> {
+//        override fun onResponse(call: Call<EmailModel?>, response: Response<EmailModel?>) {
+//            result.value = "Response Code: " + response.code()
+//            Toast.makeText(context, "이메일을 확인해주세요", Toast.LENGTH_LONG).show()
+//        }
+//
+//        override fun onFailure(call: Call<EmailModel?>, t: Throwable) {
+//            result.value = "Error: " + t.message
+//            Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
+//        }
+//    })
 }
 
 fun registerButtonHandler(
@@ -197,10 +195,10 @@ fun registerButtonHandler(
     password: String,
     result: MutableState<String>,
     onSwitchToLogin: () -> Unit,
-    authAPI: AuthAPI = defaultAuthAPI()
+    authService: AuthService = defaultAuthService()
 ) {
     val registerModel = RegisterModel(email, code, name, password)
-    val call = authAPI.register(registerModel)
+    val call = authService.register(registerModel)
     call!!.enqueue(object : Callback<RegisterModel?> {
         override fun onResponse(call: Call<RegisterModel?>, response: Response<RegisterModel?>) {
             result.value = "Response Code: " + response.code()
