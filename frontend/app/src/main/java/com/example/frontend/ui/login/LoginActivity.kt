@@ -31,26 +31,6 @@ class LoginActivity : ComponentActivity() {
     }
 }
 
-enum class CurrentScreen {
-    LOGIN, REGISTER
-}
-
 @Composable
 fun AuthenticationUI() {
-    var currentScreen by remember { mutableStateOf(CurrentScreen.LOGIN) }
-
-    // This is the onSwitchToRegister function
-    val onSwitchToRegister: () -> Unit = {
-        currentScreen = CurrentScreen.REGISTER
-    }
-
-    // This function switches to the Login screen
-    val onSwitchToLogin: () -> Unit = {
-        currentScreen = CurrentScreen.LOGIN
-    }
-
-    when (currentScreen) {
-        CurrentScreen.LOGIN -> LoginUI(onSwitchToRegister)
-        CurrentScreen.REGISTER -> RegisterUI(onSwitchToLogin)
-    }
 }
