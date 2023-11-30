@@ -39,6 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.frontend.api.MissionAPI
+import com.example.frontend.api.PlaceAPI
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.maps.model.LatLng
 
@@ -56,6 +58,11 @@ class MissionActivity : ComponentActivity() {
             }
         }
     }
+}
+
+fun defaultMissionAPI(authToken: String): MissionAPI {
+    val retrofit = createAuthenticatedRetrofit(authToken)
+    return retrofit.create(MissionAPI::class.java)
 }
 
 @Composable

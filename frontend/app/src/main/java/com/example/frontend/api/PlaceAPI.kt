@@ -13,9 +13,10 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface PlaceAPI {
-    @POST("/sendlocation")
+    @POST("/check_ins.json")
     fun send(@Body placeModel: PlaceModel?): Call<PlaceModel>?
 
-    @GET("/recommend")
+
+    @GET("places/recommend")
     fun recommend(@Query("averagedLocation") averagedLocation: LatLng?): Call<List<PlaceModel>>
 }
