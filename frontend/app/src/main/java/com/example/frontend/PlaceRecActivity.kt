@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.api.PlaceService
 import com.example.frontend.model.PlaceModel
+import com.example.frontend.ui.login.getAuthtoken
+import com.example.frontend.ui.login.getUsername
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.maps.model.LatLng
 import okhttp3.Interceptor

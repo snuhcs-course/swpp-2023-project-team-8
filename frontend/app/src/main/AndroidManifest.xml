@@ -60,7 +60,7 @@
             android:value="AIzaSyBtPoEOUN9opgeszHbx4fZ3lfdp9B69qD8" />
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.login.LoginActivity"
             android:exported="false"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.Frontend" />

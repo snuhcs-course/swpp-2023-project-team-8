@@ -40,7 +40,7 @@ class LoginUIKtTest {
     fun loginButtonHandler() {
         val result = mutableStateOf("")
 
-        loginButtonHandler(mockContext, "test@example.com", "password", result, mockAuthAPI)
+        com.example.frontend.ui.login.loginButtonHandler(mockContext, "test@example.com", "password", result, mockAuthAPI)
 
         // Capture the callback
         val argumentCaptor =

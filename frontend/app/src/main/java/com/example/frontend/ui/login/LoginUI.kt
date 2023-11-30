@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.example.frontend.ui.login
 
 import android.app.Activity
 import android.content.Context
@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.frontend.api.AuthService
+import com.example.frontend.MapActivity
 import com.example.frontend.model.AuthResponse
 import com.example.frontend.model.LoginModel
 import com.example.frontend.ui.theme.FrontendTheme
