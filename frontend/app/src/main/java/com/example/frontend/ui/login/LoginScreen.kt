@@ -26,7 +26,7 @@ import com.example.frontend.ui.login.component.TextButton
 /**
  * 로그인 화면에서 보여줄 컴포넌트를 정의합니다.
  */
-enum class LoginScreen(
+enum class LoginComponent(
     val title: String,
 ) {
     LOGIN("Login"),
@@ -35,9 +35,9 @@ enum class LoginScreen(
 
 @Composable
 fun LoginScreen() {
-    val currentComponent = remember { mutableStateOf(LoginScreen.LOGIN) }
-    val onLoginClick = { currentComponent.value = LoginScreen.LOGIN }
-    val onRegisterClick = { currentComponent.value = LoginScreen.REGISTER }
+    val currentComponent = remember { mutableStateOf(LoginComponent.LOGIN) }
+    val onLoginClick = { currentComponent.value = LoginComponent.LOGIN }
+    val onRegisterClick = { currentComponent.value = LoginComponent.REGISTER }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -61,15 +61,15 @@ fun LoginScreen() {
             horizontalArrangement = Arrangement.Center,
         ) {
             TextButton(
-                text = LoginScreen.LOGIN.title,
+                text = LoginComponent.LOGIN.title,
                 onClick = { onLoginClick() },
-                isEnabled = currentComponent.value == LoginScreen.LOGIN,
+                isEnabled = currentComponent.value == LoginComponent.LOGIN,
             )
             Spacer(modifier = Modifier.width(20.dp))
             TextButton(
-                text = LoginScreen.REGISTER.title,
+                text = LoginComponent.REGISTER.title,
                 onClick = { onRegisterClick() },
-                isEnabled = currentComponent.value == LoginScreen.REGISTER,
+                isEnabled = currentComponent.value == LoginComponent.REGISTER,
             )
         }
 
