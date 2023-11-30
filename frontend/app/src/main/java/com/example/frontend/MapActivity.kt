@@ -380,15 +380,12 @@ fun BottomBar(currentLocation: LatLng?) {
                             // Friend List 이동
                             val nextIntent = Intent(context, AddFriendActivity::class.java)
                             context.startActivity(nextIntent)
-
-
                         }
 
                         icons[2] -> {
                             // 약속 list
                             //val nextIntent = Intent(context, ::class.java)
                             //context.startActivity(nextIntent)
-
                         }
 
                         icons[3] -> {

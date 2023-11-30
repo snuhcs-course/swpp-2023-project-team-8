@@ -16,7 +16,6 @@ interface PlaceAPI {
     @POST("/check_ins.json")
     fun send(@Body placeModel: PlaceModel?): Call<PlaceModel>?
 
-
     @GET("places/recommend")
     fun recommend(@Query("averagedLocation") averagedLocation: LatLng?): Call<List<PlaceModel>>
 }
