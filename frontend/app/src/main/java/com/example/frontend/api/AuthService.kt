@@ -5,6 +5,7 @@ import com.example.frontend.model.EmailModel
 import com.example.frontend.model.LoginModel
 import com.example.frontend.model.RegisterModel
 import com.example.frontend.utilities.BASE_URL
+import com.example.frontend.utilities.GsonProvider
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -13,6 +14,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
 
+/**
+ * Used to connect to the server
+ * About authentication domain
+ */
 interface AuthService {
     @POST("/auth/login")
     fun login(@Body loginModel: LoginModel?): Call<AuthResponse?>?
@@ -34,7 +39,7 @@ interface AuthService {
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(GsonProvider.gson))
                 .build()
                 .create(AuthService::class.java)
         }
