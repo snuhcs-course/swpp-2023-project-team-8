@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.frontend.api.AuthAPI
 import com.example.frontend.model.AuthResponse
 import com.google.android.gms.maps.model.LatLng
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,7 +40,7 @@ class LoginUIKtTest {
     fun loginButtonHandler() {
         val result = mutableStateOf("")
 
-        loginButtonHandler(mockContext, "test@example.com", "password", result, mockAuthAPI)
+        com.example.frontend.ui.login.loginButtonHandler(mockContext, "test@example.com", "password", result, mockAuthAPI)
 
         // Capture the callback
         val argumentCaptor =

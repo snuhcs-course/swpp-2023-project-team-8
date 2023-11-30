@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.example.frontend.ui.login
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.example.frontend.RegisterUI
 import com.example.frontend.ui.theme.FrontendTheme
 
 class LoginActivity : ComponentActivity() {

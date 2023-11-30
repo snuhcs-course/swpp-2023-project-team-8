@@ -32,13 +32,13 @@ import androidx.compose.ui.unit.sp
 import com.example.frontend.api.AuthAPI
 import com.example.frontend.model.EmailModel
 import com.example.frontend.model.RegisterModel
+import com.example.frontend.ui.login.CustomButton
+import com.example.frontend.ui.login.defaultAuthAPI
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
