@@ -2,10 +2,9 @@ package com.example.frontend
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
-import com.example.frontend.api.AuthAPI
+import com.example.frontend.api.AuthService
 import com.example.frontend.model.AuthResponse
 import com.google.android.gms.maps.model.LatLng
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +26,7 @@ class LoginUIKtTest {
     lateinit var mockContext: Context
 
     @Mock
-    lateinit var mockAuthAPI: AuthAPI
+    lateinit var mockAuthAPI: AuthService
 
     @Mock
     lateinit var mockCall: Call<AuthResponse?>

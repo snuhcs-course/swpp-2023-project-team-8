@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.example.frontend.api.AuthAPI
+import com.example.frontend.api.AuthService
 import com.example.frontend.model.AuthResponse
 import com.example.frontend.model.LoginModel
 import com.example.frontend.ui.theme.FrontendTheme
@@ -155,10 +155,10 @@ fun loginButtonHandler(
     email: String,
     password: String,
     result: MutableState<String>,
-    authAPI: AuthAPI = defaultAuthAPI()
+    authService: AuthService = defaultAuthService()
 ) {
     val loginModel = LoginModel(email, password)
-    val call = authAPI.login(loginModel)
+    val call = authService.login(loginModel)
     ///////////////////////////////////////////////////////////
     // TODO: 배포 이후 제거
 //    val nextIntent = Intent(context, MapActivity::class.java)
@@ -238,13 +238,13 @@ fun getAuthtoken(context: Context): String {
     val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     return appPrefs.getString("AUTH_TOKEN", "")?:""
 }
-fun defaultAuthAPI(): AuthAPI {
+fun defaultAuthService(): AuthService {
     var url = "http://10.0.2.2:3000"
     val retrofit = Retrofit.Builder()
         .baseUrl(url)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-    return retrofit.create(AuthAPI::class.java)
+    return retrofit.create(AuthService::class.java)
 }
 
 @Composable
