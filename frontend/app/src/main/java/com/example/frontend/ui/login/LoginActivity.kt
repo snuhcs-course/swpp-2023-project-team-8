@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.frontend.RegisterUI
 import com.example.frontend.ui.theme.FrontendTheme
 
 class LoginActivity : ComponentActivity() {
