@@ -21,8 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,20 +49,11 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text(
-            text = "이메일을 인증해주세요.",
-            style = TextStyle(
-                fontSize = 17.sp,
-                fontWeight = FontWeight(400),
-                color = Color(0xFFA6A6A6),
-
-                ),
-            modifier = Modifier
-                .width(180.dp)
-                .height(40.dp)
-                .offset(x = (-80).dp)
-        )
-
+        // TODO(heka1024): 키보드 입력 창에서 '다음' 버튼 등으로 넘어갈 수 있게 하기
+        // TODO(heka1024): 터치할 때 키보드 내려가게 하게
+        // 눌러서 내려가는 건
+        // 다음을 띄우려면
+        // imeAction = ImeAction.Next
         EmailAuthenticationField(
             email = email,
             onEmailChanged = { newEmail -> email = newEmail },
@@ -125,7 +114,7 @@ fun sendButtonHandler(
     context: Context,
     email: String,
     result: MutableState<String>,
-    authService: AuthService = defaultAuthService()
+    authAPI: AuthAPI = defaultAuthAPI()
 ) {
     val emailModel = EmailModel(email)
 //    val call = authService.verifyEmail(emailModel)
