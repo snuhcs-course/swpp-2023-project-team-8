@@ -8,7 +8,7 @@ class MeetUpsController < ApplicationController
 
   def show
     @meet_up = MeetUp.includes(:users, :place).find(params[:id])
-    render json: @meet_up, include: [:users, :place], serializer: MeetUpSerializer
+    render json: @meet_up
   end
 
   def create
