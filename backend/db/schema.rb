@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_16_082551) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_29_174124) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -42,6 +42,16 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_16_082551) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "meet_ups", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.datetime "meet_at"
+    t.boolean "public"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "place_id"
+  end
+
   create_table "missions", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -59,10 +69,28 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_16_082551) do
   end
 
   create_table "regions", force: :cascade do |t|
-    t.geometry "geom", limit: { :srid => 4326, :type => "multi_polygon" }, null: false
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_polygon"}, null: false
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "user_locations", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.geography "location", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location"], name: "index_user_locations_on_location", using: :gist
+    t.index ["user_id"], name: "index_user_locations_on_user_id"
+  end
+
+  create_table "user_meet_ups", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "meet_up_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["meet_up_id"], name: "index_user_meet_ups_on_meet_up_id"
+    t.index ["user_id"], name: "index_user_meet_ups_on_user_id"
   end
 
   create_table "user_missions", force: :cascade do |t|
@@ -86,6 +114,9 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_16_082551) do
     t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
   end
 
+  add_foreign_key "user_locations", "users"
+  add_foreign_key "user_meet_ups", "meet_ups"
+  add_foreign_key "user_meet_ups", "users"
   add_foreign_key "user_missions", "missions"
   add_foreign_key "user_missions", "users"
 end

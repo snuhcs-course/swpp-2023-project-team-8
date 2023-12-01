@@ -3,6 +3,9 @@ class User < ApplicationRecord
   include Friendable
   include CheckInable
 
+  has_many :user_meet_ups
+  has_many :meet_ups, through: :user_meet_ups
+
   has_many :user_missions
   has_many :missions, through: :user_missions
 
@@ -17,8 +20,8 @@ class User < ApplicationRecord
 
   def nearby_friends
     User.where(id: CheckIn.order_by_distance(last_check_in.latitude, last_check_in.longitude)
-      .where(user: all_friends)
-      .select(:user_id))
+                          .where(user: all_friends)
+                          .select(:user_id))
   end
 
   private
