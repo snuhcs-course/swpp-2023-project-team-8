@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.example.frontend.ui.login
 
 import android.content.Context
 import android.widget.Toast
@@ -114,7 +114,7 @@ fun sendButtonHandler(
     context: Context,
     email: String,
     result: MutableState<String>,
-    authService: AuthService = defaultAuthService()
+    authService: AuthService = AuthService.create()
 ) {
     val emailModel = EmailModel(email)
 //    val call = authService.verifyEmail(emailModel)
