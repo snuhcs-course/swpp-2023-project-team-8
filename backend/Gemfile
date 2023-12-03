@@ -69,4 +69,5 @@ group :test do
   gem 'rspec-rails', '~> 6.0.0'
   gem 'database_cleaner-active_record'
   gem 'database_cleaner-redis'
+  gem 'simplecov', require: false
 end
