@@ -24,6 +24,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.frontend.api.PlaceAPI
+import com.example.frontend.api.PlaceService
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.ui.login.getAuthtoken
 import com.example.frontend.ui.login.getUsername
@@ -127,9 +131,9 @@ fun createAuthenticatedRetrofit(authToken: String): Retrofit {
         .build()
 }
 
-fun defaultRecAPI(authToken: String): PlaceAPI {
+fun defaultRecAPI(authToken: String): PlaceService {
     val retrofit = createAuthenticatedRetrofit(authToken)
-    return retrofit.create(PlaceAPI::class.java)
+    return retrofit.create(PlaceService::class.java)
 }
 
 @Composable
