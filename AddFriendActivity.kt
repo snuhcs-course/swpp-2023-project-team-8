@@ -1,7 +1,6 @@
-package com.example.frontend
+package com.example.register
 
 import android.app.Activity
-import android.Manifest
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -96,7 +95,7 @@ fun BottomAppBar() {
                 floatingActionButton = {
                     FloatingActionButton(
                         onClick = { /*  +버튼 눌렀을 때 친구추가 작업 */
-                            showToast(context, "친구추가 완료!")
+                        showToast(context, "친구추가 완료!")
                         },
                         containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                         elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
@@ -128,7 +127,7 @@ fun SearchFriend(){
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
-                //  검색 창을 띄우고 검색 버튼을 눌렀을 때 동작 추가
+                // TODO 검색 창을 띄우고 검색 버튼을 눌렀을 때 동작 추가
             }
         ),
         modifier = Modifier
@@ -194,24 +193,3 @@ fun FriendItem(friend: Friend) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
