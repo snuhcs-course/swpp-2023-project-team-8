@@ -114,7 +114,7 @@ fun sendButtonHandler(
     context: Context,
     email: String,
     result: MutableState<String>,
-    authAPI: AuthAPI = defaultAuthAPI()
+    authService: AuthService = AuthService.create()
 ) {
     val emailModel = EmailModel(email)
 //    val call = authService.verifyEmail(emailModel)
