@@ -26,15 +26,24 @@ class AddFriendActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            BottomAppBar()
-            //SearchFriend()
+            var showSearch by remember { mutableStateOf(false) }
+            FriendScreen(showSearch = showSearch, onShowSearchChanged = { showSearch = it })
         }
+    }
+}
+
+@Composable
+fun FriendScreen(showSearch: Boolean, onShowSearchChanged: (Boolean) -> Unit) {
+    BottomAppBar(onSearchClicked = { onShowSearchChanged(true) })
+
+    if (showSearch) {
+        SearchFriend()
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomAppBar() {
+fun BottomAppBar(onSearchClicked: () -> Unit) {
     var buttonClicked by remember { mutableStateOf(false) }
     var context = LocalContext.current
     Scaffold(
@@ -56,31 +65,27 @@ fun BottomAppBar() {
 
 
                     Icon(imageVector = Icons.Default.Person, contentDescription = "프로필")
-                    Text(text = "My Name",Modifier.offset(5.dp,0.dp))
-
+                    Text(text = "My Name", Modifier.offset(5.dp, 0.dp))
 
 
                     // 돋보기 눌렀을 때 친구검색 창 띄우기 , Composable 함수를 호출하기 위해 buttonClicked = true
                     IconButton(
                         onClick = {
-                            buttonClicked = true
-                        }
+                            onSearchClicked()
+                        },
+                        Modifier.offset(140.dp, 0.dp)
                     ) {
                         Icon(
                             Icons.Filled.Search,
-                            contentDescription = "Localized description",
-                            Modifier.offset(140.dp,0.dp)
+                            contentDescription = "Localized description"
                         )
-                    }
-                    if(buttonClicked){
-                        SearchFriend()
                     }
                 },
 
 
                 floatingActionButton = {
                     FloatingActionButton(
-                        onClick = { /*  +버튼 눌렀을 때 친구추가 작업 */},
+                        onClick = { /*  +버튼 눌렀을 때 친구추가 작업 */ },
                         containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                         elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
                     ) {
@@ -100,7 +105,7 @@ fun BottomAppBar() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchFriend(){
+fun SearchFriend() {
     var searchText by remember { mutableStateOf(TextFieldValue()) }
     OutlinedTextField(
         value = searchText,
