@@ -24,9 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.login.component.TextButton
 
-/**
- * 로그인 화면에서 보여줄 컴포넌트를 정의합니다.
- */
 enum class LoginComponent(
     val title: String,
 ) {

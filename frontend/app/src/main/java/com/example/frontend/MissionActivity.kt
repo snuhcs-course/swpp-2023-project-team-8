@@ -11,21 +11,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,24 +37,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.frontend.api.MissionAPI
-import com.example.frontend.api.PlaceAPI
+import com.example.frontend.model.AuthResponse
+import com.example.frontend.model.LoginModel
+import com.example.frontend.model.MissionModel
+import com.example.frontend.ui.login.getAuthtoken
 import com.example.frontend.ui.theme.FrontendTheme
-import com.google.android.gms.maps.model.LatLng
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MissionActivity : ComponentActivity() {
+    val authToken: String by lazy { getAuthtoken(this) }
+    val missionApi: MissionAPI by lazy { defaultMissionAPI(authToken) }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-         setContent {
-             val authToken = getAuthtoken(this)
-             val missionApi = defaultMissionAPI(authToken)
-             val missions by remember { mutableStateOf(emptyList<MissionModel>()) }
-
-             LaunchedEffect(Unit) {
-                 val missionList = missionApi.getMissionList()
-                 missions = missionList
-             }
+        setContent {
+            //val authToken = getAuthtoken(this)
+            val missionApi = defaultMissionAPI(authToken)
+            //var missions by remember { mutableStateOf(emptyList<MissionModel>()) }
+            fetchMissions()
 
             FrontendTheme {
                 ShowMissionUI(missions = missions) {
@@ -66,7 +66,34 @@ class MissionActivity : ComponentActivity() {
             }
         }
     }
+
+    var missions by mutableStateOf<List<MissionModel>>(emptyList())
+    private fun fetchMissions() {
+        val call = missionApi.getMissionList()
+
+        call.enqueue(object : Callback<List<MissionModel>> {
+            override fun onResponse(
+                call: Call<List<MissionModel>>,
+                response: Response<List<MissionModel>>
+            ) {
+                if (response.isSuccessful) {
+                    runOnUiThread {
+                        missions = response.body() ?: emptyList()
+                    }
+                } else {
+
+                }
+            }
+
+            override fun onFailure(call: Call<List<MissionModel>>, t: Throwable) {
+                runOnUiThread {
+                    missions = defaultMissions
+                }
+            }
+        })
+    }
 }
+
 
 fun defaultMissionAPI(authToken: String): MissionAPI {
     val retrofit = createAuthenticatedRetrofit(authToken)
@@ -76,12 +103,12 @@ fun defaultMissionAPI(authToken: String): MissionAPI {
 @Composable
 fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) {
     var title by remember { mutableStateOf("") }
-
+    var showMoreDescriptions by remember { mutableStateOf(mutableMapOf<String, Boolean>()) }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color(0xFFDFD5EC)
     ) {
-        GridItems(items = missions.map { it.title to it.description }) { (missionTitle, missionDescription) ->
+        GridItems(items = missions) { rowItems -> for (mission in rowItems) {
             Box(
                 modifier = Modifier
                     .padding(top = 24.dp, start = 23.dp)
@@ -95,8 +122,11 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                         Box(
                             modifier = Modifier
                                 .clickable {
-                                    title = missionTitle
-                                    showMoreDescription = true
+                                    title = mission.title
+                                    showMoreDescriptions =
+                                        showMoreDescriptions.toMutableMap().apply {
+                                            this[mission.title] = true
+                                        }
                                 }
                         ) {
                             Text(
@@ -117,7 +147,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                 Column {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = missionTitle,
+                        text = mission.title,
                         style = TextStyle(
                             fontSize = 18.sp,
                             lineHeight = 24.sp,
@@ -141,7 +171,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                     Row {
                         Spacer(modifier = Modifier.width(15.dp))
                         Text(
-                            text = missionDescription,
+                            text = mission.description,
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
@@ -152,15 +182,18 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                         )
                     }
                 }
-                if (showMoreDescriptions[missionTitle] == true) {
+                if (showMoreDescriptions[mission.title] == true) {
                     ShowMoreDescriptionDialog(
-                        title = missionTitle,
-                        description = getMoreDescription(missionTitle, missions),
-                        onDismissRequest = { showMoreDescriptions[missionTitle] = false }
+                        title = mission.title,
+                        description = getMoreDescription(mission.title, missions),
+                        onDismissRequest = { showMoreDescriptions[mission.title] = false } ,
+                        showMore = mission.showMore // Pass the showMore value here
+
                     )
                 }
 
             }
+        }
         }
     }
 }
@@ -170,7 +203,7 @@ fun getMoreDescription(missionTitle: String, missions: List<MissionModel>): Stri
     val mission = missions.find { it.title == missionTitle }
 
     // Provide different descriptions based on the mission title
-    return mission?.description ?: "$missionTitle 상세 설명"
+    return mission?.showMore ?: "$missionTitle 상세 설명 업데이트 필요"
 }
 
 //
@@ -178,14 +211,8 @@ fun getMoreDescription(missionTitle: String, missions: List<MissionModel>): Stri
 //fun getMoreDescription(missionTitle: String): String {
 //    // Provide different descriptions based on the mission title
 //    return when (missionTitle) {
-//        "미션1" -> "예상치 못한 장소에서 친구와 마주쳐 보세요!"
-//        "미션2" -> "친구와 약속을 잡아 보세요!"
-//        "미션3" -> "3명 이상의 친구와 약속을 잡아 보세요!"
-//        "미션4" -> "자하연에서 친구와 마주쳐 보세요!"
-//        "미션5" -> "관악산에 올라가 보세요!"
-//        "미션6" -> "도서관에 머물며 책을 읽는 시간을 가져 보세요!"
-//        "미션7" -> "친구 세 명과 약속을 잡아 보세요!"
-//        "미션8" -> "친구 20 명을 추가해 보세요!"
+//        "미션1" ->
+//        "미션2" ->
 //
 //        else -> "$missionTitle 상세 설명"
 //    }
@@ -196,6 +223,7 @@ fun getMoreDescription(missionTitle: String, missions: List<MissionModel>): Stri
 fun ShowMoreDescriptionDialog(
     title: String,
     description: String,
+    showMore: String,
     onDismissRequest: () -> Unit
 ) {
     Dialog(
@@ -225,7 +253,7 @@ fun ShowMoreDescriptionDialog(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = description,
+                    text = showMore,
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 24.sp,
@@ -243,31 +271,42 @@ fun ShowMoreDescriptionDialog(
     }
 }
 
+val defaultMissions = listOf(
+    MissionModel("미션1", "친구와 우연히 만나기", false, "예상치 못한 장소에서 친구와 마주쳐 보세요!"),
+    MissionModel("미션2", "친구와 약속 잡기", false,"친구와 약속을 잡아 보세요!"),
+    MissionModel("미션3", "친구와 약속 장소 정하기", false, "3명 이상의 친구와 약속을 잡아 보세요!"),
+    MissionModel("미션4", "자하연 근처에서 친구 마주치기", false, "자하연에서 친구와 마주쳐 보세요!"),
+    MissionModel("미션5", "관악산 등산하기", false, "관악산에 올라가 보세요!"),
+    MissionModel("미션6", "도서관에 한 시간 머물기", false, "도서관에 머물며 책을 읽는 시간을 가져 보세요!"),
+    MissionModel("미션7", "친구 세 명과 만나기", false, "친구 세 명과 약속을 잡아 보세요!"),
+    MissionModel("미션8", "친구 스무 명 추가하기", false, "친구 20 명을 추가해 보세요!")
+)
 
 @Preview(showBackground = true)
 @Composable
 fun ShowMissionUIPreview() {
+
     FrontendTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            ShowMissionUI {
+            ShowMissionUI(defaultMissions) {
 
             }
         }
     }
 }
 @Composable
-fun GridItems(items: List<Pair<String, String>>, itemContent: @Composable (Pair<String, String>) -> Unit) {
+fun GridItems(items: List<MissionModel>, itemContent: @Composable (List<MissionModel>) -> Unit) {
     LazyColumn {
         items(items.windowed(2, 2, partialWindows = true)) { rowItems ->
             Row {
-                for ((title, description) in rowItems) {
+                for ((title, description, color) in rowItems) {
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
-                        itemContent(title to description)
+                        itemContent(rowItems)
                     }
                 }
             }

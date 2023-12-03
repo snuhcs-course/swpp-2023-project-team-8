@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.DateRange
@@ -342,10 +343,10 @@ fun BottomBar(currentLocation: LatLng?) {
     var context = LocalContext.current
 
     val icons = listOf(
-        Icons.Outlined.AccountCircle,
-        Icons.Outlined.CheckCircle,
-        Icons.Outlined.DateRange,
         Icons.Default.Star,
+        Icons.Outlined.AccountBox,
+        Icons.Outlined.DateRange,
+        Icons.Outlined.CheckCircle,
         Icons.Outlined.Settings,
         
     )
