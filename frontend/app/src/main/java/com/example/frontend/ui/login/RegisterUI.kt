@@ -49,8 +49,9 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
     var response = remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
-    val isInitialInput = email.isEmpty() && password.isEmpty()
 
+    val isInitialInput = email.isEmpty() && password.isEmpty()
+    val isWaitingForResponse = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.padding(20.dp)
@@ -79,11 +80,12 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
         )
 
         Button(
-            onClick = { sendButtonHandler(context, email, response) },
+            onClick = { isWaitingForResponse.value = true; sendButtonHandler(context, email, isWaitingForResponse) },
             colors = ButtonDefaults.buttonColors(Purple80),
             modifier = Modifier
                 .padding(top = 20.dp)
-                .align(Alignment.End)
+                .align(Alignment.End),
+            enabled = !isWaitingForResponse.value,
         ) { Text(text = "Send") }
 
         OutlinedTextField(
@@ -129,21 +131,22 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
 private fun sendButtonHandler(
     context: Context,
     email: String,
-    result: MutableState<String>,
+    isWaitingForResponse: MutableState<Boolean>,
     authService: AuthService = AuthService.create()
 ) {
     authService.verifyEmail(EmailModel(email)).enqueue(object : Callback<EmailModel?> {
         override fun onResponse(call: Call<EmailModel?>, response: Response<EmailModel?>) {
             if (HttpStatus.fromCode(response.code()) != HttpStatus.CREATED) {
                 Toast.makeText(context, "에러가 발생했어요.", Toast.LENGTH_LONG).show()
-                return
             } else {
                 Toast.makeText(context, "인증 코드가 전송되었습니다!", Toast.LENGTH_LONG).show()
             }
+            isWaitingForResponse.value = false
         }
 
         override fun onFailure(call: Call<EmailModel?>, t: Throwable) {
             Toast.makeText(context, "에러가 발생했어요.", Toast.LENGTH_LONG).show()
+            isWaitingForResponse.value = false
         }
     })
 }
