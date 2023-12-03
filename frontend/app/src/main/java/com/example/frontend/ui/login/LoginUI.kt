@@ -182,7 +182,10 @@ fun getUsername(context: Context): String? {
     val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     return appPrefs.getString("USERNAME", "User0")
 }
-
+//fun getUserMail(context: Context): String? {
+//    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+//    return appPrefs.getString("USERMAIL", "sha@snu.ac.kr")
+//}
 
 fun getAuthtoken(context: Context): String {
     val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)

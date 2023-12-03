@@ -24,12 +24,15 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.BottomSheetValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -52,6 +55,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
+import com.example.frontend.ui.login.getUsername
 import com.example.frontend.ui.theme.FrontendTheme
 
 class UserInfoActivity : ComponentActivity() {
@@ -71,10 +75,14 @@ class UserInfoActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
+    var selectedPredefinedImage by remember { mutableStateOf<Int?>(null) }
+
     val getContent: ActivityResultLauncher<String> = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -82,6 +90,14 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
             selectedImageUri = uri
         }
     }
+
+    val predefinedImages = listOf(
+        R.drawable.cat,
+        R.drawable.cat_sunglass,
+        R.drawable.dog_sunglass,
+        R.drawable.hamster
+    )
+
 
     Box(
         modifier = Modifier
@@ -153,14 +169,6 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
 
         ) {
 
-//            Icon(
-//                imageVector = Icons.Outlined.AccountCircle,
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .size(100.dp)
-//
-//
-//            )
             if (selectedImageUri != null) {
                 val painter = rememberImagePainter(data = selectedImageUri)
                 Image(
@@ -181,7 +189,8 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                         .size(100.dp)
                         .clickable {
                             // Launch the image selection activity
-                            getContent.launch("image/*")
+                            //getContent.launch("image/*")
+
                         }
                 )
             }
@@ -195,12 +204,10 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     .offset(x = 60.dp, y = (-90).dp)
                     .clickable {
                             // Launch the image selection activity
-                            getContent.launch("image/*")
+                            //getContent.launch("image/*")
+                        bottomSheetState.expand()
                         }
             )
-
-
-
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -219,7 +226,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "김샤프",
+                    text = getUsername(context)?: "김샤프",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
