@@ -1,4 +1,4 @@
-name: CI
+name: Build image for backend
 
 on:
   push:
@@ -6,10 +6,6 @@ on:
       - main
       - backend/dockerfile
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   test:
