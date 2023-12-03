@@ -2,11 +2,21 @@ package com.example.frontend.ui.login
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -19,12 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.frontend.api.AuthService
 import com.example.frontend.model.EmailModel
 import com.example.frontend.model.RegisterModel
@@ -46,7 +54,7 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
 
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.padding(20.dp)
     ) {
 
         // TODO(heka1024): 키보드 입력 창에서 '다음' 버튼 등으로 넘어갈 수 있게 하기
@@ -54,40 +62,47 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
         // 눌러서 내려가는 건
         // 다음을 띄우려면
         // imeAction = ImeAction.Next
-        EmailAuthenticationField(
-            email = email,
-            onEmailChanged = { newEmail -> email = newEmail },
-            onSendClicked = { sendButtonHandler(context, email, response) },
+//        EmailAuthenticationField(
+//            email = email,
+//            onEmailChanged = { newEmail -> email = newEmail },
+//            onSendClicked = { sendButtonHandler(context, email, response) },
+//        )
+
+        OutlinedTextField(
+            value = email,
+            onValueChange = { newEmail -> email = newEmail },
+            label = { Text("Email Address") },
+            leadingIcon = {
+                Icon(imageVector = Icons.Default.Email, contentDescription = "Email")
+            },
         )
+
+        Button(
+            onClick = { sendButtonHandler(context, email, response) },
+            colors = ButtonDefaults.buttonColors(Purple80),
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .align(Alignment.End)
+        ) { Text(text = "Send") }
+
+        // Rightmost button
 
         OutlinedTextField(
             value = code,
             onValueChange = { code = it },
             label = { Text("Code") },
-            modifier = Modifier
-                .offset(x = (-35).dp)
-                .background(Color.Transparent)
-                .width(255.dp)
         )
 
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
             label = { Text("Name") },
-            modifier = Modifier
-                .offset(x = (-35).dp)
-                .background(colorScheme.background)
-                .width(255.dp)
         )
 
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
-            modifier = Modifier
-                .offset(x = (-35).dp)
-                .background(colorScheme.background)
-                .width(255.dp),
             visualTransformation = PasswordVisualTransformation()
         )
 
@@ -106,7 +121,6 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
                 )
             }
         )
-
     }
 }
 
@@ -181,13 +195,16 @@ fun EmailAuthenticationField(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 42.dp, end = 20.dp),
+            .padding(end = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         OutlinedTextField(
             value = email,
             onValueChange = onEmailChanged,
             label = { Text("Email Address") },
+            leadingIcon = {
+                Icon(imageVector = Icons.Default.Email, contentDescription = "Email")
+            },
             modifier = Modifier
                 .padding(end = 8.dp) // Add some padding to separate from the button
                 .width(255.dp)
