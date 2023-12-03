@@ -1,6 +1,7 @@
 package com.example.frontend
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -24,15 +25,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.BottomSheetValue
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -48,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -75,12 +74,10 @@ class UserInfoActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    val bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
     var selectedPredefinedImage by remember { mutableStateOf<Int?>(null) }
 
     val getContent: ActivityResultLauncher<String> = rememberLauncherForActivityResult(
@@ -97,7 +94,20 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
         R.drawable.dog_sunglass,
         R.drawable.hamster
     )
-
+    fun showImageSelectionDialog() {
+        AlertDialog.Builder(context)
+            .setTitle("이미지 선택")
+            .setItems(
+                arrayOf("Cat", "Cat with Sunglass", "Dog with Sunglass", "Hamster")
+            ) { _, which ->
+                selectedPredefinedImage = predefinedImages[which]
+            }
+            .setPositiveButton("사용자 이미지 선택") { _, _ ->
+                // Launch the image selection activity
+                getContent.launch("image/*")
+            }
+            .show()
+    }
 
     Box(
         modifier = Modifier
@@ -169,16 +179,20 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
 
         ) {
 
-            if (selectedImageUri != null) {
-                val painter = rememberImagePainter(data = selectedImageUri)
+            if (selectedImageUri != null || selectedPredefinedImage != null) {
+                val painter = if (selectedImageUri != null) {
+                    rememberImagePainter(data = selectedImageUri)
+                } else {
+                    painterResource(id = selectedPredefinedImage ?: R.drawable.cat)
+                }
+
                 Image(
                     painter = painter,
                     contentDescription = null,
                     modifier = Modifier
                         .size(100.dp)
                         .clickable {
-                            // Launch the image selection activity
-                            getContent.launch("image/*")
+                            showImageSelectionDialog()
                         }
                 )
             } else {
@@ -190,7 +204,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                         .clickable {
                             // Launch the image selection activity
                             //getContent.launch("image/*")
-
+                            showImageSelectionDialog()
                         }
                 )
             }
@@ -205,7 +219,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     .clickable {
                             // Launch the image selection activity
                             //getContent.launch("image/*")
-                        bottomSheetState.expand()
+                        showImageSelectionDialog()
                         }
             )
 
