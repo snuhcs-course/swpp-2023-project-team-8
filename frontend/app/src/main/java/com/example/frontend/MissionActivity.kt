@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -99,16 +101,16 @@ fun defaultMissionAPI(authToken: String): MissionAPI {
     val retrofit = createAuthenticatedRetrofit(authToken)
     return retrofit.create(MissionAPI::class.java)
 }
-
 @Composable
 fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) {
     var title by remember { mutableStateOf("") }
     var showMoreDescriptions by remember { mutableStateOf(mutableMapOf<String, Boolean>()) }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color(0xFFDFD5EC)
     ) {
-        GridItems(items = missions) { rowItems -> for (mission in rowItems) {
+        GridItems(items = missions) { mission ->
             Box(
                 modifier = Modifier
                     .padding(top = 24.dp, start = 23.dp)
@@ -138,7 +140,6 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                                     color = Color(0xFFA6A6A6),
                                     letterSpacing = 0.25.sp,
                                 )
-
                             )
                         }
                     }
@@ -186,14 +187,11 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                     ShowMoreDescriptionDialog(
                         title = mission.title,
                         description = getMoreDescription(mission.title, missions),
-                        onDismissRequest = { showMoreDescriptions[mission.title] = false } ,
+                        onDismissRequest = { showMoreDescriptions[mission.title] = false },
                         showMore = mission.showMore // Pass the showMore value here
-
                     )
                 }
-
             }
-        }
         }
     }
 }
@@ -298,18 +296,18 @@ fun ShowMissionUIPreview() {
     }
 }
 @Composable
-fun GridItems(items: List<MissionModel>, itemContent: @Composable (List<MissionModel>) -> Unit) {
-    LazyColumn {
-        items(items.windowed(2, 2, partialWindows = true)) { rowItems ->
+fun GridItems(items: List<MissionModel>, itemContent: @Composable (MissionModel) -> Unit) {
+    val rows = items.chunked(2)
+
+    Column {
+        for (rowItems in rows) {
             Row {
-                for ((title, description, color) in rowItems) {
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        itemContent(rowItems)
-                    }
+                for (mission in rowItems) {
+                    itemContent(mission)
+                    Spacer(modifier = Modifier.width(16.dp)) // Adjust spacing as needed
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp)) // Adjust spacing as needed
         }
     }
 }
