@@ -70,7 +70,7 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
     var date by remember { mutableStateOf("") }
     var explain by remember { mutableStateOf("") }
     var context = LocalContext.current
-
+    val activity = LocalContext.current as? ComponentActivity
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -81,7 +81,7 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
                 .height(64.dp)
                 .background(Color(0xFFF3EDF7))
         ) {
-            Column{
+            Box{
                 Spacer(modifier = Modifier.height(15.dp))
                 Text(
                     text = "밋업 생성",
@@ -92,10 +92,23 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
                         textAlign = TextAlign.Center,
                     ),
                     modifier = Modifier
+                        .padding(top = 16.dp)
                         .width(400.dp)
                         .height(64.dp)
                 )
+                Button(
+                    onClick = {
+                        activity?.finish()
+                    },
 
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(50.dp)
+                        .padding(start = 16.dp, top = 16.dp),
+                    colors = ButtonDefaults.buttonColors(Purple80)
+                ) {
+                    Text( text = "취소")
+                }
             }
 
         }
@@ -161,7 +174,7 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
         Row{
 
                 Text(
-                    text = "친구 초대 - ",
+                    text = "친구 초대 ",
                     style = TextStyle(
                         fontSize = 18.sp,
                         fontWeight = FontWeight(400),
@@ -174,8 +187,6 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
                         .height(64.dp)
                         .padding(start = 40.dp)
                 )
-
-
 
                 Button(
                     onClick = {

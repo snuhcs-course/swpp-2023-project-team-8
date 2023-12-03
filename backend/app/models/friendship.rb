@@ -10,4 +10,5 @@ class Friendship < ApplicationRecord
   def confirm
     update(confirmed: true)
   end
+
 end

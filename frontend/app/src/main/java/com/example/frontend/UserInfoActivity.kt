@@ -1,6 +1,7 @@
 package com.example.frontend
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -40,11 +41,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -74,13 +77,36 @@ class UserInfoActivity : ComponentActivity() {
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var selectedImageUri by rememberSaveable  { mutableStateOf<Uri?>(null) }
+    var selectedPredefinedImage by rememberSaveable  { mutableStateOf<Int?>(null) }
+
     val getContent: ActivityResultLauncher<String> = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         if (uri != null) {
             selectedImageUri = uri
         }
+    }
+
+    val predefinedImages = listOf(
+        R.drawable.cat,
+        R.drawable.cat_sunglass,
+        R.drawable.dog_sunglass,
+        R.drawable.hamster
+    )
+    fun showImageSelectionDialog() {
+        AlertDialog.Builder(context)
+            .setTitle("이미지 선택")
+            .setItems(
+                arrayOf("Gray Cat with Sunglass", "Yellow Cat with Sunglass", "Dog with Sunglass", "Hamster")
+            ) { _, which ->
+                selectedPredefinedImage = predefinedImages[which]
+            }
+            .setPositiveButton("사용자 이미지 선택") { _, _ ->
+                // Launch the image selection activity
+                getContent.launch("image/*")
+            }
+            .show()
     }
 
     Box(
@@ -153,24 +179,20 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
 
         ) {
 
-//            Icon(
-//                imageVector = Icons.Outlined.AccountCircle,
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .size(100.dp)
-//
-//
-//            )
-            if (selectedImageUri != null) {
-                val painter = rememberImagePainter(data = selectedImageUri)
+            if (selectedImageUri != null || selectedPredefinedImage != null) {
+                val painter = if (selectedImageUri != null) {
+                    rememberImagePainter(data = selectedImageUri)
+                } else {
+                    painterResource(id = selectedPredefinedImage ?: R.drawable.cat)
+                }
+
                 Image(
                     painter = painter,
                     contentDescription = null,
                     modifier = Modifier
                         .size(100.dp)
                         .clickable {
-                            // Launch the image selection activity
-                            getContent.launch("image/*")
+                            showImageSelectionDialog()
                         }
                 )
             } else {
@@ -181,7 +203,8 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                         .size(100.dp)
                         .clickable {
                             // Launch the image selection activity
-                            getContent.launch("image/*")
+                            //getContent.launch("image/*")
+                            showImageSelectionDialog()
                         }
                 )
             }
@@ -195,12 +218,10 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     .offset(x = 60.dp, y = (-90).dp)
                     .clickable {
                             // Launch the image selection activity
-                            getContent.launch("image/*")
+                            //getContent.launch("image/*")
+                        showImageSelectionDialog()
                         }
             )
-
-
-
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -219,7 +240,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "김샤프",
+                    text = getUsername(context)?: "김샤프",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,

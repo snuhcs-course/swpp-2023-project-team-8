@@ -1,3 +1,5 @@
+package com.example.frontend
+
 import com.example.frontend.utilities.GsonProvider
 import com.google.gson.JsonParser
 import org.junit.Assert

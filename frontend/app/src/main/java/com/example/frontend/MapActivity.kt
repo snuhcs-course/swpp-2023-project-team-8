@@ -4,10 +4,14 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
+import android.widget.Button
+
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -23,8 +27,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -63,6 +69,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import org.w3c.dom.Text
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -337,9 +344,11 @@ fun BottomBar(currentLocation: LatLng?) {
 
     val icons = listOf(
         Icons.Default.Star,
-        Icons.Outlined.AccountCircle,
+        Icons.Outlined.AccountBox,
+        Icons.Outlined.DateRange,
         Icons.Outlined.CheckCircle,
-        Icons.Outlined.Settings
+        Icons.Outlined.Settings,
+        
     )
 
     Box(
@@ -366,24 +375,26 @@ fun BottomBar(currentLocation: LatLng?) {
                             val nextIntent = Intent(context, MeetupActivity::class.java)
                             nextIntent.putExtra("currentLocation", currentLocation)
                             context.startActivity(nextIntent)
-
-
                         }
 
                         icons[1] -> {
                             // Friend List 이동
-                            // val nextIntent = Intent(context, ::class.java)
-                            // context.startActivity(nextIntent)
-
+                            val nextIntent = Intent(context, AddFriendActivity::class.java)
+                            context.startActivity(nextIntent)
                         }
 
                         icons[2] -> {
+                            // 약속 list
+                            //val nextIntent = Intent(context, ::class.java)
+                            //context.startActivity(nextIntent)
+                        }
+
+                        icons[3] -> {
                             // MissionActivity 이동
                             val nextIntent = Intent(context, MissionActivity::class.java)
                             context.startActivity(nextIntent)
                         }
-
-                        icons[3] -> {
+                        icons[4] -> {
                             // userInfo로 이동
                             val nextIntent = Intent(context, UserInfoActivity::class.java)
                             context.startActivity(nextIntent)
