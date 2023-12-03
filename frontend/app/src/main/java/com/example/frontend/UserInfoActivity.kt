@@ -240,7 +240,8 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = getUsername(context)?: "김샤프",
+//                    text = getUsername(context)?: "김샤프",
+                    text = "김사프",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
