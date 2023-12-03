@@ -26,4 +26,6 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   resources :check_ins, only: [:index, :create]
+
+  resources :meet_ups, only: [:create, :index, :show]
 end

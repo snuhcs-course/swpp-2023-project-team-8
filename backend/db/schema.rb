@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_16_082551) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_29_174124) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -42,6 +42,16 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_16_082551) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "meet_ups", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.datetime "meet_at"
+    t.boolean "is_public"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "place_id"
+  end
+
   create_table "missions", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -59,10 +69,19 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_16_082551) do
   end
 
   create_table "regions", force: :cascade do |t|
-    t.geometry "geom", limit: { :srid => 4326, :type => "multi_polygon" }, null: false
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_polygon"}, null: false
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "user_meet_ups", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "meet_up_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["meet_up_id"], name: "index_user_meet_ups_on_meet_up_id"
+    t.index ["user_id"], name: "index_user_meet_ups_on_user_id"
   end
 
   create_table "user_missions", force: :cascade do |t|
