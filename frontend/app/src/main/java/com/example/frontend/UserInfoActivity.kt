@@ -41,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,8 +78,8 @@ class UserInfoActivity : ComponentActivity() {
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    var selectedPredefinedImage by remember { mutableStateOf<Int?>(null) }
+    var selectedImageUri by rememberSaveable  { mutableStateOf<Uri?>(null) }
+    var selectedPredefinedImage by rememberSaveable  { mutableStateOf<Int?>(null) }
 
     val getContent: ActivityResultLauncher<String> = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -98,7 +99,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
         AlertDialog.Builder(context)
             .setTitle("이미지 선택")
             .setItems(
-                arrayOf("Cat", "Cat with Sunglass", "Dog with Sunglass", "Hamster")
+                arrayOf("Gray Cat with Sunglass", "Yellow Cat with Sunglass", "Dog with Sunglass", "Hamster")
             ) { _, which ->
                 selectedPredefinedImage = predefinedImages[which]
             }
