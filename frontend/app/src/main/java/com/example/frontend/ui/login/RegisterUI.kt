@@ -43,10 +43,10 @@ import retrofit2.Response
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterUI(onSwitchToLogin: () -> Unit) {
-    var context = LocalContext.current
+    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var response = remember { mutableStateOf("") }
+    val response = remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
 
