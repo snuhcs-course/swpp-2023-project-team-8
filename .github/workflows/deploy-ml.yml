@@ -1,4 +1,4 @@
-name: CI
+name: Build image for backend for ml
 
 on:
   push:
@@ -7,10 +7,6 @@ on:
     pathes:
       - 'idl/**'
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   test:
