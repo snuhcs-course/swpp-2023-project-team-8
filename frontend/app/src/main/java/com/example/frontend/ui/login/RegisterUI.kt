@@ -38,6 +38,7 @@ import com.example.frontend.model.EmailModel
 import com.example.frontend.model.RegisterModel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
+import com.example.frontend.utilities.isValidSnuMail
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -51,6 +52,7 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
     var response = remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
+    val isInitialInput = email.isEmpty() && password.isEmpty()
 
 
     Column(
@@ -75,6 +77,8 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
             leadingIcon = {
                 Icon(imageVector = Icons.Default.Email, contentDescription = "Email")
             },
+            isError = !isValidSnuMail(email) && !isInitialInput,
+            supportingText = { if (!isValidSnuMail(email) && !isInitialInput) Text("SNU Mail을 입력해주세요") },
         )
 
         Button(
@@ -84,8 +88,6 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
                 .padding(top = 20.dp)
                 .align(Alignment.End)
         ) { Text(text = "Send") }
-
-        // Rightmost button
 
         OutlinedTextField(
             value = code,
