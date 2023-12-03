@@ -23,7 +23,7 @@ interface AuthService {
     fun login(@Body loginModel: LoginModel?): Call<AuthResponse?>?
 
     @POST("/verification_mails")
-    fun verifyEmail(@Body email: String): Call<EmailModel?>?
+    fun verifyEmail(@Body email: EmailModel): Call<EmailModel?>
 
     @POST("/users")
     fun register(@Body registerModel: RegisterModel?): Call<RegisterModel>
