@@ -46,7 +46,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_29_174124) do
     t.string "title"
     t.string "description"
     t.datetime "meet_at"
-    t.boolean "public"
+    t.boolean "is_public"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "place_id"
@@ -73,15 +73,6 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_29_174124) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "user_locations", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.geography "location", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["location"], name: "index_user_locations_on_location", using: :gist
-    t.index ["user_id"], name: "index_user_locations_on_user_id"
   end
 
   create_table "user_meet_ups", force: :cascade do |t|
@@ -114,9 +105,6 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_29_174124) do
     t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
   end
 
-  add_foreign_key "user_locations", "users"
-  add_foreign_key "user_meet_ups", "meet_ups"
-  add_foreign_key "user_meet_ups", "users"
   add_foreign_key "user_missions", "missions"
   add_foreign_key "user_missions", "users"
 end

@@ -4,5 +4,5 @@ class Place < ApplicationRecord
   include SnuAdapter
   include IdInOrdered
 
-  has_one :meet_up
+  has_many :meet_up
 end
