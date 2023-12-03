@@ -34,6 +34,7 @@ import com.example.frontend.model.EmailModel
 import com.example.frontend.model.RegisterModel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
+import com.example.frontend.utilities.HttpStatus
 import com.example.frontend.utilities.isValidSnuMail
 import retrofit2.Call
 import retrofit2.Callback
@@ -122,25 +123,29 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
     }
 }
 
-fun sendButtonHandler(
+/*
+ * 서버에게 인증 코드를 요청하는 함수
+ */
+private fun sendButtonHandler(
     context: Context,
     email: String,
     result: MutableState<String>,
     authService: AuthService = AuthService.create()
 ) {
-    val emailModel = EmailModel(email)
-//    val call = authService.verifyEmail(emailModel)
-//    call!!.enqueue(object : Callback<EmailModel?> {
-//        override fun onResponse(call: Call<EmailModel?>, response: Response<EmailModel?>) {
-//            result.value = "Response Code: " + response.code()
-//            Toast.makeText(context, "이메일을 확인해주세요", Toast.LENGTH_LONG).show()
-//        }
-//
-//        override fun onFailure(call: Call<EmailModel?>, t: Throwable) {
-//            result.value = "Error: " + t.message
-//            Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
-//        }
-//    })
+    authService.verifyEmail(EmailModel(email)).enqueue(object : Callback<EmailModel?> {
+        override fun onResponse(call: Call<EmailModel?>, response: Response<EmailModel?>) {
+            if (HttpStatus.fromCode(response.code()) != HttpStatus.CREATED) {
+                Toast.makeText(context, "에러가 발생했어요.", Toast.LENGTH_LONG).show()
+                return
+            } else {
+                Toast.makeText(context, "인증 코드가 전송되었습니다!", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        override fun onFailure(call: Call<EmailModel?>, t: Throwable) {
+            Toast.makeText(context, "에러가 발생했어요.", Toast.LENGTH_LONG).show()
+        }
+    })
 }
 
 fun registerButtonHandler(
