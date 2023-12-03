@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "simplecov"
+require "simplecov-markdown"
+
 SimpleCov.start "rails" do
   # Ignore channel, helpers, job
 
@@ -11,3 +13,4 @@ SimpleCov.start "rails" do
   add_filter "lib/swpp" # Ignore proto gen files
 end
 
+SimpleCov.formatter = SimpleCov::Formatter::MarkdownFormatter
