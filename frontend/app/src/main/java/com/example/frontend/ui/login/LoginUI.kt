@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.sp
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.frontend.api.AuthService
+import com.example.frontend.MapActivity
+import com.example.frontend.api.AuthAPI
 import com.example.frontend.model.AuthResponse
 import com.example.frontend.model.LoginModel
 import com.example.frontend.ui.theme.FrontendTheme
@@ -161,11 +163,11 @@ fun loginButtonHandler(
     val call = authService.login(loginModel)
     ///////////////////////////////////////////////////////////
     // TODO: 배포 이후 제거
-//    val nextIntent = Intent(context, MapActivity::class.java)
-//    context.startActivity(nextIntent)
-//    if (context is Activity) {
-//        context.finish()
-//    }
+    val nextIntent = Intent(context, MapActivity::class.java)
+    context.startActivity(nextIntent)
+    if (context is Activity) {
+        context.finish()
+    }
     ////////////////////////////////////////////////////////////
     call!!.enqueue(object : Callback<AuthResponse?> {
         override fun onResponse(call: Call<AuthResponse?>, response: Response<AuthResponse?>) {
@@ -232,7 +234,10 @@ fun getUsername(context: Context): String? {
     val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     return appPrefs.getString("USERNAME", "User0")
 }
-
+//fun getUserMail(context: Context): String? {
+//    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+//    return appPrefs.getString("USERMAIL", "sha@snu.ac.kr")
+//}
 
 fun getAuthtoken(context: Context): String {
     val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)

@@ -19,7 +19,9 @@ Rails.application.routes.draw do
     get :recommend, on: :collection
   end
 
-  resources :missions, only: [:index]
+  resources :missions, only: [:index] do
+    post :mark_completed, on: :member
+    end
 
   get "up" => "rails/health#show", as: :rails_health_check
 

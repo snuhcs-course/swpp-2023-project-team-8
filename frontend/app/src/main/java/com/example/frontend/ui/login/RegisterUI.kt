@@ -3,7 +3,6 @@ package com.example.frontend
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -22,10 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,63 +49,11 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(80.dp))
-        Text(
-            text = "Register",
-            style = TextStyle(
-                fontSize = 40.sp,
-                fontWeight = FontWeight(400),
-                color = Color(0xFF000000),
-                textAlign = TextAlign.Center,
-            ),
-            modifier = Modifier
-                .width(284.dp)
-                .height(50.dp)
-        )
-        Spacer(modifier = Modifier.height(40.dp))
-        Row {
-            Text(
-                text = "Login",
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFFA6A6A6),
-                    textAlign = TextAlign.Center
-                ),
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(40.dp)
-                    .clickable { onSwitchToLogin() }
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = "Register",
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFFDFD5EC),
-                ),
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(40.dp)
-            )
-
-        }
-        Spacer(modifier = Modifier.height(30.dp))
-        Text(
-            text = "이메일을 인증해주세요.",
-            style = TextStyle(
-                fontSize = 17.sp,
-                fontWeight = FontWeight(400),
-                color = Color(0xFFA6A6A6),
-
-                ),
-            modifier = Modifier
-                .width(180.dp)
-                .height(40.dp)
-                .offset(x = (-80).dp)
-        )
-
+        // TODO(heka1024): 키보드 입력 창에서 '다음' 버튼 등으로 넘어갈 수 있게 하기
+        // TODO(heka1024): 터치할 때 키보드 내려가게 하게
+        // 눌러서 내려가는 건
+        // 다음을 띄우려면
+        // imeAction = ImeAction.Next
         EmailAuthenticationField(
             email = email,
             onEmailChanged = { newEmail -> email = newEmail },

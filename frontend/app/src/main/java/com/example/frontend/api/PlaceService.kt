@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
+
 interface PlaceService {
     @POST("/sendlocation")
     fun send(@Body placeModel: PlaceModel?): Call<PlaceModel>?
