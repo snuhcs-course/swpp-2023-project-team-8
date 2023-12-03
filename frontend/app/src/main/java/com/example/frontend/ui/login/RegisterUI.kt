@@ -2,15 +2,11 @@ package com.example.frontend.ui.login
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
@@ -183,42 +179,6 @@ fun RegisterUIPreview() {
             color = colorScheme.background
         ) {
             RegisterUI {}
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EmailAuthenticationField(
-    email: String,
-    onEmailChanged: (String) -> Unit,
-    onSendClicked: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 20.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        OutlinedTextField(
-            value = email,
-            onValueChange = onEmailChanged,
-            label = { Text("Email Address") },
-            leadingIcon = {
-                Icon(imageVector = Icons.Default.Email, contentDescription = "Email")
-            },
-            modifier = Modifier
-                .padding(end = 8.dp) // Add some padding to separate from the button
-                .width(255.dp)
-        )
-
-        Button(
-            onClick = onSendClicked,
-            modifier = Modifier
-                .align(Alignment.CenterVertically) // Center the button vertically inside the Row
-            , colors = ButtonDefaults.buttonColors(Purple80)
-        ) {
-            Text(text = "Send")
         }
     }
 }
