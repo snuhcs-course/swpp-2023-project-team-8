@@ -18,10 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -32,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,17 +44,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.frontend.api.MissionAPI
-import com.example.frontend.model.AuthResponse
-import com.example.frontend.model.LoginModel
 import com.example.frontend.model.MissionModel
-import com.example.frontend.ui.login.getAuthtoken
+import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.theme.FrontendTheme
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MissionActivity : ComponentActivity() {
-    val authToken: String by lazy { getAuthtoken(this) }
+    val userContextRepository = UserContextRepository(this)
+    val authToken: String = userContextRepository.getAuthToken()
     val missionApi: MissionAPI by lazy { defaultMissionAPI(authToken) }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -111,6 +105,7 @@ fun defaultMissionAPI(authToken: String): MissionAPI {
     val retrofit = createAuthenticatedRetrofit(authToken)
     return retrofit.create(MissionAPI::class.java)
 }
+
 @Composable
 fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) {
     var title by remember { mutableStateOf("") }
@@ -337,7 +332,7 @@ fun ShowMoreDescriptionDialog(
 
 val defaultMissions = listOf(
     MissionModel("미션1", "친구와 우연히 만나기", false, "예상치 못한 장소에서 친구와 마주쳐 보세요!"),
-    MissionModel("미션2", "친구와 약속 잡기", false,"친구와 약속을 잡아 보세요!"),
+    MissionModel("미션2", "친구와 약속 잡기", false, "친구와 약속을 잡아 보세요!"),
     MissionModel("미션3", "친구와 약속 장소 정하기", false, "3명 이상의 친구와 약속을 잡아 보세요!"),
     MissionModel("미션4", "자하연 근처에서 친구 마주치기", false, "자하연에서 친구와 마주쳐 보세요!"),
     MissionModel("미션5", "관악산 등산하기", false, "관악산에 올라가 보세요!"),
@@ -361,6 +356,7 @@ fun ShowMissionUIPreview() {
         }
     }
 }
+
 @Composable
 fun GridItems(items: List<MissionModel>, itemContent: @Composable (MissionModel) -> Unit) {
     val rows = items.chunked(2)

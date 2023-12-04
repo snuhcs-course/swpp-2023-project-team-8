@@ -30,7 +30,7 @@
             android:label="@string/title_activity_mission"
             android:theme="@style/Theme.Frontend" />
         <activity
-            android:name=".UserInfoActivity"
+            android:name=".ui.settings.UserInfoActivity"
             android:exported="false"
             android:label="@string/title_activity_user_info"
             android:theme="@style/Theme.Frontend" />

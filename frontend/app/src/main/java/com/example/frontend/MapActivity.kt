@@ -4,14 +4,10 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
-import android.widget.Button
-
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -28,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AccountBox
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Settings
@@ -56,6 +51,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
+import com.example.frontend.ui.settings.UserInfoActivity
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -69,7 +65,6 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import org.w3c.dom.Text
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -406,48 +401,3 @@ fun BottomBar(currentLocation: LatLng?) {
         }
     }
 }
-
-//@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun App() {
-//    //checkin이 true일 때 체크인 화면 성공, false일 때 체크인 화면 실패
-//    var checkin by remember { mutableStateOf(true) }
-//    val scaffoldState : ScaffoldState = rememberScaffoldState()
-//    val coroutineScope : CoroutineScope = rememberCoroutineScope()
-//
-//
-//    if(checkin){
-//        LaunchedEffect(checkin) {
-//            scaffoldState.snackbarHostState.showSnackbar(
-//                message = "체크인에 성공했어요! 메인 화면으로 이동해요.",
-//                actionLabel = null,
-//                duration = SnackbarDuration.Short
-//            )
-//        }
-//    }else{
-//        LaunchedEffect(!checkin) {
-//            scaffoldState.snackbarHostState.showSnackbar(
-//                message = "체크인에 실패했어요!",
-//                actionLabel = "재시도",
-//                duration = SnackbarDuration.Short
-//            )
-//        }
-//
-//    }
-//
-//
-//
-//
-//    Scaffold(
-//        scaffoldState = scaffoldState,
-//        modifier = Modifier.offset(y = (-90).dp),
-//        content = {
-//
-//
-//
-//        }
-//    )
-//
-//
-//}
