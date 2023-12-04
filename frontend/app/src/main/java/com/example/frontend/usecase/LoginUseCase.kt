@@ -42,9 +42,11 @@ class LoginUseCase(
                 if (response.isSuccessful && response.body() != null) {
                     val authToken = response.body()?.token
                     val userName = response.body()?.userName
+                    val userMail = response.body()?.userMail
+                    val userProfile = response.body()?.userProfile
 
                     if (authToken != null) {
-                        saveAuthToken(authToken, userName)
+                        saveAuthToken(authToken, userName, userMail, userProfile?:-1)
                     }
                     result.value = "Logged in successfully"
 
@@ -70,7 +72,7 @@ class LoginUseCase(
 
 
     // To save the auth token securely when logging in
-    private fun saveAuthToken(authToken: String, userName: String?) {
+    private fun saveAuthToken(authToken: String, userName: String?, userMail: String?, userProfile :Int) {
         val masterKey = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
             .build()
@@ -87,6 +89,8 @@ class LoginUseCase(
         with(sharedPreferences.edit()) {
             putString("AUTH_TOKEN", authToken)
             putString("USERNAME", userName)
+            putString("USER_MAIL", userMail)
+            putInt("SELECTED_PREDEFINED_IMAGE", userProfile)
             apply()
         }
 

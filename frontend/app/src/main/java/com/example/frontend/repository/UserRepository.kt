@@ -19,6 +19,10 @@ class UserContextRepository(
         val defaultValue = "User0"
         return appPrefs.getString("USERNAME", defaultValue) ?: defaultValue
     }
+    fun getUserMail(): String {
+        val defaultValue = "sha@snu.ac.kr"
+        return appPrefs.getString("USER_MAIL", defaultValue) ?: defaultValue
+    }
 
     fun getAuthToken(): String {
         return appPrefs.getString("AUTH_TOKEN", "") ?: ""

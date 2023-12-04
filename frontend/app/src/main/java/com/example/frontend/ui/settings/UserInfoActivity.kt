@@ -218,8 +218,8 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-//                    text = getUsername(context)?: "김샤프",
-                    text = "김사프",
+                    text = UserContextRepository(context).getUsername()?: "김샤프",
+                    //text = "김사프",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
@@ -233,7 +233,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
             }
             Row(){
                 Text(
-                    text = "이메일",
+                    text = UserContextRepository(context).getUserMail()?:"이메일",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
