@@ -1,6 +1,5 @@
 package com.example.frontend.ui.login
 
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,11 +24,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import com.example.frontend.ui.component.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.usecase.loginUseCase
+import com.example.frontend.usecase.LoginUseCase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,13 +60,14 @@ fun LoginUI() {
         Spacer(modifier = Modifier.height(140.dp))
         CustomButton(
             buttonText = "Login",
-            onClickHandler = { loginUseCase(context, email, password, response) })
+            onClickHandler = { LoginUseCase(context, email, password, response).execute() }
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun LoginUIPreview() {
+private fun LoginUIPreview() {
     FrontendTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -78,35 +76,5 @@ fun LoginUIPreview() {
         ) {
             LoginUI()
         }
-    }
-}
-
-// To save the auth token securely when logging in
-fun saveAuthToken(context: Context, authToken: String, userName: String?) {
-    val masterKey = MasterKey.Builder(context)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
-
-    val sharedPreferences = EncryptedSharedPreferences.create(
-        context,
-        "secure_app_prefs",
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-
-    // Save auth token securely
-    with(sharedPreferences.edit()) {
-        putString("AUTH_TOKEN", authToken)
-        putString("USERNAME", userName)
-        apply()
-    }
-
-    // Update login state
-    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-    with(appPrefs.edit()) {
-        putBoolean("IS_LOGGED_IN", true)
-        putString("USERNAME", userName)
-        apply()
     }
 }

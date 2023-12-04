@@ -182,7 +182,7 @@ fun RegisterUIPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailAuthenticationField(
+private fun EmailAuthenticationField(
     email: String,
     onEmailChanged: (String) -> Unit,
     onSendClicked: () -> Unit
