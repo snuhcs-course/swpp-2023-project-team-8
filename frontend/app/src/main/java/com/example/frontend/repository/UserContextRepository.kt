@@ -46,13 +46,13 @@ class UserContextRepository(
     }
     fun saveSelectedPredefinedImage(imageId: Int?) {
         val editor = appPrefs.edit()
-        editor.putInt("SELECTED_PREDEFINED_IMAGE", imageId ?: -1)
+        if(imageId != null && imageId != -1) editor.putInt("SELECTED_PREDEFINED_IMAGE", imageId)
         editor.apply()
     }
 
     fun getSelectedPredefinedImage(): Int? {
         val imageId = appPrefs.getInt("SELECTED_PREDEFINED_IMAGE", -1)
-        return if (imageId != -1) imageId else null
+        return if (imageId != -1) imageId else 0
     }
 
 
