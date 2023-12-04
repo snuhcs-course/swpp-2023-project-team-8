@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.api.AuthService
 import com.example.frontend.model.EmailModel
 import com.example.frontend.model.RegisterModel
+import com.example.frontend.ui.component.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
 import retrofit2.Call

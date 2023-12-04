@@ -5,13 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,17 +21,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.example.frontend.ui.component.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.ui.theme.LightPurple
-import com.example.frontend.ui.theme.Purple80
 import com.example.frontend.usecase.loginUseCase
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,29 +108,5 @@ fun saveAuthToken(context: Context, authToken: String, userName: String?) {
         putBoolean("IS_LOGGED_IN", true)
         putString("USERNAME", userName)
         apply()
-    }
-}
-
-@Composable
-fun CustomButton(
-    buttonText: String,
-    onClickHandler: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-
-        colors = ButtonDefaults.buttonColors(Purple80),
-        onClick = onClickHandler,
-        modifier = modifier
-            .shadow(
-                elevation = 4.dp,
-                spotColor = LightPurple,
-                ambientColor = LightPurple
-            )
-            .width(318.dp)
-            .height(55.dp),
-        shape = RoundedCornerShape(10.dp)
-    ) {
-        Text(text = buttonText, fontSize = 20.sp)
     }
 }
