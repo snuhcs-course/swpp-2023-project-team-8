@@ -1,7 +1,6 @@
 package com.example.frontend.api
 
 import com.example.frontend.model.MeetupModel
-import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.utilities.BASE_URL
 import com.example.frontend.utilities.GsonProvider
 import okhttp3.OkHttpClient
@@ -23,7 +22,7 @@ interface MeetUpService {
     fun createMeetUp(@Body meetUp: MeetupModel): Call<MeetupModel>
 
     companion object {
-        fun create(): FriendService {
+        fun create(): MeetUpService {
             val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 
             val client = OkHttpClient.Builder()
@@ -35,7 +34,7 @@ interface MeetUpService {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(GsonProvider.gson))
                 .build()
-                .create(FriendService::class.java)
+                .create(MeetUpService::class.java)
         }
     }
 }

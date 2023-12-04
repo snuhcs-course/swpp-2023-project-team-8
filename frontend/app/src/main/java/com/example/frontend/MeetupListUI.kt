@@ -30,9 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.api.MeetUpService
+import com.example.frontend.data.defaultMeetups
 import com.example.frontend.model.MeetupModel
 import com.example.frontend.model.MissionModel
-import com.example.frontend.ui.login.getAuthtoken
 import com.google.android.gms.maps.model.LatLng
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,8 +40,7 @@ import retrofit2.Response
 
 
 class MeetupListUI : ComponentActivity() {
-    val authToken: String by lazy { getAuthtoken(this) }
-    val meetupService: MeetUpService by lazy { defaultMeetupService(authToken) }
+
     var meetups by mutableStateOf<List<MeetupModel>>(emptyList())
     var context = this
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,9 +96,9 @@ class MeetupListUI : ComponentActivity() {
                     if (meetups.isEmpty()) {
                         LoadingIndicator()
                     } else {
-                        PromiseList(meetups)
+                        MeetUpList(meetups)
                     }
-                    PromiseList(meetups)
+                    MeetUpList(meetups)
                 }
             }
         }
@@ -127,34 +126,25 @@ class MeetupListUI : ComponentActivity() {
     }
 }
 
-data class Promise(
-    val friends: List<String>,
-    val time: String,
-    val date: String,
-    val location: String
-)
-fun defaultMeetupService(authToken: String): MeetUpService {
-    val retrofit = createAuthenticatedRetrofit(authToken)
-    return retrofit.create(MeetUpService::class.java)
-}
+
 
 
 @Composable
-fun PromiseList(meetups: List<MeetupModel>) {
+fun MeetUpList(meetups: List<MeetupModel>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         items(meetups) { meetup ->
-            PromiseItem(meetup)
+            MeetUpItem(meetup)
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
-fun PromiseItem(promise: MeetupModel) {
+fun MeetUpItem(meetup: MeetupModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,7 +163,7 @@ fun PromiseItem(promise: MeetupModel) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(imageVector = Icons.Default.Person, contentDescription = null)
-                Text(promise.friends.joinToString(", "))
+                Text(meetup.friends.joinToString(", "))
             }
 
 
@@ -182,7 +172,7 @@ fun PromiseItem(promise: MeetupModel) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
-                Text("${promise.date} ${promise.time}")
+                Text("${meetup.date} ${meetup.time}")
             }
         }
 
