@@ -11,6 +11,7 @@ import com.example.frontend.model.AuthResponse
 import com.example.frontend.model.LoginModel
 import com.example.frontend.ui.login.defaultAuthService
 import com.example.frontend.ui.login.saveAuthToken
+import com.example.frontend.utilities.DISABLE_LOGIN
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,14 +29,14 @@ fun loginUseCase(
 ) {
     val loginModel = LoginModel(email, password)
     val call = authService.login(loginModel)
-    ///////////////////////////////////////////////////////////
-    // TODO: 배포 이후 제거
-//    val nextIntent = Intent(context, MapActivity::class.java)
-//    context.startActivity(nextIntent)
-//    if (context is Activity) {
-//        context.finish()
-//    }
-    ////////////////////////////////////////////////////////////
+
+    if (!DISABLE_LOGIN) { // TODO(heka1024): Remove this flag
+        val nextIntent = Intent(context, MapActivity::class.java)
+        context.startActivity(nextIntent)
+        if (context is Activity) {
+            context.finish()
+        }
+    }
     call!!.enqueue(object : Callback<AuthResponse?> {
         override fun onResponse(call: Call<AuthResponse?>, response: Response<AuthResponse?>) {
             if (response.isSuccessful && response.body() != null) {
