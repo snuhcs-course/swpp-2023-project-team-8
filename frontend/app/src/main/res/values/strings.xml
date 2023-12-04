@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">frontend</string>
+    <string name="app_name">샤프!</string>
     <string name="title_activity_check_in">CheckInActivity</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_place_rec">PlaceRecActivity</string>
