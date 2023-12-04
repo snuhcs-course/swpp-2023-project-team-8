@@ -118,17 +118,6 @@ fun saveAuthToken(context: Context, authToken: String, userName: String?) {
     }
 }
 
-fun getUsername(context: Context): String? {
-    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-    return appPrefs.getString("USERNAME", "User0")
-}
-
-
-fun getAuthtoken(context: Context): String {
-    val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-    return appPrefs.getString("AUTH_TOKEN", "")?:""
-}
-
 @Composable
 fun CustomButton(
     buttonText: String,
