@@ -27,12 +27,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.api.MeetUpService
 import com.example.frontend.data.defaultMeetups
+import com.example.frontend.data.defaultMissions
 import com.example.frontend.model.MeetupModel
 import com.example.frontend.model.MissionModel
+import com.example.frontend.usecase.MeetUpUseCase
+import com.example.frontend.usecase.MissionUseCase
 import com.google.android.gms.maps.model.LatLng
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,8 +50,13 @@ class MeetupListUI : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val meetUpUseCase = MeetUpUseCase(this)
 
-            fetchMeetUps()
+            LaunchedEffect(Unit) {
+                meetUpUseCase.fetch { fetchedMeetUps ->
+                    meetups = fetchedMeetUps
+                }
+            }
 
             FrontendTheme {
                 Spacer(
@@ -103,27 +112,7 @@ class MeetupListUI : ComponentActivity() {
             }
         }
     }
-    private fun fetchMeetUps() {
-        val call = meetupService.getMeetUps()
 
-        call.enqueue(object : Callback<List<MeetupModel>> {
-            override fun onResponse(
-                call: Call<List<MeetupModel>>,
-                response: Response<List<MeetupModel>>
-            ) {
-                if (response.isSuccessful) {
-                    runOnUiThread {
-                        meetups = response.body() ?: emptyList()
-                    }
-                } else {
-
-                }
-            }
-            override fun onFailure(call: Call<List<MeetupModel>>, t: Throwable) {
-                meetups = defaultMeetups
-            }
-        })
-    }
 }
 
 
@@ -187,4 +176,63 @@ fun MeetUpItem(meetup: MeetupModel) {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun ShowMeetUpUIPreview() {
+    var context = LocalContext.current
+    var meetups = defaultMeetups
+    FrontendTheme {
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color(0xFFF3EDF7))
+        )
+        Row(
+            modifier = Modifier
+                .height(54.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.KeyboardArrowLeft,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(46.dp)
+                    .clickable {
+                        val nextIntent = Intent(context, MapActivity::class.java)
+                        context.startActivity(nextIntent)
+                        // finish current activity
+                        if (context is Activity) {
+                            context.finish()
+                        }
+                    }
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                modifier = Modifier,
+                text = "약속 목록",
+                style = TextStyle(
+                    fontSize = 22.sp,
+                    lineHeight = 28.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFF1D1B20)
+                )
+            )
+        }
+        // A surface container using the 'background' color from the theme
+        Surface(
+            modifier = Modifier.padding(top =54.dp),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            if (meetups.isEmpty()) {
+                LoadingIndicator()
+            } else {
+                MeetUpList(meetups)
+            }
+            MeetUpList(meetups)
+        }
+    }
+
+}
 
