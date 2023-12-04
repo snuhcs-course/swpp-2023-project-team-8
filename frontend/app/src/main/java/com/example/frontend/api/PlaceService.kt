@@ -1,5 +1,4 @@
 package com.example.frontend.api
-
 import com.example.frontend.model.PlaceModel
 import com.google.android.gms.maps.model.LatLng
 import retrofit2.Call
@@ -15,4 +14,6 @@ interface PlaceService {
 
     @GET("/recommend")
     fun recommend(@Query("averagedLocation") averagedLocation: LatLng?): Call<List<PlaceModel>>
+
+
 }

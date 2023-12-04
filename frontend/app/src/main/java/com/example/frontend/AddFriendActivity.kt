@@ -286,7 +286,6 @@ fun FriendList(friends: List<UserWithLocationModel>) {
             BottomAppBar()
         }
     }
-
 }
 
 @Composable

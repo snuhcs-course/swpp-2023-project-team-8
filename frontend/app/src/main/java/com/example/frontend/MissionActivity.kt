@@ -66,9 +66,7 @@ class MissionActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            //val authToken = getAuthtoken(this)
             val missionApi = defaultMissionAPI(authToken)
-            //var missions by remember { mutableStateOf(emptyList<MissionModel>()) }
             fetchMissions()
 
             FrontendTheme {
