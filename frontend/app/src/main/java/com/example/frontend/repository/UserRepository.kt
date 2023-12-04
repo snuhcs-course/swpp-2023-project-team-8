@@ -19,6 +19,12 @@ class UserContextRepository(
         val defaultValue = "User0"
         return appPrefs.getString("USERNAME", defaultValue) ?: defaultValue
     }
+    fun saveUserName(newName: String?) {
+        val editor = appPrefs.edit()
+        editor.putString("USERNAME", newName)
+        editor.apply()
+    }
+
     fun getUserMail(): String {
         val defaultValue = "sha@snu.ac.kr"
         return appPrefs.getString("USER_MAIL", defaultValue) ?: defaultValue

@@ -43,7 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.frontend.api.MissionAPI
+import com.example.frontend.api.MissionService
 import com.example.frontend.model.MissionModel
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.theme.FrontendTheme
@@ -54,7 +54,7 @@ import retrofit2.Response
 class MissionActivity : ComponentActivity() {
     val userContextRepository = UserContextRepository(this)
     val authToken: String = userContextRepository.getAuthToken()
-    val missionApi: MissionAPI by lazy { defaultMissionAPI(authToken) }
+    val missionApi: MissionService by lazy { defaultMissionAPI(authToken) }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,9 +101,9 @@ class MissionActivity : ComponentActivity() {
 }
 
 
-fun defaultMissionAPI(authToken: String): MissionAPI {
+fun defaultMissionAPI(authToken: String): MissionService {
     val retrofit = createAuthenticatedRetrofit(authToken)
-    return retrofit.create(MissionAPI::class.java)
+    return retrofit.create(MissionService::class.java)
 }
 
 @Composable

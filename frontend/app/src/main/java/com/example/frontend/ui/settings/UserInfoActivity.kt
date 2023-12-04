@@ -2,6 +2,7 @@ package com.example.frontend.ui.settings
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -30,10 +31,13 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +54,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberImagePainter
 import com.example.frontend.MapActivity
@@ -80,8 +85,20 @@ class UserInfoActivity : ComponentActivity() {
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
-
     var selectedPredefinedImage = UserContextRepository(context).getSelectedPredefinedImage()
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    val currentUserName = UserContextRepository(context).getUserName() ?: "DefaultName"
+
+    if (showDialog) {
+        ProfileEditDialog(
+            currentName = currentUserName,
+            onClose = { showDialog = false },
+            onProfileUpdated = { newName ->
+                UserContextRepository(context).saveUserName(newName)
+            }
+        )
+    }
 
     fun showImageSelectionDialog() {
         AlertDialog.Builder(context)
@@ -142,21 +159,19 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     color = Color(0xFF1D1B20)
                 )
             )
-
-
             Spacer(modifier = Modifier.weight(0.4f))
             Icon(
                 imageVector = Icons.Outlined.Settings,
                 contentDescription = null,
                 modifier = Modifier
                     .size(40.dp)
+                    .clickable {
+                        showDialog = true
+                    }
             )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-
-
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -167,7 +182,6 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
         ) {
 
             if (selectedPredefinedImage != null) {
-
                 Image(
                     painter = painterResource(id = selectedPredefinedImage!!),
                     contentDescription = null,
@@ -218,7 +232,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = UserContextRepository(context).getUsername()?: "김샤프",
+                    text = UserContextRepository(context).getUserName()?: "김샤프",
                     //text = "김사프",
                     style = TextStyle(
                         fontSize = 16.sp,
@@ -233,20 +247,19 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
             }
             Row(){
                 Text(
-                    text = UserContextRepository(context).getUserMail()?:"이메일",
+                    text = "이메일",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
                         fontWeight = FontWeight(500),
                         color = Color(0xFF000000),
-
                         letterSpacing = 0.1.sp,
                     ) ,
                     modifier = Modifier.padding(start = 30.dp)
                 )
 
                 Text(
-                    text = "sha@snu.ac.kr",
+                    text = UserContextRepository(context).getUserMail()?:"sha@snu.ac.kr",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
@@ -275,6 +288,61 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProfileEditDialog(
+    currentName: String,
+    onClose: () -> Unit,
+    onProfileUpdated: (newName: String) -> Unit
+) {
+    var newName by rememberSaveable { mutableStateOf(currentName) }
+
+    Dialog(
+        onDismissRequest = onClose,
+    ) {
+        // Content of the dialog
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
+        ) {
+            Text("Edit Profile", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = newName,
+                onValueChange = { newName = it },
+                label = { Text("Name") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = {
+                        // Save changes and close the dialog
+                        onProfileUpdated(newName)
+                        onClose()
+                    }
+                ) {
+                    Text("Save")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = onClose) {
+                    Text("Cancel")
+                }
+            }
+        }
+    }
+}
+
 
 
 @Preview(showBackground = true)
