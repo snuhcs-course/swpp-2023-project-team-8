@@ -1,9 +1,6 @@
 package com.example.frontend.ui.login
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +19,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,15 +34,10 @@ import androidx.compose.ui.unit.sp
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.frontend.api.AuthService
-import com.example.frontend.MapActivity
-import com.example.frontend.model.AuthResponse
-import com.example.frontend.model.LoginModel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.LightPurple
 import com.example.frontend.ui.theme.Purple80
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.frontend.usecase.loginUseCase
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -82,7 +73,7 @@ fun LoginUI() {
         Spacer(modifier = Modifier.height(140.dp))
         CustomButton(
             buttonText = "Login",
-            onClickHandler = { loginButtonHandler(context, email, password, response) })
+            onClickHandler = { loginUseCase(context, email, password, response) })
     }
 }
 
@@ -98,54 +89,6 @@ fun LoginUIPreview() {
             LoginUI()
         }
     }
-}
-
-fun loginButtonHandler(
-    context: Context,
-    email: String,
-    password: String,
-    result: MutableState<String>,
-    authService: AuthService = defaultAuthService()
-) {
-    val loginModel = LoginModel(email, password)
-    val call = authService.login(loginModel)
-    ///////////////////////////////////////////////////////////
-    // TODO: 배포 이후 제거
-//    val nextIntent = Intent(context, MapActivity::class.java)
-//    context.startActivity(nextIntent)
-//    if (context is Activity) {
-//        context.finish()
-//    }
-    ////////////////////////////////////////////////////////////
-    call!!.enqueue(object : Callback<AuthResponse?> {
-        override fun onResponse(call: Call<AuthResponse?>, response: Response<AuthResponse?>) {
-            if (response.isSuccessful && response.body() != null) {
-                val authToken = response.body()?.token
-                val userName = response.body()?.userName
-
-                if (authToken != null) {
-                    saveAuthToken(context, authToken, userName)
-                }
-                result.value = "Logged in successfully"
-
-                val nextIntent = Intent(context, MapActivity::class.java)
-                context.startActivity(nextIntent)
-
-                if (context is Activity) {
-                    context.finish()
-                }
-            } else {
-                // Handle login failure
-                result.value = "Login failed: " + response.errorBody()?.string()
-                Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
-            }
-        }
-
-        override fun onFailure(call: Call<AuthResponse?>, t: Throwable) {
-            result.value = "Login error: " + t.message
-            Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
-        }
-    })
 }
 
 // To save the auth token securely when logging in
