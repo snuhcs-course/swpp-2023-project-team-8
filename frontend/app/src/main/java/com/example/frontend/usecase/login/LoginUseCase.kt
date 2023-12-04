@@ -1,4 +1,4 @@
-package com.example.frontend.usecase
+package com.example.frontend.usecase.login
 
 import android.app.Activity
 import android.content.Context

@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.component.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.usecase.LoginUseCase
+import com.example.frontend.usecase.login.LoginUseCase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

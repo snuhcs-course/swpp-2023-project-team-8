@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.component.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
-import com.example.frontend.usecase.RegisterUseCase
-import com.example.frontend.usecase.SendVerificationCodeUseCase
+import com.example.frontend.usecase.login.RegisterUseCase
+import com.example.frontend.usecase.login.SendVerificationCodeUseCase
 import com.example.frontend.utilities.isValidSnuMail
 
 @OptIn(ExperimentalMaterial3Api::class)
