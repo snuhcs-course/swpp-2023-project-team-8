@@ -16,7 +16,7 @@ class FriendUseCase (
     private val friendService: FriendService = FriendService.create()
 ){
 
-    fun fetch(onMissionsFetched: (List<UserWithLocationModel>) -> Unit) {
+    fun fetch(onFriendFetched: (List<UserWithLocationModel>) -> Unit) {
         val call = friendService.getAllFriends()
 
         call.enqueue(object : Callback<List<UserWithLocationModel>> {
@@ -26,14 +26,14 @@ class FriendUseCase (
             ) {
                 if (response.isSuccessful) {
                     val friends = response.body() ?: emptyList()
-                    onMissionsFetched(friends)
+                    onFriendFetched(friends)
                 } else {
-                    onMissionsFetched(defaultfriendList)
+                    onFriendFetched(defaultfriendList)
                 }
             }
 
             override fun onFailure(call: Call<List<UserWithLocationModel>>, t: Throwable) {
-                onMissionsFetched(defaultfriendList)
+                onFriendFetched(defaultfriendList)
             }
         })
     }
