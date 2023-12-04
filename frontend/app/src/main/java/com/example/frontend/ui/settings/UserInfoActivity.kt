@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.example.frontend.ui.settings
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -40,7 +40,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -55,6 +54,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
+import com.example.frontend.MapActivity
+import com.example.frontend.MissionActivity
+import com.example.frontend.R
 import com.example.frontend.ui.theme.FrontendTheme
 
 class UserInfoActivity : ComponentActivity() {
