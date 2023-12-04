@@ -80,6 +80,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var selectedImageUri by rememberSaveable  { mutableStateOf<Uri?>(null) }
     var selectedPredefinedImage by rememberSaveable  { mutableStateOf<Int?>(null) }
 
+    // TODO(sggithi): Refactor using ViewModel
     val getContent: ActivityResultLauncher<String> = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
