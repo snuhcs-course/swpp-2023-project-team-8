@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -135,7 +137,10 @@ class MapActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    FriendsMapUI(currentLocation)
+                    FriendsMapUI(currentLocation, onClick = {
+                        val intent = Intent(this, MeetupActivity::class.java)
+                        this.startActivity(intent)
+                    })
                 }
             }
         }
@@ -157,7 +162,10 @@ class MapActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    FriendsMapUI(currentLocation)
+                    FriendsMapUI(currentLocation, onClick = {
+                        val intent = Intent(this, MeetupActivity::class.java)
+                        this.startActivity(intent)
+                    })
                 }
             }
         }
@@ -240,7 +248,8 @@ class MapActivity : ComponentActivity() {
 fun MapUI(
     currentLocation: LatLng?,
     friends: List<UserWithLocationModel>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
 
     MaterialTheme {
@@ -283,6 +292,14 @@ fun MapUI(
                         }
                     }
                 }
+                FloatingActionButton(
+                    onClick = { onClick() },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(50.dp)
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = null)
+                }
             }
 
             // Bottom bar at the bottom
@@ -292,7 +309,7 @@ fun MapUI(
 }
 
 @Composable
-fun FriendsMapUI(currentLocation: LatLng?) {
+fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
     val viewModel: FriendsViewModel = viewModel()
     val friendsList by viewModel.friendsList.observeAsState(emptyList())
 
@@ -303,7 +320,7 @@ fun FriendsMapUI(currentLocation: LatLng?) {
         }
     }
 
-    MapUI(currentLocation, friendsList)
+    MapUI(currentLocation, friendsList, onClick = { onClick() })
 }
 
 
@@ -311,7 +328,7 @@ fun FriendsMapUI(currentLocation: LatLng?) {
 @Composable
 fun MapUIPreview() {
     FrontendTheme {
-        MapUI(LatLng(1.35, 103.87), emptyList())
+        MapUI(LatLng(1.35, 103.87), emptyList(), onClick = {})
     }
 }
 
@@ -343,8 +360,8 @@ fun BottomBar(currentLocation: LatLng?) {
         Icons.Outlined.DateRange,
         Icons.Outlined.CheckCircle,
         Icons.Outlined.Settings,
-        
-    )
+
+        )
 
     Box(
         modifier = Modifier
@@ -389,6 +406,7 @@ fun BottomBar(currentLocation: LatLng?) {
                             val nextIntent = Intent(context, MissionActivity::class.java)
                             context.startActivity(nextIntent)
                         }
+
                         icons[4] -> {
                             // userInfo로 이동
                             val nextIntent = Intent(context, UserInfoActivity::class.java)

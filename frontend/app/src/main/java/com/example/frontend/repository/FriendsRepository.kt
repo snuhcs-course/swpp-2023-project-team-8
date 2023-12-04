@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.frontend.api.FriendService
 import com.example.frontend.callback.FriendLocationCallback
+import com.example.frontend.data.data
 import com.example.frontend.interceptor.AuthInterceptor
 import com.example.frontend.model.UserWithLocationModel
 import dagger.Module
@@ -66,10 +67,6 @@ class FriendsViewModel @Inject constructor(private val repository: FriendsReposi
     }
 }
 
-val defaultfriendList = listOf(
-    UserWithLocationModel(1, "Alice", "Sha@snu.ac.kr", 125.9, 110.2),
-    UserWithLocationModel(2, "Bob", "sha@snu.ac.kr", 11.3, 119.2),
-)
 
 @Module
 @InstallIn(SingletonComponent::class)

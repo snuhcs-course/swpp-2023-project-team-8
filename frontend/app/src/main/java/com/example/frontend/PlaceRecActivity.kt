@@ -1,9 +1,12 @@
 package com.example.frontend
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -24,6 +27,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,9 +41,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.api.PlaceService
+import com.example.frontend.model.MissionModel
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.usecase.MissionUseCase
+import com.example.frontend.usecase.PlaceUseCase
 import com.google.android.gms.maps.model.LatLng
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -45,36 +55,32 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDateTime
 
 class PlaceRecActivity() : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val userContextRepository = UserContextRepository(this)
+        val title = intent.getStringExtra("title")
+        val meetAtString = intent.getStringExtra("meetAt")
+        val meetAt = LocalDateTime.parse(meetAtString)
+        val userIds = intent.getLongArrayExtra("userIds")
 
         // averagedLocation 넘겨 받기
-        val averagedLocation: LatLng? = intent.getParcelableExtra("averagedLocation")
-        val userName = userContextRepository.getUserName()
-        val authToken = userContextRepository.getAuthToken()
-        val call = defaultRecAPI(authToken).recommend(averagedLocation)
+        val averagedLocation: LatLng = intent.getParcelableExtra("averagedLocation") ?: LatLng(10.1, 12.2)
 
-        call.enqueue(object : Callback<List<PlaceModel>> {
-            override fun onResponse(
-                call: Call<List<PlaceModel>>,
-                response: Response<List<PlaceModel>>
-            ) {
-                if (response.isSuccessful) {
-                    val placeModels: List<PlaceModel>? = response.body()
-                } else {
+        var userName = UserContextRepository(this).getUserName()
+        var places by mutableStateOf<List<PlaceModel>>(emptyList())
+        setContent {
+            val placeUseCase = PlaceUseCase(this, averagedLocation)
 
+            LaunchedEffect(Unit) {
+                placeUseCase.fetch { fetchedPlaces ->
+                    places = fetchedPlaces
                 }
             }
 
-            override fun onFailure(call: Call<List<PlaceModel>>, t: Throwable) {
-            }
-        })
-
-        setContent {
             FrontendTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -95,7 +101,7 @@ class PlaceRecActivity() : ComponentActivity() {
                                 .height(300.dp)
                                 .padding(top = 250.dp)
                         ) {
-                            MapUI(LatLng(126.9511, 37.4594), emptyList())
+                            MapUI(LatLng(126.9511, 37.4594), emptyList(), onClick = {})
 
                         }
 
@@ -107,31 +113,7 @@ class PlaceRecActivity() : ComponentActivity() {
     }
 }
 
-class AuthInterceptor(private val authToken: String) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
-        val request = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer $authToken")
-            .build()
-        return chain.proceed(request)
-    }
-}
 
-fun createAuthenticatedRetrofit(authToken: String): Retrofit {
-    val httpClient = OkHttpClient.Builder()
-        .addInterceptor(AuthInterceptor(authToken))
-        .build()
-
-    return Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:3000") // Adjust the base URL accordingly
-        .addConverterFactory(GsonConverterFactory.create())
-        .client(httpClient)
-        .build()
-}
-
-fun defaultRecAPI(authToken: String): PlaceService {
-    val retrofit = createAuthenticatedRetrofit(authToken)
-    return retrofit.create(PlaceService::class.java)
-}
 
 @Composable
 fun PlaceList(placeModels: List<PlaceModel>, modifier: Modifier = Modifier) {
@@ -242,4 +224,3 @@ fun PlaceRecUIPreview() {
         PlaceRecUI("김민수")
     }
 }
-

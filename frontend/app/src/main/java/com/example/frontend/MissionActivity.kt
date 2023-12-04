@@ -45,9 +45,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.frontend.api.MissionService
+import com.example.frontend.data.defaultMissions
 import com.example.frontend.model.MissionModel
 import com.example.frontend.repository.UserContextRepository
-import com.example.frontend.repository.defaultMissions
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.usecase.MissionUseCase
 import retrofit2.Call
