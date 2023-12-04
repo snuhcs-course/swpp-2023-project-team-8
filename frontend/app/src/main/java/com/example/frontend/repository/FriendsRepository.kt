@@ -22,6 +22,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
+
 class FriendsRepository(private val friendService: FriendService) {
 
     fun getNearbyFriends(callback: FriendLocationCallback) {
@@ -64,6 +65,11 @@ class FriendsViewModel @Inject constructor(private val repository: FriendsReposi
         })
     }
 }
+
+val defaultfriendList = listOf(
+    UserWithLocationModel(1, "Alice", "Sha@snu.ac.kr", 125.9, 110.2),
+    UserWithLocationModel(2, "Bob", "sha@snu.ac.kr", 11.3, 119.2),
+)
 
 @Module
 @InstallIn(SingletonComponent::class)

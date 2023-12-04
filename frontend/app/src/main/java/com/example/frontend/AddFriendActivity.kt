@@ -35,7 +35,6 @@ class AddFriendActivity : ComponentActivity() {
 @Composable
 fun FriendScreen(showSearch: Boolean, onShowSearchChanged: (Boolean) -> Unit) {
     BottomAppBar(onSearchClicked = { onShowSearchChanged(true) })
-
     if (showSearch) {
         SearchFriend()
     }
@@ -62,8 +61,6 @@ fun BottomAppBar(onSearchClicked: () -> Unit) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "뒤로 가기")
                     }
 
-
-
                     Icon(imageVector = Icons.Default.Person, contentDescription = "프로필")
                     Text(text = "My Name", Modifier.offset(5.dp, 0.dp))
 
@@ -81,7 +78,6 @@ fun BottomAppBar(onSearchClicked: () -> Unit) {
                         )
                     }
                 },
-
 
                 floatingActionButton = {
                     FloatingActionButton(

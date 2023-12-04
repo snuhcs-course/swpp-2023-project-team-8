@@ -228,10 +228,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
 }
 
 fun getMoreDescription(missionTitle: String, missions: List<MissionModel>): String {
-    // Find the MissionModel for the given missionTitle
     val mission = missions.find { it.title == missionTitle }
-
-    // Provide different descriptions based on the mission title
     return mission?.showMore ?: "$missionTitle 상세 설명 업데이트 필요"
 }
 
@@ -324,10 +321,10 @@ fun GridItems(items: List<MissionModel>, itemContent: @Composable (MissionModel)
             Row {
                 for (mission in rowItems) {
                     itemContent(mission)
-                    Spacer(modifier = Modifier.width(16.dp)) // Adjust spacing as needed
+                    Spacer(modifier = Modifier.width(16.dp))
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp)) // Adjust spacing as needed
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
