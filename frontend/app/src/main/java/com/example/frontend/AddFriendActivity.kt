@@ -90,7 +90,6 @@ class AddFriendActivity : ComponentActivity() {
             override fun onFailure(call: Call<List<UserWithLocationModel>>, t: Throwable) {
                 runOnUiThread {
                     friendlist = defaultfriendList
-
                 }
             }
         })
@@ -109,7 +108,6 @@ class AddFriendActivity : ComponentActivity() {
                         FriendList(friendlist)
                     }
                     FriendList(friendlist)
-
 
                 }
             }
@@ -249,19 +247,6 @@ data class Friend(val name: String)
 val defaultfriendList = listOf(
     UserWithLocationModel(1, "Alice", "Sha@snu.ac.kr", 125.9, 110.2),
     UserWithLocationModel(2, "Bob", "sha@snu.ac.kr", 11.3, 119.2),
-//
-//    Friend("Charlie"),
-//    Friend("David"),
-//    Friend("Apple"),
-//    Friend("Banana"),
-//    Friend("WaterMelon"),
-//    Friend("Maria"),
-//    Friend("Anna"),
-//    Friend("Bips"),
-//    Friend("Yangki"),
-//    Friend("Tristana"),
-//    Friend("Meliodas"),
-//    Friend("Ban")
 )
 
 @Composable

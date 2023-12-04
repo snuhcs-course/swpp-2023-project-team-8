@@ -1,5 +1,7 @@
 package com.example.frontend
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.frontend.ui.theme.FrontendTheme
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,9 +20,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.frontend.api.MeetUpService
 import com.example.frontend.model.MeetupModel
 import com.example.frontend.model.MissionModel
@@ -34,6 +43,7 @@ class MeetupListUI : ComponentActivity() {
     val authToken: String by lazy { getAuthtoken(this) }
     val meetupService: MeetUpService by lazy { defaultMeetupService(authToken) }
     var meetups by mutableStateOf<List<MeetupModel>>(emptyList())
+    var context = this
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -41,9 +51,47 @@ class MeetupListUI : ComponentActivity() {
             fetchMeetUps()
 
             FrontendTheme {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = Color(0xFFF3EDF7))
+                )
+                Row(
+                    modifier = Modifier
+                        .height(54.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.KeyboardArrowLeft,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(46.dp)
+                            .clickable {
+                                val nextIntent = Intent(context, MapActivity::class.java)
+                                context.startActivity(nextIntent)
+                                // finish current activity
+                                if (context is Activity) {
+                                    context.finish()
+                                }
+                            }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        modifier = Modifier,
+                        text = "약속 목록",
+                        style = TextStyle(
+                            fontSize = 22.sp,
+                            lineHeight = 28.sp,
+                            fontWeight = FontWeight(400),
+                            color = Color(0xFF1D1B20)
+                        )
+                    )
+                }
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.padding(top =54.dp),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     if (meetups.isEmpty()) {
