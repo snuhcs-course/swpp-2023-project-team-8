@@ -22,6 +22,10 @@ interface AuthService {
     @POST("/auth/login")
     fun login(@Body loginModel: LoginModel?): Call<AuthResponse?>?
 
+    // TODO: rename 추가
+    @POST("/rename")
+    fun rename(@Body newName: String?)
+
     @POST("/verification_mails")
     fun verifyEmail(@Body email: String): Call<EmailModel?>?
 

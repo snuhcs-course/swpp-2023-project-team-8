@@ -11,6 +11,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 interface FriendService {
+    // TODO: ALL FRIEND 데려오기 vs 가까운 친구 데려오기
+    @GET("/firends/all")
+    fun getAllFriends(): Call<List<UserWithLocationModel>>
 
     @GET("/friends/nearby")
     fun getNearbyFriends(): Call<List<UserWithLocationModel>>
