@@ -11,7 +11,7 @@ import com.example.frontend.model.AuthResponse
 import com.example.frontend.model.LoginModel
 import com.example.frontend.ui.login.defaultAuthService
 import com.example.frontend.ui.login.saveAuthToken
-import com.example.frontend.utilities.DISABLE_LOGIN
+import com.example.frontend.utilities.BYPASS_LOGIN
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,7 +30,7 @@ fun loginUseCase(
     val loginModel = LoginModel(email, password)
     val call = authService.login(loginModel)
 
-    if (!DISABLE_LOGIN) { // TODO(heka1024): Remove this flag
+    if (BYPASS_LOGIN) { // TODO(heka1024): Remove this flag
         val nextIntent = Intent(context, MapActivity::class.java)
         context.startActivity(nextIntent)
         if (context is Activity) {
