@@ -2,13 +2,17 @@ package com.example.frontend.ui.login
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.api.AuthService
 import com.example.frontend.model.EmailModel
 import com.example.frontend.model.RegisterModel
+import com.example.frontend.ui.component.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
 import com.example.frontend.utilities.HttpStatus
@@ -159,7 +164,7 @@ fun registerButtonHandler(
     password: String,
     result: MutableState<String>,
     onSwitchToLogin: () -> Unit,
-    authService: AuthService = defaultAuthService()
+    authService: AuthService = AuthService.create()
 ) {
     val registerModel = RegisterModel(email, code, name, password)
     val call = authService.register(registerModel)
