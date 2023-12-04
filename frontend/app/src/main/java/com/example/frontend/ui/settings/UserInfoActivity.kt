@@ -28,11 +28,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -57,6 +54,7 @@ import coil.compose.rememberImagePainter
 import com.example.frontend.MapActivity
 import com.example.frontend.MissionActivity
 import com.example.frontend.R
+import com.example.frontend.ui.settings.component.MissionCard
 import com.example.frontend.ui.theme.FrontendTheme
 
 class UserInfoActivity : ComponentActivity() {
@@ -297,70 +295,8 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 MissionCard()
             }
         }
-
-
-
     }
 }
-
-
-@Composable
-fun MissionCard() {
-    var context = LocalContext.current
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF3EDF7),
-        ),
-        modifier = Modifier
-            .padding(top = 50.dp)
-            .size(width = 300.dp, height = 500.dp)
-            .fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Top
-        ) {
-            Row(){
-                Icon(
-                    imageVector = Icons.Outlined.CheckCircle,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clickable {
-                            val nextIntent = Intent(context, MissionActivity::class.java)
-                            context.startActivity(nextIntent)
-                        }
-                        .size(50.dp),
-
-                    tint = (Color(0xFF6750A4))
-
-                )
-                Text(
-                    text = "달성 기록",
-                    color = Color(0xFF000000),
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        lineHeight = 20.sp,
-                        fontWeight = FontWeight(500),
-                        color = Color(0xFF000000),
-                        letterSpacing = 0.1.sp,
-                    )  ,
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .padding(top=3.dp)
-                        .clickable {
-                            val nextIntent = Intent(context, MissionActivity::class.java)
-                            context.startActivity(nextIntent)
-                        }
-                )
-
-            }
-
-        }
-    }
-}
-
 
 
 @Preview(showBackground = true)
