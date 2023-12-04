@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -78,13 +79,13 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
             },
             isError = !isValidSnuMail(email) && !isInitialInput,
             supportingText = { if (!isValidSnuMail(email) && !isInitialInput) Text("SNU Mail을 입력해주세요") },
+            modifier = Modifier.fillMaxWidth()
         )
 
         Button(
             onClick = { isWaitingForResponse.value = true; sendButtonHandler(context, email, isWaitingForResponse) },
             colors = ButtonDefaults.buttonColors(Purple80),
             modifier = Modifier
-                .padding(top = 20.dp)
                 .align(Alignment.End),
             enabled = !isWaitingForResponse.value,
         ) { Text(text = "Send") }
@@ -93,19 +94,22 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
             value = code,
             onValueChange = { code = it },
             label = { Text("Code") },
+            modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
             label = { Text("Name") },
+            modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -121,7 +125,8 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
                     response,
                     onSwitchToLogin
                 )
-            }
+            },
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
