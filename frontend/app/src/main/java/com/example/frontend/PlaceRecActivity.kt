@@ -1,9 +1,12 @@
 package com.example.frontend
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -50,10 +53,17 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDateTime
 
 class PlaceRecActivity() : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val title = intent.getStringExtra("title")
+        val meetAtString = intent.getStringExtra("meetAt")
+        val meetAt = LocalDateTime.parse(meetAtString)
+        val userIds = intent.getLongArrayExtra("userIds")
 
         // averagedLocation 넘겨 받기
         val averagedLocation: LatLng? = intent.getParcelableExtra("averagedLocation")
@@ -98,7 +108,7 @@ class PlaceRecActivity() : ComponentActivity() {
                                 .height(300.dp)
                                 .padding(top = 250.dp)
                         ) {
-                            MapUI(LatLng(126.9511, 37.4594), emptyList())
+                            MapUI(LatLng(126.9511, 37.4594), emptyList(), onClick = {})
 
                         }
 

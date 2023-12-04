@@ -1,10 +1,15 @@
 package com.example.frontend
 
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +20,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Checkbox
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,44 +50,72 @@ import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.login.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
-import com.google.android.gms.maps.model.LatLng
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.frontend.model.UserWithLocationModel
+import com.example.frontend.repository.FriendsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
 
+@AndroidEntryPoint
 class MeetupActivity : ComponentActivity() {
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Retrieve the currentLocation from the intent
 
-        val currentLocation: LatLng? = intent.getParcelableExtra("currentLocation")
         setContent {
             FrontendTheme {
-                MeetupUI(currentLocation) {
-                    // Handle switch to register
+                val navController = rememberNavController()
+                val selectedFriends = mutableStateOf<List<Long>>(emptyList())
+
+                val viewModel: FriendsViewModel = viewModel()
+                val friendsList by viewModel.friendsList.observeAsState(emptyList())
+
+                LaunchedEffect(Unit) {
+                    viewModel.fetchFriends()
+                }
+
+                NavHost(navController = navController, startDestination = "meetupUI") {
+                    composable("meetupUI") { MeetupUI(navController, selectedFriends) }
+                    composable("friendListUI") {
+                        FriendListUI(selectedFriends, {}, friendsList, navController)
+                    }
                 }
             }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
+fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Long>>) {
 
-    var title by remember { mutableStateOf("") }
-    var hour by remember { mutableStateOf("") }
-    var minute by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
-    var explain by remember { mutableStateOf("") }
+    var title by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
     var context = LocalContext.current
     val activity = LocalContext.current as? ComponentActivity
 
-    /*
-    var selectedDate by remember { mutableStateOf(Calendar.getInstance().time) }
-    var selectedTime by remember { mutableStateOf(Calendar.getInstance().time) }
-    var showDatePicker by remember { mutableStateOf(false) }
-    var showTimePicker by remember { mutableStateOf(false) }
-     */
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -88,7 +126,7 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
                 .height(64.dp)
                 .background(Color(0xFFF3EDF7))
         ) {
-            Box{
+            Box {
                 Spacer(modifier = Modifier.height(15.dp))
                 Text(
                     text = "밋업 생성",
@@ -114,350 +152,176 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
                         .padding(start = 16.dp, top = 16.dp),
                     colors = ButtonDefaults.buttonColors(Purple80)
                 ) {
-                    Text( text = "취소")
+                    Text(text = "취소")
                 }
             }
 
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         OutlinedTextField(
             value = title,
             onValueChange = { title = it },
             label = { Text("제목") },
-
+            modifier = Modifier.width(310.dp)
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
-        OutlinedTextField(//Picker로 교체
-            value = date,
-            onValueChange = { date = it },
-            label = { Text("날짜") },
-            )
-
-        /* OutlinedTextField(
-            value = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedDate),
-            onValueChange = {},
-            label = { Text("Select Date") },
-            trailingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_calendar),
-                    contentDescription = null,
-                    modifier = Modifier.clickable {
-                        showDatePicker = true
-                    }
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        ) */
-
-        /*
-        if (showDatePicker) {
-            DatePickerDialog(
-                onDismissRequest = { showDatePicker = false },
-                selectedDate = selectedDate,
-                onDateSelected = {
-                    selectedDate = it
-                    showDatePicker = false
-                }
-            )
-        }
-         */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Row{
-            /*
-            OutlinedTextField(
-            value = SimpleDateFormat("HH:mm", Locale.getDefault()).format(selectedTime),
-            onValueChange = {},
-            label = { Text("Select Time") },
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Schedule,
-                    contentDescription = null,
-                    modifier = Modifier.clickable {
-                        showTimePicker = true
-                    }
-                )
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-             */
-
-
-
-            /*
-             if (showTimePicker) {
-            TimePickerDialog(
-                onDismissRequest = { showTimePicker = false },
-                selectedTime = selectedTime,
-                onTimeSelected = {
-                    selectedTime = it
-                    showTimePicker = false
-                }
-            )
-        }
-    }
-}
-
-             */
-            OutlinedTextField(//Picker로 교체
-                value = hour,
-                onValueChange = { hour = it },
-                label = { Text("시") },
-                modifier = Modifier
-                    .offset(x = (-15).dp)
-                    .background(Color.Transparent)
-                    .width(96.dp)
-                    .height(72.dp)
-            )
-            Text(
-                text = ":",
-                style = TextStyle(
-                    fontSize = 57.sp,
-                    lineHeight = 64.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFF1D1B20),
-                    textAlign = TextAlign.Center,
-                ),
-                modifier = Modifier
-                    .offset(x = (0).dp)
-            )
-            OutlinedTextField(//Picker로 교체
-                value = minute,
-                onValueChange = { minute = it },
-                label = { Text("분") },
-                modifier = Modifier
-                    .offset(x = (15).dp)
-                    .background(Color.Transparent)
-                    .width(96.dp)
-                    .height(72.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = explain,
-            onValueChange = { explain = it },
+            value = description,
+            onValueChange = { description = it },
             label = { Text("설명") },
+            modifier = Modifier.width(310.dp)
         )
-        Spacer(modifier = Modifier.height(35.dp))
 
-        Row{
+        val datePickerState =
+            rememberDatePickerState(
+                initialSelectedDateMillis = System.currentTimeMillis(),
+                initialDisplayMode = DisplayMode.Input
+            )
+        Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+            DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
+        }
 
-                Text(
-                    text = "친구 초대 ",
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight(400),
-                        color = Color(0xFF000000),
+        val timePickerState = rememberTimePickerState()
+        TimeInput(timePickerState)
 
-                        ),
+        Spacer(modifier = Modifier.height(30.dp))
 
-                    modifier = Modifier
-                        .width(130.dp)
-                        .height(64.dp)
-                        .padding(start = 40.dp)
-                )
+        Row {
 
-                Button(
-                    onClick = {
+            Text(
+                text = "친구 초대: ${selectedFriends.value.size}명",
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFF000000),
 
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically) // Center the button vertically inside the Row
-                        .offset(y = (-19).dp)
-                    , colors = ButtonDefaults.buttonColors(Purple80)
-                ) {
-                    Text(text = "초대하기")
-                }
+                    ),
+
+                modifier = Modifier
+                    .width(180.dp)
+                    .height(64.dp)
+                    .padding(start = 40.dp)
+            )
+
+            Button(
+                onClick = {
+                    navController.navigate("friendListUI")
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterVertically) // Center the button vertically inside the Row
+                    .offset(y = (-19).dp), colors = ButtonDefaults.buttonColors(Purple80)
+            ) {
+                Text(text = "초대하기")
+            }
 
 
         }
 
-        Spacer(modifier = Modifier.height(140.dp))
-        Row{
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .align(Alignment.CenterVertically) // Center the button vertically inside the Row
-                
-                , colors = ButtonDefaults.buttonColors(Purple80)
-            ) {
-                Text(text = "공개")
-            }
-            Spacer(modifier = Modifier.width(5.dp))
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .align(Alignment.CenterVertically) // Center the button vertically inside the Row
-
-                , colors = ButtonDefaults.buttonColors(Purple80)
-            ) {
-                Text(text = "비공개")
-            }
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-
-
-        // (현재 유저 위치) currentLocation
-        // averagedLocation: 친구들 위치와 현재 유저 위치의 평균 값
-        ///////////////////////////////////////////////////////////////////
-        //
-        val averagedLocation: LatLng? = LatLng(1.35, 103.87)
-        ///////////////////////////////////////////////////////////////////
         CustomButton(
             buttonText = "장소 선택",
             onClickHandler = {
-//                val nextIntent = Intent(context, PlaceRecActivity::class.java)
-//                nextIntent.putExtra("averagedLocation", averagedLocation)
-//                context.startActivity(nextIntent)
-
+                val nextIntent = Intent(context, PlaceRecActivity::class.java)
+                nextIntent.putExtra("title", title)
+                nextIntent.putExtra("description", description)
+                val selectedDate: LocalDate =
+                    Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
+                        ZoneId.systemDefault()
+                    ).toLocalDate()
+                val selectedTime: LocalTime =
+                    LocalTime.of(timePickerState.hour, timePickerState.minute)
+                val selectedDateTime: LocalDateTime = LocalDateTime.of(selectedDate, selectedTime)
+                val dateTimeString = selectedDateTime.toString()
+                nextIntent.putExtra("meetAt", dateTimeString)
+                val userIds = selectedFriends.value.toLongArray()
+                nextIntent.putExtra("userIds", userIds)
+                context.startActivity(nextIntent)
             })
     }
 }
 
-
-/*
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerDialog(
-    onDismissRequest: () -> Unit,
-    selectedDate: Date,
-    onDateSelected: (Date) -> Unit
+fun FriendListUI(
+    selectedFriends: MutableState<List<Long>>,
+    onSelectionComplete: () -> Unit,
+    friendsList: List<UserWithLocationModel>,
+    navController: NavController
 ) {
-    var date by remember { mutableStateOf(selectedDate) }
+    // Local state for search query
+    var searchQuery by remember { mutableStateOf("") }
 
 
-    DatePicker(
-        value = date,
-        onValueChange = {
-            date = it
-        },
-        onDismissRequest = onDismissRequest,
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
-            .fillMaxWidth()
-            .heightIn(LocalDensity.current.density * 360.dp),
-        colors = DatePickerDefaults.colors(
-            headerBackgroundColor = MaterialTheme.colorScheme.primary,
-            headerTextColor = MaterialTheme.colorScheme.onPrimary,
-            selectedDayBackgroundColor = MaterialTheme.colorScheme.primary,
-            selectedDayTextColor = MaterialTheme.colorScheme.onPrimary,
-            dayTextColor = MaterialTheme.colorScheme.onSurface,
-            dayBackgroundColor = MaterialTheme.colorScheme.background,
-            daySelectedTextColor = MaterialTheme.colorScheme.onPrimary
+    // Dummy list of friends
+    val filteredFriends = friendsList.filter { it.name.contains(searchQuery, ignoreCase = true) }
+
+    // Handle friend selection
+    val selectedFriendIds = remember { mutableStateOf(listOf<Long>()) }
+
+    Column {
+        TopAppBar(
+            title = { Text(text = "친구 초대") },
+            actions = {
+                IconButton(onClick = { /* handle search icon click */ }) {
+                    Icon(Icons.Filled.Search, contentDescription = "Search")
+                }
+            }
         )
-    ) {
-
-        Column(
+        // Search bar
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            label = { Text("검색") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(
-                onClick = {
-                    onDateSelected(date)
-                    onDismissRequest()
-                },
-                modifier = Modifier
-                    .padding(end = 8.dp)
-            ) {
-                Text("OK")
-            }
+                .padding(8.dp)
+        )
 
-            Button(
-                onClick = {
-                    onDismissRequest()
-                },
-                modifier = Modifier
-                    .padding(start = 8.dp)
-            ) {
-                Text("Cancel")
+        // Friends list
+        LazyColumn {
+            items(filteredFriends) { friend ->
+                FriendListItem(
+                    friendName = friend.name,
+                    isSelected = selectedFriendIds.value.contains(friend.id),
+                    onItemSelected = { isSelected ->
+                        if (isSelected) {
+                            selectedFriendIds.value = selectedFriendIds.value + friend.id
+                        } else {
+                            selectedFriendIds.value = selectedFriendIds.value - friend.id
+                        }
+                    }
+                )
             }
+        }
+        Button(
+            onClick = {
+                selectedFriends.value = selectedFriendIds.value
+                onSelectionComplete()
+                navController.popBackStack()
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text("완료")
         }
     }
 }
 
 @Composable
-fun TimePickerDialog(
-    onDismissRequest: () -> Unit,
-    selectedTime: Date,
-    onTimeSelected: (Date) -> Unit
-) {
-    var time by remember { mutableStateOf(selectedTime) }
-
-
-    TimePicker(
-        value = time,
-        onValueChange = {
-            time = it
-        },
-        onDismissRequest = onDismissRequest,
+fun FriendListItem(friendName: String, isSelected: Boolean, onItemSelected: (Boolean) -> Unit) {
+    Row(
         modifier = Modifier
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
             .fillMaxWidth()
-            .heightIn(LocalDensity.current.density * 240.dp),
-        colors = TimePickerDefaults.colors(
-            backgroundColor = MaterialTheme.colorScheme.background,
-            activeColor = MaterialTheme.colorScheme.primary,
-            inactiveColor = MaterialTheme.colorScheme.onSurface,
-            clockBackgroundColor = MaterialTheme.colorScheme.background,
-            clockHandColor = MaterialTheme.colorScheme.primary
-        )
+            .clickable(onClick = { onItemSelected(!isSelected) })
+            .padding(16.dp)
     ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(
-                onClick = {
-                    onTimeSelected(time)
-                    onDismissRequest()
-                },
-                modifier = Modifier
-                    .padding(end = 8.dp)
-            ) {
-                Text("OK")
-            }
-
-            Button(
-                onClick = {
-                    onDismissRequest()
-                },
-                modifier = Modifier
-                    .padding(start = 8.dp)
-            ) {
-                Text("Cancel")
-            }
-        }
+        Text(friendName, modifier = Modifier.weight(1f))
+        Checkbox(
+            checked = isSelected,
+            onCheckedChange = { onItemSelected(it) }
+        )
     }
 }
-
- */
-
-
 
 
 @Preview(showBackground = true)
@@ -469,9 +333,7 @@ fun MeetupUIPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            MeetupUI(LatLng(1.35, 103.87)) {
-
-            }
+//            MeetupUI()
         }
     }
 }
