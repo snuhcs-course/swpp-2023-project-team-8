@@ -47,25 +47,21 @@ import com.example.frontend.api.MissionService
 import com.example.frontend.model.MissionModel
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.usecase.MissionUseCase
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MissionActivity : ComponentActivity() {
     val userContextRepository = UserContextRepository(this)
-    val authToken: String = userContextRepository.getAuthToken()
-    val missionApi: MissionService by lazy { defaultMissionAPI(authToken) }
-
+    var missions by mutableStateOf<List<MissionModel>>(emptyList())
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            //val authToken = getAuthtoken(this)
-            val missionApi = defaultMissionAPI(authToken)
-            //var missions by remember { mutableStateOf(emptyList<MissionModel>()) }
-            fetchMissions()
-
+            missions = MissionUseCase(this).fetch()
             FrontendTheme {
+
                 ShowMissionUI(missions = missions) {
                     // Handle switch to register
                 }
@@ -73,38 +69,10 @@ class MissionActivity : ComponentActivity() {
         }
     }
 
-    var missions by mutableStateOf<List<MissionModel>>(emptyList())
-    private fun fetchMissions() {
-        val call = missionApi.getMissionList()
 
-        call.enqueue(object : Callback<List<MissionModel>> {
-            override fun onResponse(
-                call: Call<List<MissionModel>>,
-                response: Response<List<MissionModel>>
-            ) {
-                if (response.isSuccessful) {
-                    runOnUiThread {
-                        missions = response.body() ?: emptyList()
-                    }
-                } else {
-
-                }
-            }
-
-            override fun onFailure(call: Call<List<MissionModel>>, t: Throwable) {
-                runOnUiThread {
-                    missions = defaultMissions
-                }
-            }
-        })
-    }
 }
 
 
-fun defaultMissionAPI(authToken: String): MissionService {
-    val retrofit = createAuthenticatedRetrofit(authToken)
-    return retrofit.create(MissionService::class.java)
-}
 
 @Composable
 fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) {
