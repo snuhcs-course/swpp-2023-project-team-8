@@ -63,7 +63,6 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui:1.0.0")
-    implementation("androidx.compose.material:material:1.0.0")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
@@ -71,6 +70,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.test.ext:junit-ktx:1.1.5")
+    implementation("org.chromium.net:cronet-embedded:113.5672.61")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.11.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
@@ -99,6 +99,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
     implementation("androidx.compose.runtime:runtime-livedata:1.3.0-rc01")
     implementation("com.google.dagger:hilt-android:2.44")
+    implementation("androidx.compose.material:material:1.4.2")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
 
 }

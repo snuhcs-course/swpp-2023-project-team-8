@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
@@ -24,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.api.PlaceService
+import com.example.frontend.model.MissionModel
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.ui.login.getAuthtoken
 import com.example.frontend.ui.login.getUsername
@@ -60,6 +64,7 @@ class PlaceRecActivity() : ComponentActivity() {
         val userName = getUsername(this)
         val authToken = getAuthtoken(this)
         val call = defaultRecAPI(authToken).recommend(averagedLocation)
+        var placelist by mutableStateOf<List<PlaceModel>>(emptyList())
 
         call.enqueue(object : Callback<List<PlaceModel>> {
             override fun onResponse(
@@ -67,13 +72,14 @@ class PlaceRecActivity() : ComponentActivity() {
                 response: Response<List<PlaceModel>>
             ) {
                 if (response.isSuccessful) {
-                    val placeModels: List<PlaceModel>? = response.body()
+                    placelist = response.body()?:emptyList()
                 } else {
 
                 }
             }
 
             override fun onFailure(call: Call<List<PlaceModel>>, t: Throwable) {
+                placelist = defaultPlaces
             }
         })
 
@@ -90,16 +96,19 @@ class PlaceRecActivity() : ComponentActivity() {
                     )
                     {
                         // PlaceRecUI
-                        PlaceRecUI(userName, modifier = Modifier.align(Alignment.TopCenter))
-
+                        PlaceList(placeModels = placelist, modifier = Modifier.fillMaxSize())
                         Box(
                             modifier = Modifier
-                                .fillMaxSize()
+                                .width(400.dp)
                                 .height(300.dp)
+                                .align(Alignment.Center)
                                 .padding(top = 250.dp)
                         ) {
                             MapUI(LatLng(126.9511, 37.4594), emptyList())
 
+                        }
+                        LaunchedEffect(placelist) {
+                            // Nothing to do here, just being used to trigger recomposition
                         }
 
                     }
@@ -109,6 +118,11 @@ class PlaceRecActivity() : ComponentActivity() {
         }
     }
 }
+
+val defaultPlaces = listOf(
+PlaceModel(LatLng(1.35, 103.87), "중앙도서관"),
+    PlaceModel(LatLng(124.5,104.2), "자하연")
+)
 
 class AuthInterceptor(private val authToken: String) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
@@ -141,18 +155,16 @@ fun PlaceList(placeModels: List<PlaceModel>, modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier
     ) {
-//        items(placeModels) { placeModel ->
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(100.dp)
-//                    .background(color = Color.Gray)
-//            ) {
-//
-//                //Text(text = placeModel)
-//
-//            }
-//        }
+        items(placeModels) { placeModel ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .background(color = Color.Gray)
+            ) {
+                Text(text = placeModel.name ?: "장소", color = Color.White)
+            }
+        }
     }
 }
 

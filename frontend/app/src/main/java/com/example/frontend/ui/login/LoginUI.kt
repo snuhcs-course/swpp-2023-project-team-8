@@ -111,11 +111,11 @@ fun loginButtonHandler(
     val call = authService.login(loginModel)
     ///////////////////////////////////////////////////////////
     // TODO: 배포 이후 제거
-//    val nextIntent = Intent(context, MapActivity::class.java)
-//    context.startActivity(nextIntent)
-//    if (context is Activity) {
-//        context.finish()
-//    }
+    val nextIntent = Intent(context, MapActivity::class.java)
+    context.startActivity(nextIntent)
+    if (context is Activity) {
+        context.finish()
+    }
     ////////////////////////////////////////////////////////////
     call!!.enqueue(object : Callback<AuthResponse?> {
         override fun onResponse(call: Call<AuthResponse?>, response: Response<AuthResponse?>) {

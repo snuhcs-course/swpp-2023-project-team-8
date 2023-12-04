@@ -348,7 +348,6 @@ fun BottomBar(currentLocation: LatLng?) {
         Icons.Outlined.DateRange,
         Icons.Outlined.CheckCircle,
         Icons.Outlined.Settings,
-        
     )
 
     Box(
@@ -397,6 +396,7 @@ fun BottomBar(currentLocation: LatLng?) {
                         icons[4] -> {
                             // userInfo로 이동
                             val nextIntent = Intent(context, UserInfoActivity::class.java)
+                            //val nextIntent = Intent(context, PlaceRecActivity::class.java)
                             context.startActivity(nextIntent)
 
                         }
