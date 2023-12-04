@@ -31,12 +31,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.api.AuthService
-import com.example.frontend.model.EmailModel
 import com.example.frontend.model.RegisterModel
 import com.example.frontend.ui.component.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
-import com.example.frontend.utilities.HttpStatus
+import com.example.frontend.usecase.SendVerificationCodeUseCase
 import com.example.frontend.utilities.isValidSnuMail
 import retrofit2.Call
 import retrofit2.Callback
@@ -83,7 +82,10 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
         )
 
         Button(
-            onClick = { isWaitingForResponse.value = true; sendButtonHandler(context, email, isWaitingForResponse) },
+            onClick = {
+                isWaitingForResponse.value = true
+                SendVerificationCodeUseCase(context, email, isWaitingForResponse).execute()
+            },
             colors = ButtonDefaults.buttonColors(Purple80),
             modifier = Modifier
                 .align(Alignment.End),
@@ -129,32 +131,6 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
         )
     }
-}
-
-/*
- * 서버에게 인증 코드를 요청하는 함수
- */
-private fun sendButtonHandler(
-    context: Context,
-    email: String,
-    isWaitingForResponse: MutableState<Boolean>,
-    authService: AuthService = AuthService.create()
-) {
-    authService.verifyEmail(EmailModel(email)).enqueue(object : Callback<EmailModel?> {
-        override fun onResponse(call: Call<EmailModel?>, response: Response<EmailModel?>) {
-            if (HttpStatus.fromCode(response.code()) != HttpStatus.CREATED) {
-                Toast.makeText(context, "에러가 발생했어요.", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(context, "인증 코드가 전송되었습니다!", Toast.LENGTH_LONG).show()
-            }
-            isWaitingForResponse.value = false
-        }
-
-        override fun onFailure(call: Call<EmailModel?>, t: Throwable) {
-            Toast.makeText(context, "에러가 발생했어요.", Toast.LENGTH_LONG).show()
-            isWaitingForResponse.value = false
-        }
-    })
 }
 
 fun registerButtonHandler(
