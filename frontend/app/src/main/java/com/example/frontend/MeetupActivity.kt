@@ -71,6 +71,13 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
     var explain by remember { mutableStateOf("") }
     var context = LocalContext.current
     val activity = LocalContext.current as? ComponentActivity
+
+    /*
+    var selectedDate by remember { mutableStateOf(Calendar.getInstance().time) }
+    var selectedTime by remember { mutableStateOf(Calendar.getInstance().time) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+     */
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -128,8 +135,87 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
             label = { Text("날짜") },
             )
 
+        /* OutlinedTextField(
+            value = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedDate),
+            onValueChange = {},
+            label = { Text("Select Date") },
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_calendar),
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        showDatePicker = true
+                    }
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        ) */
+
+        /*
+        if (showDatePicker) {
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                selectedDate = selectedDate,
+                onDateSelected = {
+                    selectedDate = it
+                    showDatePicker = false
+                }
+            )
+        }
+         */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         Spacer(modifier = Modifier.height(16.dp))
         Row{
+            /*
+            OutlinedTextField(
+            value = SimpleDateFormat("HH:mm", Locale.getDefault()).format(selectedTime),
+            onValueChange = {},
+            label = { Text("Select Time") },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Schedule,
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        showTimePicker = true
+                    }
+                )
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+             */
+
+
+
+            /*
+             if (showTimePicker) {
+            TimePickerDialog(
+                onDismissRequest = { showTimePicker = false },
+                selectedTime = selectedTime,
+                onTimeSelected = {
+                    selectedTime = it
+                    showTimePicker = false
+                }
+            )
+        }
+    }
+}
+
+             */
             OutlinedTextField(//Picker로 교체
                 value = hour,
                 onValueChange = { hour = it },
@@ -244,6 +330,132 @@ fun MeetupUI(currentLocation: LatLng?, onSwitchToRegister: () -> Unit) {
             })
     }
 }
+
+
+/*
+@Composable
+fun DatePickerDialog(
+    onDismissRequest: () -> Unit,
+    selectedDate: Date,
+    onDateSelected: (Date) -> Unit
+) {
+    var date by remember { mutableStateOf(selectedDate) }
+
+
+    DatePicker(
+        value = date,
+        onValueChange = {
+            date = it
+        },
+        onDismissRequest = onDismissRequest,
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)
+            .fillMaxWidth()
+            .heightIn(LocalDensity.current.density * 360.dp),
+        colors = DatePickerDefaults.colors(
+            headerBackgroundColor = MaterialTheme.colorScheme.primary,
+            headerTextColor = MaterialTheme.colorScheme.onPrimary,
+            selectedDayBackgroundColor = MaterialTheme.colorScheme.primary,
+            selectedDayTextColor = MaterialTheme.colorScheme.onPrimary,
+            dayTextColor = MaterialTheme.colorScheme.onSurface,
+            dayBackgroundColor = MaterialTheme.colorScheme.background,
+            daySelectedTextColor = MaterialTheme.colorScheme.onPrimary
+        )
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
+                onClick = {
+                    onDateSelected(date)
+                    onDismissRequest()
+                },
+                modifier = Modifier
+                    .padding(end = 8.dp)
+            ) {
+                Text("OK")
+            }
+
+            Button(
+                onClick = {
+                    onDismissRequest()
+                },
+                modifier = Modifier
+                    .padding(start = 8.dp)
+            ) {
+                Text("Cancel")
+            }
+        }
+    }
+}
+
+@Composable
+fun TimePickerDialog(
+    onDismissRequest: () -> Unit,
+    selectedTime: Date,
+    onTimeSelected: (Date) -> Unit
+) {
+    var time by remember { mutableStateOf(selectedTime) }
+
+
+    TimePicker(
+        value = time,
+        onValueChange = {
+            time = it
+        },
+        onDismissRequest = onDismissRequest,
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)
+            .fillMaxWidth()
+            .heightIn(LocalDensity.current.density * 240.dp),
+        colors = TimePickerDefaults.colors(
+            backgroundColor = MaterialTheme.colorScheme.background,
+            activeColor = MaterialTheme.colorScheme.primary,
+            inactiveColor = MaterialTheme.colorScheme.onSurface,
+            clockBackgroundColor = MaterialTheme.colorScheme.background,
+            clockHandColor = MaterialTheme.colorScheme.primary
+        )
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
+                onClick = {
+                    onTimeSelected(time)
+                    onDismissRequest()
+                },
+                modifier = Modifier
+                    .padding(end = 8.dp)
+            ) {
+                Text("OK")
+            }
+
+            Button(
+                onClick = {
+                    onDismissRequest()
+                },
+                modifier = Modifier
+                    .padding(start = 8.dp)
+            ) {
+                Text("Cancel")
+            }
+        }
+    }
+}
+
+ */
 
 
 
