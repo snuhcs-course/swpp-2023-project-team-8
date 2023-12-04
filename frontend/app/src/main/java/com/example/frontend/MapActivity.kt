@@ -144,9 +144,6 @@ class MapActivity : ComponentActivity() {
                 }
             }
         }
-//        val intent = Intent(this, PlaceRecActivity::class.java)
-//        intent.putExtra("userLocation", currentLocation)
-//        startActivity(intent)
 
         checkAndRequestLocationPermissions()
     }

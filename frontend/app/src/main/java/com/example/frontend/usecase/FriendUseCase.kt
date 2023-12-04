@@ -3,10 +3,9 @@ package com.example.frontend.usecase
 import android.content.Context
 import com.example.frontend.api.AuthService
 import com.example.frontend.api.FriendService
+import com.example.frontend.data.defaultfriendList
 import com.example.frontend.model.MissionModel
 import com.example.frontend.model.UserWithLocationModel
-import com.example.frontend.repository.defaultMissions
-import com.example.frontend.repository.defaultfriendList
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

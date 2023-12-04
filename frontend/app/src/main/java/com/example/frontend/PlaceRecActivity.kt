@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
@@ -41,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.api.PlaceService
+import com.example.frontend.data.defaultPlaces
 import com.example.frontend.model.MissionModel
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.repository.UserContextRepository
@@ -104,6 +106,9 @@ class PlaceRecActivity() : ComponentActivity() {
                             MapUI(LatLng(126.9511, 37.4594), emptyList(), onClick = {})
 
                         }
+                        LaunchedEffect(places) {
+                            // Nothing to do here, just being used to trigger recomposition
+                        }
 
                     }
                 }
@@ -120,18 +125,16 @@ fun PlaceList(placeModels: List<PlaceModel>, modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier
     ) {
-//        items(placeModels) { placeModel ->
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(100.dp)
-//                    .background(color = Color.Gray)
-//            ) {
-//
-//                //Text(text = placeModel)
-//
-//            }
-//        }
+        items(placeModels) { placeModel ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .background(color = Color.Gray)
+            ) {
+                Text(text = placeModel.name ?: "장소", color = Color.White)
+            }
+        }
     }
 }
 
@@ -168,8 +171,6 @@ fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
                     }
             )
             Spacer(modifier = Modifier.width(8.dp))
-
-
             Text(
                 modifier = Modifier,
 
@@ -212,8 +213,6 @@ fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
                 .height(200.dp)
                 .width(300.dp)
         )
-
-
     }
 }
 
@@ -222,5 +221,6 @@ fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
 fun PlaceRecUIPreview() {
     FrontendTheme {
         PlaceRecUI("김민수")
+        PlaceList(defaultPlaces)
     }
 }

@@ -60,8 +60,9 @@ import coil.compose.rememberImagePainter
 import com.example.frontend.MapActivity
 import com.example.frontend.MissionActivity
 import com.example.frontend.R
+import com.example.frontend.data.predefinedImages
 import com.example.frontend.repository.UserContextRepository
-import com.example.frontend.repository.predefinedImages
+
 import com.example.frontend.ui.settings.component.MissionCard
 import com.example.frontend.ui.theme.FrontendTheme
 

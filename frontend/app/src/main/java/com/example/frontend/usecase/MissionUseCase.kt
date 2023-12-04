@@ -7,9 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.frontend.api.AuthService
 import com.example.frontend.api.MissionService
+import com.example.frontend.data.defaultMissions
 
 import com.example.frontend.model.MissionModel
-import com.example.frontend.repository.defaultMissions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

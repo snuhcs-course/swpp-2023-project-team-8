@@ -36,9 +36,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.data.defaultfriendList
 import com.example.frontend.model.UserWithLocationModel
-import com.example.frontend.repository.defaultMissions
-import com.example.frontend.repository.defaultfriendList
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.usecase.FriendUseCase
 import com.example.frontend.usecase.MissionUseCase
@@ -223,7 +222,6 @@ fun ShowAddFriendUIPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            //FriendList(defaultfriendList)
             FriendScreen(showSearch = showSearch, onShowSearchChanged = { showSearch = it }, friendList = defaultfriendList)
         }
     }
