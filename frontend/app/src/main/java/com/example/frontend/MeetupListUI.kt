@@ -138,9 +138,6 @@ fun defaultMeetupService(authToken: String): MeetUpService {
     return retrofit.create(MeetUpService::class.java)
 }
 
-val defaultMeetups = listOf(
-    MeetupModel("카페", listOf("친구1", "친구2", "친구3"), "14:00", "2023-12-01", LatLng(13.1, 23.1))
-)
 
 @Composable
 fun PromiseList(meetups: List<MeetupModel>) {
