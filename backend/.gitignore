@@ -37,3 +37,5 @@
 # Ignore env files
 .env
 .env*
+
+docker-compose.app.yml

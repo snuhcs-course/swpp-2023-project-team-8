@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import com.example.frontend.api.AuthService
 import com.example.frontend.model.AuthResponse
-import com.google.android.gms.maps.model.LatLng
+import com.example.frontend.usecase.LoginUseCase
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,7 +16,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Response
 
 
 @RunWith(MockitoJUnitRunner::class)
@@ -40,7 +39,7 @@ class LoginUIKtTest {
     fun loginButtonHandler() {
         val result = mutableStateOf("")
 
-        com.example.frontend.ui.login.loginButtonHandler(mockContext, "test@example.com", "password", result, mockAuthAPI)
+        LoginUseCase(mockContext, "test@example.com", "password", result, mockAuthAPI).execute()
 
         // Capture the callback
         val argumentCaptor =
@@ -48,7 +47,7 @@ class LoginUIKtTest {
         verify(mockCall).enqueue(argumentCaptor.capture())
 
         // Simulate a successful response
-        val response = Response.success(AuthResponse("token", "username", LatLng(0.0, 0.0)))
+//        val response = Response.success(AuthResponse("token", "username", LatLng(0.0, 0.0)))
 //        TODO: 테스트 수정
 //        argumentCaptor.value.onResponse(mockCall, response)
 //

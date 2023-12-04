@@ -27,10 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,8 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.api.PlaceService
 import com.example.frontend.model.PlaceModel
-import com.example.frontend.ui.login.getAuthtoken
-import com.example.frontend.ui.login.getUsername
+import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.maps.model.LatLng
 import okhttp3.Interceptor
@@ -64,11 +59,13 @@ class PlaceRecActivity() : ComponentActivity() {
         val meetAtString = intent.getStringExtra("meetAt")
         val meetAt = LocalDateTime.parse(meetAtString)
         val userIds = intent.getLongArrayExtra("userIds")
+        
+        val userContextRepository = UserContextRepository(this)
 
         // averagedLocation 넘겨 받기
         val averagedLocation: LatLng? = intent.getParcelableExtra("averagedLocation")
-        val userName = getUsername(this)
-        val authToken = getAuthtoken(this)
+        val userName = userContextRepository.getUserName()
+        val authToken = userContextRepository.getAuthToken()
         val call = defaultRecAPI(authToken).recommend(averagedLocation)
 
         call.enqueue(object : Callback<List<PlaceModel>> {
@@ -252,7 +249,7 @@ fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
 @Composable
 fun PlaceRecUIPreview() {
     FrontendTheme {
-        PlaceRecUI(getUsername(LocalContext.current))
+        PlaceRecUI("김민수")
     }
 }
 
