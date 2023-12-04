@@ -9,7 +9,6 @@ import com.example.frontend.MapActivity
 import com.example.frontend.api.AuthService
 import com.example.frontend.model.AuthResponse
 import com.example.frontend.model.LoginModel
-import com.example.frontend.ui.login.defaultAuthService
 import com.example.frontend.ui.login.saveAuthToken
 import com.example.frontend.utilities.BYPASS_LOGIN
 import retrofit2.Call
@@ -25,7 +24,7 @@ fun loginUseCase(
     email: String,
     password: String,
     result: MutableState<String>,
-    authService: AuthService = defaultAuthService()
+    authService: AuthService = AuthService.create()
 ) {
     val loginModel = LoginModel(email, password)
     val call = authService.login(loginModel)

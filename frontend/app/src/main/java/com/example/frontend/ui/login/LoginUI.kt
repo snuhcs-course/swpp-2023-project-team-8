@@ -33,13 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.example.frontend.api.AuthService
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.LightPurple
 import com.example.frontend.ui.theme.Purple80
 import com.example.frontend.usecase.loginUseCase
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -130,14 +127,6 @@ fun getUsername(context: Context): String? {
 fun getAuthtoken(context: Context): String {
     val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     return appPrefs.getString("AUTH_TOKEN", "")?:""
-}
-fun defaultAuthService(): AuthService {
-    var url = "http://10.0.2.2:3000"
-    val retrofit = Retrofit.Builder()
-        .baseUrl(url)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    return retrofit.create(AuthService::class.java)
 }
 
 @Composable
