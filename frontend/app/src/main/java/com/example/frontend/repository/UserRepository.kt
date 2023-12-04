@@ -1,6 +1,14 @@
 package com.example.frontend.repository
 
 import android.content.Context
+import com.example.frontend.R
+
+val predefinedImages = listOf(
+    R.drawable.cat,
+    R.drawable.cat_sunglass,
+    R.drawable.dog_sunglass,
+    R.drawable.hamster
+)
 
 class UserContextRepository(
     private val context: Context
@@ -15,4 +23,15 @@ class UserContextRepository(
     fun getAuthToken(): String {
         return appPrefs.getString("AUTH_TOKEN", "") ?: ""
     }
+    fun saveSelectedPredefinedImage(imageId: Int?) {
+        val editor = appPrefs.edit()
+        editor.putInt("SELECTED_PREDEFINED_IMAGE", imageId ?: -1)
+        editor.apply()
+    }
+
+    fun getSelectedPredefinedImage(): Int? {
+        val imageId = appPrefs.getInt("SELECTED_PREDEFINED_IMAGE", -1)
+        return if (imageId != -1) imageId else null
+    }
+
 }

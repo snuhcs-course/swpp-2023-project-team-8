@@ -50,10 +50,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberImagePainter
 import com.example.frontend.MapActivity
 import com.example.frontend.MissionActivity
 import com.example.frontend.R
+import com.example.frontend.repository.UserContextRepository
+import com.example.frontend.repository.predefinedImages
 import com.example.frontend.ui.settings.component.MissionCard
 import com.example.frontend.ui.theme.FrontendTheme
 
@@ -77,24 +80,9 @@ class UserInfoActivity : ComponentActivity() {
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
-    var selectedImageUri by rememberSaveable  { mutableStateOf<Uri?>(null) }
-    var selectedPredefinedImage by rememberSaveable  { mutableStateOf<Int?>(null) }
 
-    // TODO(sggithi): Refactor using ViewModel
-    val getContent: ActivityResultLauncher<String> = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            selectedImageUri = uri
-        }
-    }
+    var selectedPredefinedImage = UserContextRepository(context).getSelectedPredefinedImage()
 
-    val predefinedImages = listOf(
-        R.drawable.cat,
-        R.drawable.cat_sunglass,
-        R.drawable.dog_sunglass,
-        R.drawable.hamster
-    )
     fun showImageSelectionDialog() {
         AlertDialog.Builder(context)
             .setTitle("이미지 선택")
@@ -102,11 +90,9 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 arrayOf("Gray Cat with Sunglass", "Yellow Cat with Sunglass", "Dog with Sunglass", "Hamster")
             ) { _, which ->
                 selectedPredefinedImage = predefinedImages[which]
+                UserContextRepository(context).saveSelectedPredefinedImage(selectedPredefinedImage)
             }
-            .setPositiveButton("사용자 이미지 선택") { _, _ ->
-                // Launch the image selection activity
-                getContent.launch("image/*")
-            }
+
             .show()
     }
 
@@ -180,15 +166,10 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
 
         ) {
 
-            if (selectedImageUri != null || selectedPredefinedImage != null) {
-                val painter = if (selectedImageUri != null) {
-                    rememberImagePainter(data = selectedImageUri)
-                } else {
-                    painterResource(id = selectedPredefinedImage ?: R.drawable.cat)
-                }
+            if (selectedPredefinedImage != null) {
 
                 Image(
-                    painter = painter,
+                    painter = painterResource(id = selectedPredefinedImage!!),
                     contentDescription = null,
                     modifier = Modifier
                         .size(100.dp)
@@ -203,8 +184,6 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .size(100.dp)
                         .clickable {
-                            // Launch the image selection activity
-                            //getContent.launch("image/*")
                             showImageSelectionDialog()
                         }
                 )
@@ -218,8 +197,6 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     .size(30.dp)
                     .offset(x = 60.dp, y = (-90).dp)
                     .clickable {
-                            // Launch the image selection activity
-                            //getContent.launch("image/*")
                         showImageSelectionDialog()
                         }
             )
@@ -251,7 +228,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                         textAlign = TextAlign.Center,
                         letterSpacing = 0.1.sp,
                     ),
-                    modifier = Modifier.padding(start = 93.dp) // Adjust the padding as needed
+                    modifier = Modifier.padding(start = 93.dp)
                 )
             }
             Row(){
