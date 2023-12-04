@@ -1,7 +1,5 @@
 package com.example.frontend.ui.login
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +17,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,16 +27,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.frontend.api.AuthService
-import com.example.frontend.model.RegisterModel
 import com.example.frontend.ui.component.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
+import com.example.frontend.usecase.RegisterUseCase
 import com.example.frontend.usecase.SendVerificationCodeUseCase
 import com.example.frontend.utilities.isValidSnuMail
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,46 +110,13 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
         Spacer(modifier = Modifier.height(30.dp))
         CustomButton(
             buttonText = "Register",
-            onClickHandler = {
-                registerButtonHandler(
-                    context,
-                    email,
-                    code,
-                    name,
-                    password,
-                    response,
-                    onSwitchToLogin
-                )
-            },
             modifier = Modifier.fillMaxWidth(),
+            onClickHandler = {
+                RegisterUseCase(context, email, code, name, password, response, onSwitchToLogin)
+                    .execute()
+            },
         )
     }
-}
-
-fun registerButtonHandler(
-    context: Context,
-    email: String,
-    code: String,
-    name: String,
-    password: String,
-    result: MutableState<String>,
-    onSwitchToLogin: () -> Unit,
-    authService: AuthService = AuthService.create()
-) {
-    val registerModel = RegisterModel(email, code, name, password)
-    val call = authService.register(registerModel)
-    call!!.enqueue(object : Callback<RegisterModel?> {
-        override fun onResponse(call: Call<RegisterModel?>, response: Response<RegisterModel?>) {
-            result.value = "Response Code: " + response.code()
-            Toast.makeText(context, "회원가입 성공!", Toast.LENGTH_LONG).show()
-            onSwitchToLogin()
-        }
-
-        override fun onFailure(call: Call<RegisterModel?>, t: Throwable) {
-            result.value = "Error: " + t.message
-            Toast.makeText(context, result.value, Toast.LENGTH_LONG).show()
-        }
-    })
 }
 
 @Preview(showBackground = true)
