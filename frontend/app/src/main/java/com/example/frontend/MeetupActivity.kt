@@ -4,6 +4,7 @@ package com.example.frontend
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -249,8 +250,9 @@ fun FriendListUI(
     friendsList: List<UserWithLocationModel>,
     navController: NavController
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    val filteredFriends = friendsList.filter { it.name.contains(searchQuery, ignoreCase = true) }
+    var searchQuery by rememberSaveable  { mutableStateOf("") }
+    var isSearchClicked by remember { mutableStateOf(false) }
+   // val filteredFriends = remember {friendsList.filter { it.name.contains(searchQuery, ignoreCase = true) }}
     val selectedFriendIds = remember { mutableStateOf(listOf<Long>()) }
     val friendUseCase = ListFriendUseCase(LocalContext.current)
     val friendlist = remember { mutableStateOf<List<UserWithLocationModel>>(emptyList()) }
@@ -262,13 +264,18 @@ fun FriendListUI(
             }
         }
     }
+    val filteredFriends = if (isSearchClicked) {
+        friendlist.value.filter { it.name.contains(searchQuery, ignoreCase = true) }
+    } else {
+        friendlist.value
+    }
 
     Column(Modifier.fillMaxSize()) {
         TopAppBar(
             title = { Text(text = "친구 초대") },
             actions = {
                 IconButton(onClick = {
-
+                    isSearchClicked = !isSearchClicked
                 }) {
                     Icon(Icons.Filled.Search, contentDescription = "Search")
                 }
@@ -278,16 +285,16 @@ fun FriendListUI(
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            label = { Text("검색") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
-                .height(30.dp)
+                .height(50.dp),
+            textStyle = TextStyle(fontSize =20.sp)
+
         )
 
-        // Friends list
         LazyColumn {
-            items(friendlist.value) { friend ->
+            items(filteredFriends) { friend ->
                 FriendListItem(
                     friendName = friend.name,
                     isSelected = selectedFriendIds.value.contains(friend.id),
