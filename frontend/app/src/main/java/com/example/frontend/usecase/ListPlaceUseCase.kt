@@ -2,16 +2,14 @@ package com.example.frontend.usecase
 
 import android.content.Context
 import com.example.frontend.api.PlaceService
-import com.example.frontend.data.defaultMissions
 import com.example.frontend.data.defaultPlaces
-import com.example.frontend.model.MissionModel
 import com.example.frontend.model.PlaceModel
 import com.google.android.gms.maps.model.LatLng
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PlaceUseCase(
+class ListPlaceUseCase(
     private val context: Context,
     private val averagedLocation: LatLng,
     private val placeService: PlaceService = PlaceService.create()

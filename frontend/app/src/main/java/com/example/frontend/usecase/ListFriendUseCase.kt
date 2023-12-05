@@ -1,16 +1,14 @@
 package com.example.frontend.usecase
 
 import android.content.Context
-import com.example.frontend.api.AuthService
 import com.example.frontend.api.FriendService
 import com.example.frontend.data.defaultfriendList
-import com.example.frontend.model.MissionModel
 import com.example.frontend.model.UserWithLocationModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class FriendUseCase (
+class ListFriendUseCase (
     private val context: Context,
     private val friendService: FriendService = FriendService.create()
 ){

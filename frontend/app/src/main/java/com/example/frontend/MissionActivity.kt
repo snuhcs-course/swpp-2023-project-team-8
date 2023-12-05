@@ -44,15 +44,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.frontend.api.MissionService
 import com.example.frontend.data.defaultMissions
 import com.example.frontend.model.MissionModel
-import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.usecase.MissionUseCase
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.frontend.usecase.ListMissionUseCase
 
 class MissionActivity : ComponentActivity() {
     var missions by mutableStateOf<List<MissionModel>>(emptyList())
@@ -60,7 +55,7 @@ class MissionActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val missionUseCase = MissionUseCase(this)
+            val missionUseCase = ListMissionUseCase(this)
 
             LaunchedEffect(Unit) {
                 missionUseCase.fetch { fetchedMissions ->

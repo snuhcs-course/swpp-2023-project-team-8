@@ -1,11 +1,6 @@
 package com.example.frontend.usecase
 
 import android.content.Context
-import android.widget.Toast
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import com.example.frontend.api.AuthService
 import com.example.frontend.api.MissionService
 import com.example.frontend.data.defaultMissions
 
@@ -14,7 +9,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MissionUseCase(
+class ListMissionUseCase(
     private val context: Context,
     private val missionService: MissionService = MissionService.create()
 ) {

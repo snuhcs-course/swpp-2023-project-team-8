@@ -3,7 +3,6 @@ package com.example.frontend
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -41,25 +40,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.frontend.api.PlaceService
 import com.example.frontend.data.defaultPlaces
-import com.example.frontend.model.MissionModel
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.usecase.MissionUseCase
-import com.example.frontend.usecase.PlaceUseCase
+import com.example.frontend.usecase.ListPlaceUseCase
 import com.google.android.gms.maps.model.LatLng
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDateTime
 
 class PlaceRecActivity() : ComponentActivity() {
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +65,7 @@ class PlaceRecActivity() : ComponentActivity() {
         var userName = UserContextRepository(this).getUserName()
         var places by mutableStateOf<List<PlaceModel>>(emptyList())
         setContent {
-            val placeUseCase = PlaceUseCase(this, averagedLocation)
+            val placeUseCase = ListPlaceUseCase(this, averagedLocation)
 
             LaunchedEffect(Unit) {
                 placeUseCase.fetch { fetchedPlaces ->

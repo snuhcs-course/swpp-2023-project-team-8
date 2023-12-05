@@ -2,17 +2,14 @@ package com.example.frontend.usecase
 
 import android.content.Context
 import com.example.frontend.api.MeetUpService
-import com.example.frontend.api.MissionService
 import com.example.frontend.data.defaultMeetups
-import com.example.frontend.data.defaultMissions
 import com.example.frontend.model.MeetupModel
-import com.example.frontend.model.MissionModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class MeetUpUseCase(
+class ListMeetUpUseCase(
     private val context: Context,
     private val meetUpService: MeetUpService = MeetUpService.create()
 ) {

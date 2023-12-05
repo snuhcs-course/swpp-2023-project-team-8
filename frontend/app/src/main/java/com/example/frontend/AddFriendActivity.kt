@@ -39,8 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.data.defaultfriendList
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.usecase.FriendUseCase
-import com.example.frontend.usecase.MissionUseCase
+import com.example.frontend.usecase.ListFriendUseCase
 
 class AddFriendActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
@@ -48,7 +47,7 @@ class AddFriendActivity : ComponentActivity() {
         var friendlist by mutableStateOf<List<UserWithLocationModel>>(emptyList())
 
         setContent {
-            val friendUseCase = FriendUseCase(this)
+            val friendUseCase = ListFriendUseCase(this)
 
             LaunchedEffect(Unit) {
                 friendUseCase.fetch { fetchedFriends ->

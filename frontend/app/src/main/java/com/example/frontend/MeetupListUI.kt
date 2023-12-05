@@ -30,17 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.frontend.api.MeetUpService
 import com.example.frontend.data.defaultMeetups
-import com.example.frontend.data.defaultMissions
 import com.example.frontend.model.MeetupModel
-import com.example.frontend.model.MissionModel
-import com.example.frontend.usecase.MeetUpUseCase
-import com.example.frontend.usecase.MissionUseCase
-import com.google.android.gms.maps.model.LatLng
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.frontend.usecase.ListMeetUpUseCase
 
 
 class MeetupListUI : ComponentActivity() {
@@ -50,7 +42,7 @@ class MeetupListUI : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val meetUpUseCase = MeetUpUseCase(this)
+            val meetUpUseCase = ListMeetUpUseCase(this)
 
             LaunchedEffect(Unit) {
                 meetUpUseCase.fetch { fetchedMeetUps ->
