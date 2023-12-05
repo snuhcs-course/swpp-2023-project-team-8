@@ -2,7 +2,7 @@ class FriendsController < ApplicationController
   before_action :set_friend, only: [:create, :confirm, :destroy]
 
   def index
-    render json: current_user.friends
+    render json: current_user.all_friends
   end
 
   def create

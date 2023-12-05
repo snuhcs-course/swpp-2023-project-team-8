@@ -53,6 +53,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
+import com.example.frontend.ui.friend.FriendActivity
 import com.example.frontend.ui.settings.UserInfoActivity
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -388,7 +389,7 @@ fun BottomBar(currentLocation: LatLng?) {
 
                         icons[1] -> {
                             // Friend List 이동
-                            val nextIntent = Intent(context, AddFriendActivity::class.java)
+                            val nextIntent = Intent(context, FriendActivity::class.java)
                             context.startActivity(nextIntent)
                         }
 

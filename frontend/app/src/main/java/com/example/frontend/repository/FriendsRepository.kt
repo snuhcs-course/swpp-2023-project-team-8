@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.frontend.api.FriendService
+import com.example.frontend.api.UserService
 import com.example.frontend.callback.FriendLocationCallback
-import com.example.frontend.data.data
 import com.example.frontend.interceptor.AuthInterceptor
 import com.example.frontend.model.UserWithLocationModel
 import dagger.Module
@@ -96,4 +96,10 @@ object AppModule {
     fun provideFriendAPI(retrofit: Retrofit): FriendService {
         return retrofit.create(FriendService::class.java)
     }
+
+    @Provides
+    fun provideUserService(retrofit: Retrofit): UserService {
+        return retrofit.create(UserService::class.java)
+    }
+
 }
