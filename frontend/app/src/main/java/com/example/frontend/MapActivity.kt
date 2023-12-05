@@ -394,8 +394,8 @@ fun BottomBar(currentLocation: LatLng?) {
 
                         icons[2] -> {
                             // 약속 list
-                            //val nextIntent = Intent(context, ::class.java)
-                            //context.startActivity(nextIntent)
+                            val nextIntent = Intent(context, MeetupListUI::class.java)
+                            context.startActivity(nextIntent)
                         }
 
                         icons[3] -> {
