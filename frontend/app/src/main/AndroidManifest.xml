@@ -71,6 +71,11 @@
             android:theme="@style/Theme.Frontend" />
 
         <activity
+            android:name=".MeetupListUI"
+            android:exported="false"
+            android:label="MeetupListUI"
+            android:theme="@style/Theme.Frontend" />
+        <activity
             android:name=".SplashScreenActivity"
             android:exported="true"
             android:theme="@style/Theme.Frontend">

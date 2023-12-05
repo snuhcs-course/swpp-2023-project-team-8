@@ -2,6 +2,7 @@ package com.example.frontend.ui.settings
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -30,10 +31,13 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,10 +54,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberImagePainter
 import com.example.frontend.MapActivity
 import com.example.frontend.MissionActivity
 import com.example.frontend.R
+import com.example.frontend.data.predefinedImages
+import com.example.frontend.repository.UserContextRepository
+
 import com.example.frontend.ui.settings.component.MissionCard
 import com.example.frontend.ui.theme.FrontendTheme
 
@@ -77,24 +86,21 @@ class UserInfoActivity : ComponentActivity() {
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
-    var selectedImageUri by rememberSaveable  { mutableStateOf<Uri?>(null) }
-    var selectedPredefinedImage by rememberSaveable  { mutableStateOf<Int?>(null) }
+    var selectedPredefinedImage = UserContextRepository(context).getSelectedPredefinedImage()
+    var showDialog by rememberSaveable { mutableStateOf(false) }
 
-    // TODO(sggithi): Refactor using ViewModel
-    val getContent: ActivityResultLauncher<String> = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            selectedImageUri = uri
-        }
+    val currentUserName = UserContextRepository(context).getUserName() ?: "DefaultName"
+
+    if (showDialog) {
+        ProfileEditDialog(
+            currentName = currentUserName,
+            onClose = { showDialog = false },
+            onProfileUpdated = { newName ->
+                UserContextRepository(context).saveUserName(newName)
+            }
+        )
     }
 
-    val predefinedImages = listOf(
-        R.drawable.cat,
-        R.drawable.cat_sunglass,
-        R.drawable.dog_sunglass,
-        R.drawable.hamster
-    )
     fun showImageSelectionDialog() {
         AlertDialog.Builder(context)
             .setTitle("이미지 선택")
@@ -102,11 +108,9 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 arrayOf("Gray Cat with Sunglass", "Yellow Cat with Sunglass", "Dog with Sunglass", "Hamster")
             ) { _, which ->
                 selectedPredefinedImage = predefinedImages[which]
+                UserContextRepository(context).saveSelectedPredefinedImage(selectedPredefinedImage)
             }
-            .setPositiveButton("사용자 이미지 선택") { _, _ ->
-                // Launch the image selection activity
-                getContent.launch("image/*")
-            }
+
             .show()
     }
 
@@ -156,21 +160,19 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     color = Color(0xFF1D1B20)
                 )
             )
-
-
             Spacer(modifier = Modifier.weight(0.4f))
             Icon(
                 imageVector = Icons.Outlined.Settings,
                 contentDescription = null,
                 modifier = Modifier
                     .size(40.dp)
+                    .clickable {
+                        showDialog = true
+                    }
             )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-
-
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -180,22 +182,18 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
 
         ) {
 
-            if (selectedImageUri != null || selectedPredefinedImage != null) {
-                val painter = if (selectedImageUri != null) {
-                    rememberImagePainter(data = selectedImageUri)
-                } else {
-                    painterResource(id = selectedPredefinedImage ?: R.drawable.cat)
+            if (selectedPredefinedImage != null) {
+                selectedPredefinedImage.let { image ->
+                    Image(
+                        painter = painterResource(id = image?:0),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clickable {
+                                showImageSelectionDialog()
+                            }
+                    )
                 }
-
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clickable {
-                            showImageSelectionDialog()
-                        }
-                )
             } else {
                 Icon(
                     imageVector = Icons.Outlined.AccountCircle,
@@ -203,8 +201,6 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .size(100.dp)
                         .clickable {
-                            // Launch the image selection activity
-                            //getContent.launch("image/*")
                             showImageSelectionDialog()
                         }
                 )
@@ -218,8 +214,6 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     .size(30.dp)
                     .offset(x = 60.dp, y = (-90).dp)
                     .clickable {
-                            // Launch the image selection activity
-                            //getContent.launch("image/*")
                         showImageSelectionDialog()
                         }
             )
@@ -241,8 +235,8 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-//                    text = getUsername(context)?: "김샤프",
-                    text = "김사프",
+                    text = UserContextRepository(context).getUserName()?: "김샤프",
+                    //text = "김사프",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
@@ -251,7 +245,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                         textAlign = TextAlign.Center,
                         letterSpacing = 0.1.sp,
                     ),
-                    modifier = Modifier.padding(start = 93.dp) // Adjust the padding as needed
+                    modifier = Modifier.padding(start = 93.dp)
                 )
             }
             Row(){
@@ -262,14 +256,13 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                         lineHeight = 20.sp,
                         fontWeight = FontWeight(500),
                         color = Color(0xFF000000),
-
                         letterSpacing = 0.1.sp,
                     ) ,
                     modifier = Modifier.padding(start = 30.dp)
                 )
 
                 Text(
-                    text = "sha@snu.ac.kr",
+                    text = UserContextRepository(context).getUserMail()?:"sha@snu.ac.kr",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
@@ -298,6 +291,61 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProfileEditDialog(
+    currentName: String,
+    onClose: () -> Unit,
+    onProfileUpdated: (newName: String) -> Unit
+) {
+    var newName by rememberSaveable { mutableStateOf(currentName) }
+
+    Dialog(
+        onDismissRequest = onClose,
+    ) {
+        // Content of the dialog
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
+        ) {
+            Text("Edit Profile", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = newName,
+                onValueChange = { newName = it },
+                label = { Text("Name") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = {
+                        // Save changes and close the dialog
+                        onProfileUpdated(newName)
+                        onClose()
+                    }
+                ) {
+                    Text("Save")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = onClose) {
+                    Text("Cancel")
+                }
+            }
+        }
+    }
+}
+
 
 
 @Preview(showBackground = true)

@@ -1,9 +1,6 @@
 package com.example.frontend.api
 
-import com.example.frontend.model.AuthResponse
-import com.example.frontend.model.EmailModel
-import com.example.frontend.model.LoginModel
-import com.example.frontend.model.RegisterModel
+import com.example.frontend.model.MeetupModel
 import com.example.frontend.utilities.BASE_URL
 import com.example.frontend.utilities.GsonProvider
 import okhttp3.OkHttpClient
@@ -12,28 +9,20 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
-/**
- * Used to connect to the server
- * About authentication domain
- */
-interface AuthService {
-    @POST("/auth/login")
-    fun login(@Body loginModel: LoginModel?): Call<AuthResponse?>?
-
-    // TODO: rename 추가
-    @POST("/rename")
-    fun rename(@Body newName: String?)
-
-    @POST("/verification_mails")
-    fun verifyEmail(@Body email: String): Call<EmailModel?>?
-
-    @POST("/users")
-    fun register(@Body registerModel: RegisterModel?): Call<RegisterModel>
+interface MeetUpService {
+    @GET("/meet_ups")
+    fun getMeetUps(): Call<List<MeetupModel>>
+    @GET("/meet_ups/{id}")
+    fun getMeetUpById(@Path("id") meetUpId: Int): Call<MeetupModel>
+    @POST("/meet_ups")
+    fun createMeetUp(@Body meetUp: MeetupModel): Call<MeetupModel>
 
     companion object {
-        fun create(): AuthService {
+        fun create(): MeetUpService {
             val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 
             val client = OkHttpClient.Builder()
@@ -45,7 +34,7 @@ interface AuthService {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(GsonProvider.gson))
                 .build()
-                .create(AuthService::class.java)
+                .create(MeetUpService::class.java)
         }
     }
 }
