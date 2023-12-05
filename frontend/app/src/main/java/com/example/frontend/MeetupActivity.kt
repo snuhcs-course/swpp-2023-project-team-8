@@ -69,6 +69,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
+import com.example.frontend.usecase.ListFriendUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
 import java.time.LocalDate
@@ -87,7 +88,6 @@ class MeetupActivity : ComponentActivity() {
             FrontendTheme {
                 val navController = rememberNavController()
                 val selectedFriends = mutableStateOf<List<Long>>(emptyList())
-
                 val viewModel: FriendsViewModel = viewModel()
                 val friendsList by viewModel.friendsList.observeAsState(emptyList())
 
@@ -249,21 +249,27 @@ fun FriendListUI(
     friendsList: List<UserWithLocationModel>,
     navController: NavController
 ) {
-    // Local state for search query
     var searchQuery by remember { mutableStateOf("") }
-
-
-    // Dummy list of friends
     val filteredFriends = friendsList.filter { it.name.contains(searchQuery, ignoreCase = true) }
-
-    // Handle friend selection
     val selectedFriendIds = remember { mutableStateOf(listOf<Long>()) }
+    val friendUseCase = ListFriendUseCase(LocalContext.current)
+    val friendlist = remember { mutableStateOf<List<UserWithLocationModel>>(emptyList()) }
 
-    Column {
+    LaunchedEffect(Unit) {
+        if (friendlist.value.isEmpty()) {
+            friendUseCase.fetch { fetchedFriends ->
+                friendlist.value = fetchedFriends
+            }
+        }
+    }
+
+    Column(Modifier.fillMaxSize()) {
         TopAppBar(
             title = { Text(text = "친구 초대") },
             actions = {
-                IconButton(onClick = { /* handle search icon click */ }) {
+                IconButton(onClick = {
+
+                }) {
                     Icon(Icons.Filled.Search, contentDescription = "Search")
                 }
             }
@@ -276,11 +282,12 @@ fun FriendListUI(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
+                .height(30.dp)
         )
 
         // Friends list
         LazyColumn {
-            items(filteredFriends) { friend ->
+            items(friendlist.value) { friend ->
                 FriendListItem(
                     friendName = friend.name,
                     isSelected = selectedFriendIds.value.contains(friend.id),
@@ -301,6 +308,7 @@ fun FriendListUI(
                 navController.popBackStack()
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
+
         ) {
             Text("완료")
         }

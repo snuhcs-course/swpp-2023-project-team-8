@@ -58,6 +58,7 @@ class PlaceRecActivity() : ComponentActivity() {
         val meetAtString = intent.getStringExtra("meetAt")
         val meetAt = LocalDateTime.parse(meetAtString)
         val userIds = intent.getLongArrayExtra("userIds")
+        val currentLocation: LatLng? = intent.getParcelableExtra("currentLocation")
 
         // averagedLocation 넘겨 받기
         val averagedLocation: LatLng = intent.getParcelableExtra("averagedLocation") ?: LatLng(10.1, 12.2)
@@ -93,7 +94,7 @@ class PlaceRecActivity() : ComponentActivity() {
                                 .height(300.dp)
                                 .padding(top = 250.dp)
                         ) {
-                            MapUI(LatLng(126.9511, 37.4594), emptyList(), onClick = {})
+                            MapUI(currentLocation, emptyList(), onClick = {})
 
                         }
                         LaunchedEffect(places) {

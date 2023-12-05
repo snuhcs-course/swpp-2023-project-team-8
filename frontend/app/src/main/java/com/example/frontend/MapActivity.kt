@@ -139,6 +139,7 @@ class MapActivity : ComponentActivity() {
                 ) {
                     FriendsMapUI(currentLocation, onClick = {
                         val intent = Intent(this, MeetupActivity::class.java)
+                        intent.putExtra("currentLocation", currentLocation)
                         this.startActivity(intent)
                     })
                 }
