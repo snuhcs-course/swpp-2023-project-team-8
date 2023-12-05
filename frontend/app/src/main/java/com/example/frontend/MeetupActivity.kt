@@ -62,6 +62,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -88,7 +89,7 @@ class MeetupActivity : ComponentActivity() {
         setContent {
             FrontendTheme {
                 val navController = rememberNavController()
-                val selectedFriends = mutableStateOf<List<Long>>(emptyList())
+                val selectedFriends = rememberSaveable { mutableStateOf(listOf<Long>()) }
                 val viewModel: FriendsViewModel = viewModel()
                 val friendsList by viewModel.friendsList.observeAsState(emptyList())
 
@@ -252,10 +253,10 @@ fun FriendListUI(
 ) {
     var searchQuery by rememberSaveable  { mutableStateOf("") }
     var isSearchClicked by remember { mutableStateOf(false) }
-   // val filteredFriends = remember {friendsList.filter { it.name.contains(searchQuery, ignoreCase = true) }}
     val selectedFriendIds = remember { mutableStateOf(listOf<Long>()) }
     val friendUseCase = ListFriendUseCase(LocalContext.current)
     val friendlist = remember { mutableStateOf<List<UserWithLocationModel>>(emptyList()) }
+    val checkedStates = remember { mutableStateMapOf<Long, Boolean>() }
 
     LaunchedEffect(Unit) {
         if (friendlist.value.isEmpty()) {
@@ -297,13 +298,15 @@ fun FriendListUI(
             items(filteredFriends) { friend ->
                 FriendListItem(
                     friendName = friend.name,
-                    isSelected = selectedFriendIds.value.contains(friend.id),
+                    isSelected = checkedStates[friend.id] ?: false,
                     onItemSelected = { isSelected ->
+                        checkedStates[friend.id] = isSelected
                         if (isSelected) {
                             selectedFriendIds.value = selectedFriendIds.value + friend.id
                         } else {
                             selectedFriendIds.value = selectedFriendIds.value - friend.id
                         }
+
                     }
                 )
             }
