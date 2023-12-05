@@ -183,15 +183,17 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
         ) {
 
             if (selectedPredefinedImage != null) {
-                Image(
-                    painter = painterResource(id = selectedPredefinedImage!!),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clickable {
-                            showImageSelectionDialog()
-                        }
-                )
+                selectedPredefinedImage.let { image ->
+                    Image(
+                        painter = painterResource(id = image?:0),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clickable {
+                                showImageSelectionDialog()
+                            }
+                    )
+                }
             } else {
                 Icon(
                     imageVector = Icons.Outlined.AccountCircle,

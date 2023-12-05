@@ -9,14 +9,20 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface FriendService {
     // TODO: ALL FRIEND 데려오기 vs 가까운 친구 데려오기
     @GET("/firends/all")
     fun getAllFriends(): Call<List<UserWithLocationModel>>
+    @GET("/friends/searched")
+    fun getSearchedFriends(@Path("user_name") userName: String) : Call<List<UserWithLocationModel>>
 
     @GET("/friends/nearby")
     fun getNearbyFriends(): Call<List<UserWithLocationModel>>
+
+
     companion object {
         fun create(): FriendService {
             val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }

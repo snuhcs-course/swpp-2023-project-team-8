@@ -31,6 +31,12 @@ val defaultfriendList = listOf(
     UserWithLocationModel(2, "Bob", "sha@snu.ac.kr", 11.3, 119.2),
 )
 
+val defaultSearchedList = listOf(
+    UserWithLocationModel(1, "Hi", "Sha@snu.ac.kr", 125.9, 110.2),
+    UserWithLocationModel(2, "HOOHOO", "sha@snu.ac.kr", 11.3, 119.2),
+)
+
+
 val defaultPlaces = listOf(
     PlaceModel(LatLng(11.1,123.4), "자하연"),
             PlaceModel(LatLng(121.1,103.4), "중도")

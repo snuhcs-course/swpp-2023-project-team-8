@@ -39,7 +39,7 @@ class UserContextRepository(
 
     fun getSelectedPredefinedImage(): Int? {
         val imageId = appPrefs.getInt("SELECTED_PREDEFINED_IMAGE", -1)
-        return if (imageId != -1) imageId else 0
+        return if (imageId != -1) imageId else null
     }
 
 

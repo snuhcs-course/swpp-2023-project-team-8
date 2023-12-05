@@ -36,4 +36,27 @@ class FriendUseCase (
             }
         })
     }
+
+    fun getSearchedFriend(searchText: String, onFriendSearched: (List<UserWithLocationModel>) -> Unit){
+        val call = friendService.getSearchedFriends(searchText)
+        call.enqueue(object : Callback<List<UserWithLocationModel>> {
+            override fun onResponse(
+                call: Call<List<UserWithLocationModel>>,
+                response: Response<List<UserWithLocationModel>>
+            ) {
+                if (response.isSuccessful) {
+                    val friends = response.body() ?: emptyList()
+                    onFriendSearched(friends)
+                } else {
+                    onFriendSearched(defaultfriendList)
+                }
+            }
+
+            override fun onFailure(call: Call<List<UserWithLocationModel>>, t: Throwable) {
+                onFriendSearched(defaultfriendList)
+            }
+        })
+
+
+    }
 }
