@@ -39,6 +39,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -46,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -86,9 +88,9 @@ class UserInfoActivity : ComponentActivity() {
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
-    var selectedPredefinedImage = UserContextRepository(context).getSelectedPredefinedImage()
+    var selectedPredefinedImage by rememberSaveable { mutableStateOf(0) }
+    selectedPredefinedImage = UserContextRepository(context).getSelectedPredefinedImage()?:0
     var showDialog by rememberSaveable { mutableStateOf(false) }
-
     val currentUserName = UserContextRepository(context).getUserName() ?: "DefaultName"
 
     if (showDialog) {
@@ -101,6 +103,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
         )
     }
 
+
     fun showImageSelectionDialog() {
         AlertDialog.Builder(context)
             .setTitle("이미지 선택")
@@ -109,6 +112,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
             ) { _, which ->
                 selectedPredefinedImage = predefinedImages[which]
                 UserContextRepository(context).saveSelectedPredefinedImage(selectedPredefinedImage)
+
             }
 
             .show()
