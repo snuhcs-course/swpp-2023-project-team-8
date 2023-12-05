@@ -11,7 +11,7 @@ class Users::PendingRequestsController < ApplicationController
   private
 
   def set_user
-    if params[:user_id] != "me" || params[:user_id] != current_user.id
+    if params[:user_id] != "me" && params[:user_id] != current_user.id.to_s
       raise ActiveRecord::RecordNotFound
     end
 
