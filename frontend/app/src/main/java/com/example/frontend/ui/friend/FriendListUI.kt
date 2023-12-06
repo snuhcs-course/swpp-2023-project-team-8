@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.frontend.model.UserModel
-import com.example.frontend.repository.UsersViewModel
+import com.example.frontend.viewmodel.UsersViewModel
 
 @Composable
 fun FriendListUI(viewModel: UsersViewModel) {
