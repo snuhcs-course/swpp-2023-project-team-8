@@ -20,11 +20,11 @@ class MeetUpsController < ApplicationController
         UserMeetUp.create(meet_up: @meet_up, user_id: user_id) unless user_id == current_user.id
       end
 
-      user_mission1 = UserMission.find_or_create_by(user_id: current_user.id, mission_id: 1)
+      user_mission1 = UserMission.find_or_create_by(user_id: current_user.id, mission_id: Mission::CREATE_3_MEET_UPS)
       user_mission1.update_progress(1)
 
       if meet_up_params[:user_ids].length >= 3
-        user_mission2 = UserMission.find_or_create_by(user_id: current_user.id, mission_id: 2)
+        user_mission2 = UserMission.find_or_create_by(user_id: current_user.id, mission_id: Mission::CREATE_MEET_UP_WITH_3_FRIENDS)
         user_mission2.update_progress(1)
       end
 
