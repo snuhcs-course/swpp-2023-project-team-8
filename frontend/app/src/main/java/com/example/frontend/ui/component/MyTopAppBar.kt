@@ -1,8 +1,10 @@
 package com.example.frontend.ui.component
 
 import android.app.Activity
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,7 +21,10 @@ import com.example.frontend.ui.theme.LightPurple
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBar(title: String) {
+fun MyTopAppBar(
+    title: String,
+    actions: @Composable RowScope.() -> Unit = {},
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
 
@@ -48,11 +53,22 @@ fun MyTopAppBar(title: String) {
             }
         },
         scrollBehavior = scrollBehavior,
+        actions = actions,
     )
 }
 
 @Preview
 @Composable
 private fun PreviewMyTopAppBar() {
-    MyTopAppBar(title = "Meetup")
+    MyTopAppBar(
+        title = "Meetup",
+        actions = {
+            IconButton(onClick = {}) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Localized description"
+                )
+            }
+        }
+    )
 }
