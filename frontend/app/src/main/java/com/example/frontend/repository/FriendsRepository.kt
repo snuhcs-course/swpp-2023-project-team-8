@@ -1,6 +1,7 @@
 package com.example.frontend.repository
 
 import android.content.Context
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,6 +16,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -67,7 +70,17 @@ class FriendsViewModel @Inject constructor(private val repository: FriendsReposi
     }
 }
 
+class MeetupViewModel : ViewModel() {
 
+    private val _checkedStates = mutableStateMapOf<Long, Boolean>()
+    private val _checkedStatesFlow = MutableStateFlow<Map<Long, Boolean>>(_checkedStates)
+
+    val checkedStatesFlow = _checkedStatesFlow.asStateFlow()
+    fun updateCheckedState(friendId: Long, isChecked: Boolean) {
+        _checkedStates[friendId] = isChecked
+        _checkedStatesFlow.value = _checkedStates.toMap()
+    }
+}
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {

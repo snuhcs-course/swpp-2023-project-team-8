@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -63,6 +64,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -71,6 +73,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
+import com.example.frontend.repository.MeetupViewModel
 import com.example.frontend.usecase.ListFriendUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
@@ -81,7 +84,7 @@ import java.time.ZoneId
 
 @AndroidEntryPoint
 class MeetupActivity : ComponentActivity() {
-
+    private val viewModelCheck: MeetupViewModel by viewModels()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +103,7 @@ class MeetupActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "meetupUI") {
                     composable("meetupUI") { MeetupUI(navController, selectedFriends) }
                     composable("friendListUI") {
-                        FriendListUI(selectedFriends, {}, friendsList, navController)
+                        FriendListUI(selectedFriends, {},viewModelCheck, friendsList, navController)
                     }
                 }
             }
@@ -248,12 +251,13 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
 fun FriendListUI(
     selectedFriends: MutableState<List<Long>>,
     onSelectionComplete: () -> Unit,
+    viewModel: MeetupViewModel,
     friendsList: List<UserWithLocationModel>,
     navController: NavController
 ) {
     var searchQuery by rememberSaveable  { mutableStateOf("") }
     var isSearchClicked by remember { mutableStateOf(false) }
-    val selectedFriendIds = remember { mutableStateOf(listOf<Long>()) }
+    val selectedFriendIds = remember(selectedFriends.value) { mutableStateOf(selectedFriends.value) }
     val friendUseCase = ListFriendUseCase(LocalContext.current)
     val friendlist = remember { mutableStateOf<List<UserWithLocationModel>>(emptyList()) }
     val checkedStates = remember { mutableStateMapOf<Long, Boolean>() }
@@ -298,22 +302,22 @@ fun FriendListUI(
             items(filteredFriends) { friend ->
                 FriendListItem(
                     friendName = friend.name,
-                    isSelected = checkedStates[friend.id] ?: false,
+                    isSelected = viewModel.checkedStatesFlow.value[friend.id] ?: false,
                     onItemSelected = { isSelected ->
+                        viewModel.updateCheckedState(friend.id, isSelected)
                         checkedStates[friend.id] = isSelected
                         if (isSelected) {
                             selectedFriendIds.value = selectedFriendIds.value + friend.id
                         } else {
                             selectedFriendIds.value = selectedFriendIds.value - friend.id
                         }
-
                     }
                 )
             }
         }
         Button(
             onClick = {
-                selectedFriends.value = selectedFriendIds.value
+                selectedFriends.value = selectedFriendIds.value.distinct()
                 onSelectionComplete()
                 navController.popBackStack()
             },
@@ -327,16 +331,24 @@ fun FriendListUI(
 
 @Composable
 fun FriendListItem(friendName: String, isSelected: Boolean, onItemSelected: (Boolean) -> Unit) {
+    val rememberedSelectedState = remember { mutableStateOf(isSelected) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = { onItemSelected(!isSelected) })
+            .clickable(onClick = {
+                val updatedState = !rememberedSelectedState.value
+                rememberedSelectedState.value = updatedState
+                onItemSelected(updatedState) })
             .padding(16.dp)
     ) {
         Text(friendName, modifier = Modifier.weight(1f))
         Checkbox(
-            checked = isSelected,
-            onCheckedChange = { onItemSelected(it) }
+            checked = rememberedSelectedState.value,
+            onCheckedChange = {
+                rememberedSelectedState.value = it
+                onItemSelected(it)
+            }
         )
     }
 }
