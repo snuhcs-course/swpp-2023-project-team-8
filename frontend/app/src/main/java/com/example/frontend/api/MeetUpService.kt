@@ -1,5 +1,8 @@
 package com.example.frontend.api
 
+import android.content.Context
+import com.example.frontend.interceptor.AuthInterceptor
+import com.example.frontend.model.MeetUpResponse
 import com.example.frontend.model.MeetupModel
 import com.example.frontend.utilities.BASE_URL
 import com.example.frontend.utilities.GsonProvider
@@ -15,18 +18,22 @@ import retrofit2.http.Path
 
 interface MeetUpService {
     @GET("/meet_ups")
-    fun getMeetUps(): Call<List<MeetupModel>>
+    fun getMeetUps(): Call<List<MeetUpResponse>>
+
     @GET("/meet_ups/{id}")
     fun getMeetUpById(@Path("id") meetUpId: Int): Call<MeetupModel>
+
     @POST("/meet_ups")
     fun createMeetUp(@Body meetUp: MeetupModel): Call<MeetupModel>
 
     companion object {
-        fun create(): MeetUpService {
-            val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
+        fun create(context: Context): MeetUpService {
+            val logger =
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 
             val client = OkHttpClient.Builder()
                 .addInterceptor(logger)
+                .addInterceptor(AuthInterceptor(context))
                 .build()
 
             return Retrofit.Builder()
