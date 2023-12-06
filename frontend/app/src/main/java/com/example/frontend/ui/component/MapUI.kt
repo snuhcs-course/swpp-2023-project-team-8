@@ -18,22 +18,6 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kotlin.random.Random
 
 @Composable
-private fun buildMarkerIcon(user: UserWithLocationModel) {
-    return Marker(
-        state = MarkerState(
-            position = LatLng(
-                user.latitude,
-                user.longitude
-            )
-        ),
-        title = user.name,
-        snippet = user.email,
-        icon = BitmapDescriptorFactory.defaultMarker(Random.nextFloat() * 360)
-    )
-}
-
-
-@Composable
 fun MapWithMarker(
     currentLocation: LatLng?,
     friends: List<UserWithLocationModel>
@@ -61,6 +45,21 @@ fun MapWithMarker(
             }
         }
     }
+}
+
+@Composable
+private fun buildMarkerIcon(user: UserWithLocationModel) {
+    return Marker(
+        state = MarkerState(
+            position = LatLng(
+                user.latitude,
+                user.longitude
+            )
+        ),
+        title = user.name,
+        snippet = user.email,
+        icon = BitmapDescriptorFactory.defaultMarker(Random.nextFloat() * 360)
+    )
 }
 
 @Preview(showBackground = true)
