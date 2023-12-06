@@ -55,8 +55,10 @@ import com.example.frontend.MissionActivity
 import com.example.frontend.data.predefinedImages
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.component.CustomButton
+import com.example.frontend.ui.login.LoginActivity
 import com.example.frontend.ui.settings.component.MissionCard
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.usecase.LogOutUseCase
 
 class UserInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -283,10 +285,18 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
 
             CustomButton(
                 buttonText = "로그아웃",
-                onClickHandler = { /*TODO*/ },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 30.dp)
+                    .padding(top = 30.dp),
+                onClickHandler = {
+                    LogOutUseCase(context).execute()
+                    val nextIntent = Intent(context, LoginActivity::class.java)
+                    context.startActivity(nextIntent)
+                    // finish current activity
+                    if (context is Activity) {
+                        context.finish()
+                    }
+                }
             )
         }
     }
