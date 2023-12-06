@@ -25,6 +25,10 @@ class UserContextRepository(
         return store.getString(AUTH_TOKEN) ?: ""
     }
 
+    fun saveAuthToken(token: String) {
+        store.putString(AUTH_TOKEN, token)
+    }
+
     fun saveSelectedPredefinedImage(imageId: Int?) {
         if (imageId != null && imageId != KVStore.DEFAULT_INT) {
             store.putInt(SELECTED_PREDEFINED_IMAGE, imageId)

@@ -11,6 +11,7 @@ import com.example.frontend.MapActivity
 import com.example.frontend.api.AuthService
 import com.example.frontend.model.AuthResponse
 import com.example.frontend.model.LoginModel
+import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.utilities.BYPASS_LOGIN
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,7 +47,7 @@ class LoginUseCase(
                     val userProfile = response.body()?.userProfile
 
                     if (authToken != null) {
-                        saveAuthToken(authToken, userName, userMail, userProfile?:-1)
+                        saveAuthToken(authToken, userName, userMail, userProfile ?: -1)
                     }
                     result.value = "Logged in successfully"
 
@@ -73,10 +74,13 @@ class LoginUseCase(
 
 
     // To save the auth token securely when logging in
-    private fun saveAuthToken(authToken: String, userName: String?, userMail: String?, userProfile :Int) {
+    private fun saveAuthToken(authToken: String, userName: String?, userMail: String?, userProfile: Int) {
         val masterKey = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
             .build()
+
+        val encryptedUserRepo = UserContextRepository.ofContext(context, secure = true)
+        val userRepo = UserContextRepository.ofContext(context, secure = false)
 
         val sharedPreferences = EncryptedSharedPreferences.create(
             context,
@@ -86,9 +90,10 @@ class LoginUseCase(
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
 
+        encryptedUserRepo.saveAuthToken(authToken)
+
         // Save auth token securely
         with(sharedPreferences.edit()) {
-            putString("AUTH_TOKEN", authToken)
             putString("USERNAME", userName)
             putString("USER_MAIL", userMail)
             putInt("SELECTED_PREDEFINED_IMAGE", userProfile)
