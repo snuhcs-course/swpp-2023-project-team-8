@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.frontend.IconToggleButton
 import com.example.frontend.MeetupActivity
 import com.example.frontend.MeetupListUI
 import com.example.frontend.MissionActivity
