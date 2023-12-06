@@ -41,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontend.ui.component.BottomBar
 import com.example.frontend.ui.component.MapWithMarker
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.utilities.SNU_POLYGON
 import com.example.frontend.viewmodel.FriendsViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -248,19 +249,13 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomEnd
         ) {
-            MapWithMarker(currentLocation, friendsList)
+            MapWithMarker(currentLocation, friendsList, SNU_POLYGON)
             FloatingActionButton(
                 onClick = { onClick() },
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(Icons.Filled.Add, contentDescription = null)
             }
-
         }
-
     }
-
-
 }
-
-
