@@ -15,14 +15,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -47,11 +48,11 @@ import androidx.compose.ui.window.Dialog
 import com.example.frontend.data.defaultMissions
 import com.example.frontend.model.MissionModel
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.ui.theme.Purple40
 import com.example.frontend.usecase.ListMissionUseCase
 
 class MissionActivity : ComponentActivity() {
     var missions by mutableStateOf<List<MissionModel>>(emptyList())
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -73,8 +74,9 @@ class MissionActivity : ComponentActivity() {
 
 @Composable
 fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) {
+    val indexedMissions = missions.withIndex().toList()
     var title by remember { mutableStateOf("") }
-    var showMoreDescriptions by remember { mutableStateOf(mutableMapOf<String, Boolean>()) }
+    var showMoreDescriptions by remember { mutableStateOf(mutableMapOf<Int, Boolean>()) }
     var context = LocalContext.current
     Column {
         // Header with Back button and title
@@ -128,7 +130,8 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                 modifier = Modifier.fillMaxSize(),
                 color = Color(0xFFDFD5EC)
             ) {
-                GridItems(items = missions) { mission ->
+                GridItems(items = indexedMissions) { indexedMission ->
+                    val (index, mission) = indexedMission
                     Box(
                         modifier = Modifier
                             .padding(top = 24.dp, start = 23.dp)
@@ -143,13 +146,23 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                                 Box(
                                     modifier = Modifier
                                         .clickable {
-                                            title = mission.title
+                                            title = "미션 ${index + 1}"
                                             showMoreDescriptions =
                                                 showMoreDescriptions.toMutableMap().apply {
-                                                    this[mission.title] = true
+                                                    this[index] = true
                                                 }
                                         }
                                 ) {
+                                    if (mission.userCompleted) {
+                                        Icon(
+                                            imageVector = Icons.Filled.CheckCircle,
+                                            contentDescription = "Completed",
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd)
+                                                .offset(x = 7.dp, y = (-134).dp),
+                                            tint = Purple40
+                                        )
+                                    }
                                     Text(
                                         text = "See More ›",
                                         style = TextStyle(
@@ -167,7 +180,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                         Column {
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
-                                text = mission.title,
+                                text = "미션 ${index + 1}",
                                 style = TextStyle(
                                     fontSize = 18.sp,
                                     lineHeight = 24.sp,
@@ -191,7 +204,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                             Row {
                                 Spacer(modifier = Modifier.width(15.dp))
                                 Text(
-                                    text = mission.description,
+                                    text = mission.name,
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         lineHeight = 24.sp,
@@ -202,17 +215,17 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                                 )
                             }
                         }
-                        if (showMoreDescriptions[mission.title] == true) {
+                        if (showMoreDescriptions[index] == true) {
                             ShowMoreDescriptionDialog(
-                                title = mission.title,
-                                description = getMoreDescription(mission.title, missions),
+                                title = mission.name,
+                                description = "",
                                 onDismissRequest = {
                                     showMoreDescriptions =
                                         showMoreDescriptions.toMutableMap().apply {
-                                            remove(mission.title)
+                                            remove(index)
                                         }
                                 },
-                                showMore = mission.showMore // Pass the showMore value here
+                                showMore = if (!mission.userCompleted) "${mission.description} 현재: ${mission.userProgress}회" else mission.description
                             )
                         }
                     }
@@ -220,11 +233,6 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
             }
         }
     }
-}
-
-fun getMoreDescription(missionTitle: String, missions: List<MissionModel>): String {
-    val mission = missions.find { it.title == missionTitle }
-    return mission?.showMore ?: "$missionTitle 상세 설명 업데이트 필요"
 }
 
 
@@ -243,7 +251,10 @@ fun ShowMoreDescriptionDialog(
         Box(
             modifier = Modifier
                 .padding(16.dp)
-                .background(MaterialTheme.colorScheme.background, shape = MaterialTheme.shapes.medium)
+                .background(
+                    MaterialTheme.colorScheme.background,
+                    shape = MaterialTheme.shapes.medium
+                )
         ) {
             Column {
                 Text(
@@ -308,7 +319,10 @@ fun ShowMissionUIPreview() {
 }
 
 @Composable
-fun GridItems(items: List<MissionModel>, itemContent: @Composable (MissionModel) -> Unit) {
+fun GridItems(
+    items: List<IndexedValue<MissionModel>>,
+    itemContent: @Composable (IndexedValue<MissionModel>) -> Unit
+) {
     val rows = items.chunked(2)
 
     Column {

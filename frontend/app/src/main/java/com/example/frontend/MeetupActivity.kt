@@ -3,6 +3,7 @@ package com.example.frontend
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -224,9 +225,12 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
         CustomButton(
             buttonText = "장소 선택",
             onClickHandler = {
-                navController.navigate("placeRecUI")
-            }
-        )
+                if (selectedFriends.value.isEmpty()) {
+                    Toast.makeText(context, "친구 초대 없이는 밋업을 생성할 수 없어요", Toast.LENGTH_SHORT).show()
+                } else {
+                    navController.navigate("placeRecUI")
+                }
+            })
     }
 }
 
