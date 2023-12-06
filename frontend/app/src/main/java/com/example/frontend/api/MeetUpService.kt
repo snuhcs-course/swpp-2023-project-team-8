@@ -1,5 +1,7 @@
 package com.example.frontend.api
 
+import android.content.Context
+import com.example.frontend.interceptor.AuthInterceptor
 import com.example.frontend.model.MeetupModel
 import com.example.frontend.utilities.BASE_URL
 import com.example.frontend.utilities.GsonProvider
@@ -21,10 +23,11 @@ interface MeetUpService {
     fun createMeetUp(@Body meetUp: MeetupModel): Call<Void>
 
     companion object {
-        fun create(): MeetUpService {
+        fun create(context: Context): MeetUpService {
             val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 
             val client = OkHttpClient.Builder()
+                .addInterceptor(AuthInterceptor(context))
                 .addInterceptor(logger)
                 .build()
 

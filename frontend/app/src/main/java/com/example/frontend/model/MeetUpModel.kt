@@ -8,5 +8,6 @@ data class MeetupModel(
     val description: String,
     val userIds: List<Long>,
     val meetAt: LocalDateTime,
+    val isPublic: Boolean,
     val placeId: Long
 )

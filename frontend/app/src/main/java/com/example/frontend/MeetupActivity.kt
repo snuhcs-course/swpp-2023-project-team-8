@@ -64,6 +64,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -72,9 +73,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.frontend.data.defaultPlaces
 import com.example.frontend.model.MeetupModel
 import com.example.frontend.model.PlaceModel
+import com.example.frontend.model.UserModel
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
 import com.example.frontend.repository.InviteFriendViewModel
+import com.example.frontend.repository.UsersViewModel
 import com.example.frontend.usecase.CreateMeetUpUseCase
 import com.example.frontend.usecase.ListFriendUseCase
 import com.google.android.gms.maps.model.LatLng
@@ -98,6 +101,7 @@ class MeetupActivity : ComponentActivity() {
                 val selectedFriends = rememberSaveable { mutableStateOf(listOf<Long>()) }
                 val viewModel: FriendsViewModel = viewModel()
                 val friendsList by viewModel.friendsList.observeAsState(emptyList())
+                val userviewModel: UsersViewModel = viewModel()
                 val userIds = rememberSaveable { mutableStateOf(LongArray(0)) }
                 val selectedName = rememberSaveable { mutableStateOf("") }
                 val meetUpPlaceId = rememberSaveable{mutableStateOf<Long>(0)}
@@ -110,7 +114,7 @@ class MeetupActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "meetupUI") {
                     composable("meetupUI") { MeetupUI(navController, selectedFriends, selectedName, meetUpPlaceId, dateTime) }
                     composable("friendListUI") {
-                        FriendListUI(selectedFriends, {},viewModelCheck, friendsList, navController)
+                        FriendListUI(selectedFriends, {},viewModelCheck, userviewModel, friendsList, navController)
                     }
                     composable("placeRecUI"){
                       PlaceRecUI(meetUpPlaceId, selectedName, userIds.value,currentLocation, Modifier, navController, LocalContext.current)
@@ -173,9 +177,8 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
 
                 Button(
                     onClick = {
-                        var meetup = MeetupModel(title, description, selectedFriends.value, meetAt.value, meetUpPlace.value)
-                        CreateMeetUpUseCase().send(meetup)
-
+                        var meetup = MeetupModel(title, description, selectedFriends.value, meetAt.value, true, meetUpPlace.value)
+                        CreateMeetUpUseCase(context).send(meetup)
                         activity?.finish()
                     },
 
@@ -219,14 +222,29 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
 
         val timePickerState = rememberTimePickerState()
         TimeInput(timePickerState)
-        val selectedDate: LocalDate =
-            Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
-                ZoneId.systemDefault()
-            ).toLocalDate()
-        val selectedTime: LocalTime =
-            LocalTime.of(timePickerState.hour, timePickerState.minute)
-        val selectedDateTime: LocalDateTime = LocalDateTime.of(selectedDate, selectedTime)
-        meetAt.value = selectedDateTime
+
+//        val selectedDate: LocalDate =
+//            Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
+//                ZoneId.systemDefault()
+//            ).toLocalDate()
+//        val selectedTime: LocalTime =
+//            LocalTime.of(timePickerState.hour, timePickerState.minute)
+//        val selectedDateTime: LocalDateTime = LocalDateTime.of(selectedDate, selectedTime)
+//
+//        meetAt.value = selectedDateTime
+        LaunchedEffect(datePickerState, timePickerState) {
+            snapshotFlow {
+                val selectedDate: LocalDate =
+                    Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
+                        ZoneId.systemDefault()
+                    ).toLocalDate()
+                val selectedTime: LocalTime =
+                    LocalTime.of(timePickerState.hour, timePickerState.minute)
+                LocalDateTime.of(selectedDate, selectedTime)
+            }.collect { updatedDateTime ->
+                meetAt.value = updatedDateTime
+            }
+        }
         Spacer(modifier = Modifier.height(30.dp))
 
         Row {
@@ -283,6 +301,7 @@ fun FriendListUI(
     selectedFriends: MutableState<List<Long>>,
     onSelectionComplete: () -> Unit,
     viewModel: InviteFriendViewModel,
+    friendsviewModel: UsersViewModel,
     friendsList: List<UserWithLocationModel>,
     navController: NavController
 ) {
@@ -290,16 +309,22 @@ fun FriendListUI(
     var isSearchClicked by remember { mutableStateOf(false) }
     val selectedFriendIds = remember(selectedFriends.value) { mutableStateOf(selectedFriends.value) }
     val friendUseCase = ListFriendUseCase(LocalContext.current)
-    val friendlist = remember { mutableStateOf<List<UserWithLocationModel>>(emptyList()) }
+    val friendlist = remember { mutableStateOf<List<UserModel>>(emptyList()) }
     val checkedStates = remember { mutableStateMapOf<Long, Boolean>() }
 
-    LaunchedEffect(Unit) {
-        if (friendlist.value.isEmpty()) {
-            friendUseCase.fetch { fetchedFriends ->
-                friendlist.value = fetchedFriends
-            }
-        }
+    val friends by friendsviewModel.friends.observeAsState(initial = emptyList())
+    friendlist.value = friends
+    LaunchedEffect(key1 = true) {
+        friendsviewModel.getFriends()
     }
+
+//    LaunchedEffect(Unit) {
+//        if (friendlist.value.isEmpty()) {
+//            friendUseCase.fetch { fetchedFriends ->
+//                friendlist.value = fetchedFriends
+//            }
+//        }
+//    }
     val filteredFriends = if (isSearchClicked) {
         friendlist.value.filter { it.name.contains(searchQuery, ignoreCase = true) }
     } else {

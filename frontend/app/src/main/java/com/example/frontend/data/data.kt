@@ -49,5 +49,5 @@ val defaultPlaces = listOf(
 )
 @RequiresApi(Build.VERSION_CODES.O)
 val defaultMeetups = listOf(
-    MeetupModel("카페", "카페 약속입니다.", listOf(1L, 2L, 3L, 4L, 5L), LocalDateTime.MIN, 22)
+    MeetupModel("카페", "카페 약속입니다.", listOf(1L, 2L, 3L, 4L, 5L), LocalDateTime.MIN, true, 22)
 )

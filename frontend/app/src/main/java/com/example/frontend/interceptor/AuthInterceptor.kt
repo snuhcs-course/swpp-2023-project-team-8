@@ -18,7 +18,7 @@ class AuthInterceptor(context: Context) : Interceptor {
 
         // Add the Authorization header to the original request
         val newRequest = originalRequest.newBuilder()
-            .addHeader("Authorization", "$token")
+            .addHeader("Authorization", "DEV 5")
             .build()
 
         return chain.proceed(newRequest)

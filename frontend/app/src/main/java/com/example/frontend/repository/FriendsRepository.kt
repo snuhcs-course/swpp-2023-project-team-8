@@ -10,6 +10,7 @@ import com.example.frontend.api.UserService
 import com.example.frontend.callback.FriendLocationCallback
 import com.example.frontend.interceptor.AuthInterceptor
 import com.example.frontend.model.UserWithLocationModel
+import com.example.frontend.utilities.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -94,7 +95,7 @@ object AppModule {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000")
+            .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

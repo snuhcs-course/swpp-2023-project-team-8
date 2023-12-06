@@ -12,7 +12,8 @@ import java.io.IOException
 import okhttp3.Request
 
 class CreateMeetUpUseCase(
-    private val meetUpService: MeetUpService = MeetUpService.create()
+    private val context: Context,
+    private val meetUpService: MeetUpService = MeetUpService.create(context)
 ) {
     fun send(meetup: MeetupModel) {
         val call = meetUpService.createMeetUp(meetup)
@@ -20,7 +21,7 @@ class CreateMeetUpUseCase(
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Log.d("CreateMeetUpUseCase", "Meetup created successfully")
+
                 } else {
 
                 }
