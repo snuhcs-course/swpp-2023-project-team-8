@@ -9,4 +9,8 @@ interface KVStore {
 
     fun getInt(key: String): Int?
     fun putInt(key: String, value: Int)
+
+    companion object {
+        const val DEFAULT_INT = -1
+    }
 }
