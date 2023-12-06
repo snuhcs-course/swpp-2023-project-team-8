@@ -23,6 +23,11 @@ class MeetUpsController < ApplicationController
       user_mission = UserMission.find_or_create_by(user_id: current_user.id, mission_id: 1)
       user_mission.update_progress(1)
 
+      if meet_up_params[:user_ids].length >= 3
+        user_mission = UserMission.find_or_create_by(user_id: current_user.id, mission_id: 2)
+        user_mission.update_progress(1)
+      end
+
       render json: @meet_up, status: :created
     else
       render json: @meet_up.errors, status: :unprocessable_entity
