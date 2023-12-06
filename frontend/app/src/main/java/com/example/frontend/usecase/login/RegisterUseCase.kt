@@ -26,6 +26,10 @@ class RegisterUseCase(
         val registerModel = RegisterModel(email, code, name, password)
         authService.register(registerModel).enqueue(object : Callback<RegisterModel?> {
             override fun onResponse(call: Call<RegisterModel?>, response: Response<RegisterModel?>) {
+                if (!response.isSuccessful) {
+                    Toast.makeText(context, "가입에 실패했어요.", Toast.LENGTH_LONG).show()
+                    return
+                }
                 result.value = "Response Code: " + response.code()
                 Toast.makeText(context, "회원가입 성공!", Toast.LENGTH_LONG).show()
                 onSwitchToLogin()

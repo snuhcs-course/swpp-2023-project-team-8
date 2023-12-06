@@ -20,6 +20,9 @@ val predefinedImages = listOf(
 val defaultMissions = listOf(
     MissionModel("예상치 못한 장소에서 친구와 마주쳐 보세요!", "친구와 우연히 만나기", false, 0)
 )
+
+val defaultfriendIdsList: List<Long> = listOf(1L, 2L, 3L, 4L, 5L)
+
 val defaultfriendList = listOf(
     UserWithLocationModel(1, "Alice", "Sha@snu.ac.kr", 125.9, 110.2),
     UserWithLocationModel(2, "Bob", "sha@snu.ac.kr", 11.3, 119.2),

@@ -59,4 +59,15 @@ class InMemoryKVStoreTest {
         kvStore.putBoolean("key", true)
         assertEquals(true, kvStore.getBoolean("key"))
     }
+
+    @Test
+    fun `clear removes all values`() {
+        kvStore.putString("key", "value")
+        kvStore.putInt("key", 123)
+        kvStore.putBoolean("key", true)
+        kvStore.clear()
+        assertNull(kvStore.getString("key"))
+        assertNull(kvStore.getInt("key"))
+        assertNull(kvStore.getBoolean("key"))
+    }
 }

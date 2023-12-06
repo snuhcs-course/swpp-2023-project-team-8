@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -137,6 +138,14 @@ fun MeetUpItem(meetup: MeetupModel) {
                 .padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(imageVector = Icons.Default.Menu, contentDescription = null)
+                Text(meetup.title)
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

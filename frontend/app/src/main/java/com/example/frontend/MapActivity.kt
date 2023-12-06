@@ -10,29 +10,19 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.AccountBox
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,38 +30,27 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
-import com.example.frontend.ui.friend.FriendActivity
-import com.example.frontend.ui.settings.UserInfoActivity
+import com.example.frontend.ui.component.BottomBar
+import com.example.frontend.ui.component.MapWithMarker
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlin.random.Random
 
 
 @AndroidEntryPoint
@@ -140,6 +119,7 @@ class MapActivity : ComponentActivity() {
                 ) {
                     FriendsMapUI(currentLocation, onClick = {
                         val intent = Intent(this, MeetupActivity::class.java)
+                        intent.putExtra("currentLocation", currentLocation)
                         this.startActivity(intent)
                     })
                 }
@@ -243,74 +223,10 @@ class MapActivity : ComponentActivity() {
 }
 
 @Composable
-fun MapUI(
-    currentLocation: LatLng?,
-    friends: List<UserWithLocationModel>,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-
-    MaterialTheme {
-        Column {
-            // The map takes up all the space minus the bottom bar
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                currentLocation?.let { location ->
-                    val cameraPositionState = rememberCameraPositionState {
-                        position = CameraPosition.fromLatLngZoom(location, 15f)
-                    }
-
-                    GoogleMap(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        cameraPositionState = cameraPositionState
-                    ) {
-                        Marker(
-                            state = MarkerState(position = location),
-                            title = "Current Location",
-                            snippet = "You are here"
-                        )
-
-                        // Friends location markers
-                        friends.forEach { friend ->
-                            Marker(
-                                state = MarkerState(
-                                    position = LatLng(
-                                        friend.latitude,
-                                        friend.longitude
-                                    )
-                                ),
-                                title = friend.name,
-                                snippet = friend.email,
-                                icon = BitmapDescriptorFactory.defaultMarker(Random.nextFloat() * 360)
-                            )
-                        }
-                    }
-                }
-                FloatingActionButton(
-                    onClick = { onClick() },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(50.dp)
-                ) {
-                    Icon(Icons.Filled.Add, contentDescription = null)
-                }
-            }
-
-            // Bottom bar at the bottom
-            BottomBar(currentLocation)
-        }
-    }
-}
-
-@Composable
 fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
     val viewModel: FriendsViewModel = viewModel()
     val friendsList by viewModel.friendsList.observeAsState(emptyList())
-
+    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(Unit) {
         while (isActive) {
             viewModel.fetchFriends()
@@ -318,102 +234,33 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
         }
     }
 
-    MapUI(currentLocation, friendsList, onClick = { onClick() })
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun MapUIPreview() {
-    FrontendTheme {
-        MapUI(LatLng(1.35, 103.87), emptyList(), onClick = {})
-    }
-}
-
-@Composable
-fun IconToggleButton(
-    icon: ImageVector,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .size(36.dp)
-            .clickable { onClick() }
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-}
-
-@Composable
-fun BottomBar(currentLocation: LatLng?) {
-    var context = LocalContext.current
-
-    val icons = listOf(
-        Icons.Default.Star,
-        Icons.Outlined.AccountBox,
-        Icons.Outlined.DateRange,
-        Icons.Outlined.CheckCircle,
-        Icons.Outlined.Settings,
-
-        )
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .background(Color(0xFFF3EDF7))
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 37.dp, end = 37.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            icons.forEach { icon ->
-
-                IconToggleButton(icon = icon) {
-                    // Implement icon button click action here
-                    when (icon) {
-
-                        icons[0] -> {
-                            // MeetUp 생성으로 이동
-                            val nextIntent = Intent(context, MeetupActivity::class.java)
-                            nextIntent.putExtra("currentLocation", currentLocation)
-                            context.startActivity(nextIntent)
-                        }
-
-                        icons[1] -> {
-                            // Friend List 이동
-                            val nextIntent = Intent(context, FriendActivity::class.java)
-                            context.startActivity(nextIntent)
-                        }
-
-                        icons[2] -> {
-                            // 약속 list
-                            val nextIntent = Intent(context, MeetupListUI::class.java)
-                            context.startActivity(nextIntent)
-                        }
-
-                        icons[3] -> {
-                            // MissionActivity 이동
-                            val nextIntent = Intent(context, MissionActivity::class.java)
-                            context.startActivity(nextIntent)
-                        }
-
-                        icons[4] -> {
-                            // userInfo로 이동
-                            val nextIntent = Intent(context, UserInfoActivity::class.java)
-                            context.startActivity(nextIntent)
-
-                        }
-                    }
-                }
-            }
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        bottomBar = {
+            BottomBar(currentLocation)
         }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            MapWithMarker(currentLocation, friendsList)
+            FloatingActionButton(
+                onClick = { onClick() },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = null)
+            }
+
+        }
+
     }
+
+
 }
+
+

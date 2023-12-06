@@ -54,8 +54,11 @@ import com.example.frontend.MapActivity
 import com.example.frontend.MissionActivity
 import com.example.frontend.data.predefinedImages
 import com.example.frontend.repository.UserContextRepository
+import com.example.frontend.ui.component.CustomButton
+import com.example.frontend.ui.login.LoginActivity
 import com.example.frontend.ui.settings.component.MissionCard
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.usecase.LogOutUseCase
 
 class UserInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,11 +80,11 @@ class UserInfoActivity : ComponentActivity() {
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
-    var selectedPredefinedImage = UserContextRepository.ofContext(context).getSelectedPredefinedImage()
+    var selectedPredefinedImage by rememberSaveable { mutableStateOf(0) }
+    selectedPredefinedImage = UserContextRepository.ofContext(context).getSelectedPredefinedImage()?:0
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     val currentUserName = UserContextRepository.ofContext(context).getUserName() ?: "DefaultName"
-
     if (showDialog) {
         ProfileEditDialog(
             currentName = currentUserName,
@@ -91,6 +94,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
             }
         )
     }
+
 
     fun showImageSelectionDialog() {
         AlertDialog.Builder(context)
@@ -173,10 +177,10 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
 
         ) {
 
-            if (selectedPredefinedImage != null) {
+            if (selectedPredefinedImage != 0) {
                 selectedPredefinedImage.let { image ->
                     Image(
-                        painter = painterResource(id = image?:0),
+                        painter = painterResource(id = image ?: 0),
                         contentDescription = null,
                         modifier = Modifier
                             .size(100.dp)
@@ -200,13 +204,13 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
             Icon(// 프로필 사진 수정
                 imageVector = Icons.Outlined.AddCircle,
                 contentDescription = null,
-                tint=Color(0xFF6750A4),
+                tint = Color(0xFF6750A4),
                 modifier = Modifier
                     .size(30.dp)
                     .offset(x = 60.dp, y = (-90).dp)
                     .clickable {
                         showImageSelectionDialog()
-                        }
+                    }
             )
 
             Row(
@@ -226,7 +230,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = UserContextRepository.ofContext(context).getUserName()?: "김샤프",
+                    text = UserContextRepository.ofContext(context).getUserName() ?: "김샤프",
                     //text = "김사프",
                     style = TextStyle(
                         fontSize = 16.sp,
@@ -239,7 +243,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     modifier = Modifier.padding(start = 93.dp)
                 )
             }
-            Row(){
+            Row() {
                 Text(
                     text = "이메일",
                     style = TextStyle(
@@ -248,12 +252,12 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                         fontWeight = FontWeight(500),
                         color = Color(0xFF000000),
                         letterSpacing = 0.1.sp,
-                    ) ,
+                    ),
                     modifier = Modifier.padding(start = 30.dp)
                 )
 
                 Text(
-                    text = UserContextRepository.ofContext(context).getUserMail()?:"sha@snu.ac.kr",
+                    text = UserContextRepository.ofContext(context).getUserMail() ?: "sha@snu.ac.kr",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
@@ -261,7 +265,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                         color = Color(0xFF000000),
                         textAlign = TextAlign.Center,
                         letterSpacing = 0.1.sp,
-                    )  ,
+                    ),
                     modifier = Modifier.padding(start = 80.dp)
                 )
             }
@@ -270,7 +274,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
-                    .width(344.dp)
+                    .fillMaxWidth()
                     .height(130.dp)
                     .clickable {
                         val nextIntent = Intent(context, MissionActivity::class.java)
@@ -279,6 +283,22 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
             ) {
                 MissionCard()
             }
+
+            CustomButton(
+                buttonText = "로그아웃",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp),
+                onClickHandler = {
+                    LogOutUseCase(context).execute()
+                    val nextIntent = Intent(context, LoginActivity::class.java)
+                    context.startActivity(nextIntent)
+                    // finish current activity
+                    if (context is Activity) {
+                        context.finish()
+                    }
+                }
+            )
         }
     }
 }
@@ -336,7 +356,6 @@ fun ProfileEditDialog(
         }
     }
 }
-
 
 
 @Preview(showBackground = true)

@@ -55,4 +55,14 @@ RSpec.describe MailVerificationToken, type: :model do
       end
     end
   end
+
+  context "이미 가입된 이메일로 발송을 시도한다면" do
+    let!(:user) { User.create!(email: snu_mail, name: "test", password: "1234") }
+
+    it "실패한다" do
+      mail_verification_token = MailVerificationToken.new(email: snu_mail)
+
+      expect(mail_verification_token.valid?).to be_falsey
+    end
+  end
 end

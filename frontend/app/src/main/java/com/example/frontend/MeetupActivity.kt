@@ -1,12 +1,12 @@
 package com.example.frontend
 
-
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -62,6 +62,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -70,27 +71,26 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
+import com.example.frontend.repository.InviteFriendViewModel
+import com.example.frontend.usecase.ListFriendUseCase
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
 
 @AndroidEntryPoint
 class MeetupActivity : ComponentActivity() {
-
+    private val viewModelCheck: InviteFriendViewModel by viewModels()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val currentLocation = this.intent.getParcelableExtra("currentLocation")?: LatLng(10.1, 23.1)
         setContent {
             FrontendTheme {
                 val navController = rememberNavController()
-                val selectedFriends = mutableStateOf<List<Long>>(emptyList())
-
+                val selectedFriends = rememberSaveable { mutableStateOf(listOf<Long>()) }
                 val viewModel: FriendsViewModel = viewModel()
                 val friendsList by viewModel.friendsList.observeAsState(emptyList())
+                val userIds = rememberSaveable { mutableStateOf(LongArray(0)) }
+                val selectedName = rememberSaveable { mutableStateOf("") }
 
                 LaunchedEffect(Unit) {
                     viewModel.fetchFriends()
@@ -99,13 +99,17 @@ class MeetupActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "meetupUI") {
                     composable("meetupUI") { MeetupUI(navController, selectedFriends) }
                     composable("friendListUI") {
-                        FriendListUI(selectedFriends, {}, friendsList, navController)
+                        FriendListUI(selectedFriends, {},viewModelCheck, friendsList, navController)
+                    }
+                    composable("placeRecUI"){
+                      PlaceRecUI(selectedName.value, userIds.value,currentLocation, Modifier, navController, LocalContext.current)
                     }
                 }
             }
         }
     }
 }
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -217,31 +221,14 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
                 Text(text = "초대하기")
             }
 
-
         }
-
         CustomButton(
             buttonText = "장소 선택",
             onClickHandler = {
                 if (selectedFriends.value.isEmpty()) {
                     Toast.makeText(context, "친구 초대 없이는 밋업을 생성할 수 없어요", Toast.LENGTH_SHORT).show()
                 } else {
-                    val nextIntent = Intent(context, PlaceRecActivity::class.java)
-                    nextIntent.putExtra("title", title)
-                    nextIntent.putExtra("description", description)
-                    val selectedDate: LocalDate =
-                        Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
-                            ZoneId.systemDefault()
-                        ).toLocalDate()
-                    val selectedTime: LocalTime =
-                        LocalTime.of(timePickerState.hour, timePickerState.minute)
-                    val selectedDateTime: LocalDateTime =
-                        LocalDateTime.of(selectedDate, selectedTime)
-                    val dateTimeString = selectedDateTime.toString()
-                    nextIntent.putExtra("meetAt", dateTimeString)
-                    val userIds = selectedFriends.value.toLongArray()
-                    nextIntent.putExtra("userIds", userIds)
-                    context.startActivity(nextIntent)
+                    navController.navigate("placeRecUI")
                 }
             })
     }
@@ -252,24 +239,37 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
 fun FriendListUI(
     selectedFriends: MutableState<List<Long>>,
     onSelectionComplete: () -> Unit,
+    viewModel: InviteFriendViewModel,
     friendsList: List<UserWithLocationModel>,
     navController: NavController
 ) {
-    // Local state for search query
-    var searchQuery by remember { mutableStateOf("") }
+    var searchQuery by rememberSaveable  { mutableStateOf("") }
+    var isSearchClicked by remember { mutableStateOf(false) }
+    val selectedFriendIds = remember(selectedFriends.value) { mutableStateOf(selectedFriends.value) }
+    val friendUseCase = ListFriendUseCase(LocalContext.current)
+    val friendlist = remember { mutableStateOf<List<UserWithLocationModel>>(emptyList()) }
+    val checkedStates = remember { mutableStateMapOf<Long, Boolean>() }
 
+    LaunchedEffect(Unit) {
+        if (friendlist.value.isEmpty()) {
+            friendUseCase.fetch { fetchedFriends ->
+                friendlist.value = fetchedFriends
+            }
+        }
+    }
+    val filteredFriends = if (isSearchClicked) {
+        friendlist.value.filter { it.name.contains(searchQuery, ignoreCase = true) }
+    } else {
+        friendlist.value
+    }
 
-    // Dummy list of friends
-    val filteredFriends = friendsList.filter { it.name.contains(searchQuery, ignoreCase = true) }
-
-    // Handle friend selection
-    val selectedFriendIds = remember { mutableStateOf(listOf<Long>()) }
-
-    Column {
+    Column(Modifier.fillMaxSize()) {
         TopAppBar(
             title = { Text(text = "친구 초대") },
             actions = {
-                IconButton(onClick = { /* handle search icon click */ }) {
+                IconButton(onClick = {
+                    isSearchClicked = !isSearchClicked
+                }) {
                     Icon(Icons.Filled.Search, contentDescription = "Search")
                 }
             }
@@ -278,19 +278,22 @@ fun FriendListUI(
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            label = { Text("검색") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
+                .height(50.dp),
+            textStyle = TextStyle(fontSize =20.sp)
+
         )
 
-        // Friends list
         LazyColumn {
             items(filteredFriends) { friend ->
                 FriendListItem(
                     friendName = friend.name,
-                    isSelected = selectedFriendIds.value.contains(friend.id),
+                    isSelected = viewModel.checkedStatesFlow.value[friend.id] ?: false,
                     onItemSelected = { isSelected ->
+                        viewModel.updateCheckedState(friend.id, isSelected)
+                        checkedStates[friend.id] = isSelected
                         if (isSelected) {
                             selectedFriendIds.value = selectedFriendIds.value + friend.id
                         } else {
@@ -302,11 +305,12 @@ fun FriendListUI(
         }
         Button(
             onClick = {
-                selectedFriends.value = selectedFriendIds.value
+                selectedFriends.value = selectedFriendIds.value.distinct()
                 onSelectionComplete()
                 navController.popBackStack()
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
+
         ) {
             Text("완료")
         }
@@ -315,16 +319,25 @@ fun FriendListUI(
 
 @Composable
 fun FriendListItem(friendName: String, isSelected: Boolean, onItemSelected: (Boolean) -> Unit) {
+    val rememberedSelectedState = remember { mutableStateOf(isSelected) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = { onItemSelected(!isSelected) })
+            .clickable(onClick = {
+                val updatedState = !rememberedSelectedState.value
+                rememberedSelectedState.value = updatedState
+                onItemSelected(updatedState)
+            })
             .padding(16.dp)
     ) {
         Text(friendName, modifier = Modifier.weight(1f))
         Checkbox(
-            checked = isSelected,
-            onCheckedChange = { onItemSelected(it) }
+            checked = rememberedSelectedState.value,
+            onCheckedChange = {
+                rememberedSelectedState.value = it
+                onItemSelected(it)
+            }
         )
     }
 }

@@ -52,6 +52,10 @@ class UserContextRepository(
         return store.getBoolean(IS_LOGGED_IN) ?: false
     }
 
+    fun clear() {
+        store.clear()
+    }
+
     companion object {
         /*
          * Returns UserContextRepository instance backed by SharedPreferenceKVStore.
