@@ -33,6 +33,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -140,6 +144,7 @@ class MapActivity : ComponentActivity() {
                 ) {
                     FriendsMapUI(currentLocation, onClick = {
                         val intent = Intent(this, MeetupActivity::class.java)
+                        intent.putExtra("currentLocation", currentLocation)
                         this.startActivity(intent)
                     })
                 }
@@ -290,18 +295,9 @@ fun MapUI(
                         }
                     }
                 }
-                FloatingActionButton(
-                    onClick = { onClick() },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(50.dp)
-                ) {
-                    Icon(Icons.Filled.Add, contentDescription = null)
-                }
+
             }
 
-            // Bottom bar at the bottom
-            BottomBar(currentLocation)
         }
     }
 }
@@ -310,7 +306,7 @@ fun MapUI(
 fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
     val viewModel: FriendsViewModel = viewModel()
     val friendsList by viewModel.friendsList.observeAsState(emptyList())
-
+    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(Unit) {
         while (isActive) {
             viewModel.fetchFriends()
@@ -318,7 +314,33 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
         }
     }
 
-    MapUI(currentLocation, friendsList, onClick = { onClick() })
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        bottomBar = {
+            BottomBar(currentLocation)
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            MapUI(currentLocation, friendsList, onClick = { onClick() }, modifier = Modifier.fillMaxSize())
+            FloatingActionButton(
+                onClick = { onClick() },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = null)
+            }
+
+        }
+
+    }
+
+
 }
 
 
@@ -375,11 +397,8 @@ fun BottomBar(currentLocation: LatLng?) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             icons.forEach { icon ->
-
                 IconToggleButton(icon = icon) {
-                    // Implement icon button click action here
                     when (icon) {
-
                         icons[0] -> {
                             // MeetUp 생성으로 이동
                             val nextIntent = Intent(context, MeetupActivity::class.java)

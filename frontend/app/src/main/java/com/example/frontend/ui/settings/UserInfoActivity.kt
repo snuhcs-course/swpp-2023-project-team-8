@@ -80,11 +80,11 @@ class UserInfoActivity : ComponentActivity() {
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
-    var selectedPredefinedImage = UserContextRepository.ofContext(context).getSelectedPredefinedImage()
+    var selectedPredefinedImage by rememberSaveable { mutableStateOf(0) }
+    selectedPredefinedImage = UserContextRepository.ofContext(context).getSelectedPredefinedImage()?:0
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     val currentUserName = UserContextRepository.ofContext(context).getUserName() ?: "DefaultName"
-
     if (showDialog) {
         ProfileEditDialog(
             currentName = currentUserName,
@@ -94,6 +94,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
             }
         )
     }
+
 
     fun showImageSelectionDialog() {
         AlertDialog.Builder(context)
@@ -176,7 +177,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
 
         ) {
 
-            if (selectedPredefinedImage != null) {
+            if (selectedPredefinedImage != 0) {
                 selectedPredefinedImage.let { image ->
                     Image(
                         painter = painterResource(id = image ?: 0),

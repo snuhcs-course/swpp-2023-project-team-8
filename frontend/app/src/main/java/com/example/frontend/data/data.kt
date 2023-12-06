@@ -26,6 +26,9 @@ val defaultMissions = listOf(
     MissionModel("미션7", "친구 세 명과 만나기", false, "친구 세 명과 약속을 잡아 보세요!"),
     MissionModel("미션8", "친구 스무 명 추가하기", false, "친구 20 명을 추가해 보세요!")
 )
+
+val defaultfriendIdsList: List<Long> = listOf(1L, 2L, 3L, 4L, 5L)
+
 val defaultfriendList = listOf(
     UserWithLocationModel(1, "Alice", "Sha@snu.ac.kr", 125.9, 110.2),
     UserWithLocationModel(2, "Bob", "sha@snu.ac.kr", 11.3, 119.2),
