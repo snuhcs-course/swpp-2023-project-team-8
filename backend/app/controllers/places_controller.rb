@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class PlacesController < ApplicationController
-  skip_before_action :require_login
-
   def recommend
-    # TODO: User 입력으로 변경하기
-    latitude = params[:latitude].to_f
-    longitude = params[:longitude].to_f
+    user_ids = params[:user_ids].map(&:to_i) + [current_user.id]
+
+    checkins = CheckIn.where(user_id: user_ids).last_check_in_by_user.select(:latitude, :longitude).to_ary
+
+    latitude = checkins.sum { |x| x.latitude } / checkins.size
+    longitude = checkins.sum { |x| x.longitude } / checkins.size
 
     render json: {
       places: RecommendPlaces.new(latitude: latitude, longitude: longitude).run
