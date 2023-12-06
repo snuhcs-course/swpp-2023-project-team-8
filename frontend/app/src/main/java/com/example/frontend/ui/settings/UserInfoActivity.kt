@@ -24,11 +24,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -54,6 +54,7 @@ import com.example.frontend.MissionActivity
 import com.example.frontend.data.predefinedImages
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.component.CustomButton
+import com.example.frontend.ui.component.MyTopAppBar
 import com.example.frontend.ui.login.LoginActivity
 import com.example.frontend.ui.settings.component.MissionCard
 import com.example.frontend.ui.theme.FrontendTheme
@@ -80,7 +81,7 @@ class UserInfoActivity : ComponentActivity() {
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
     var selectedPredefinedImage by rememberSaveable { mutableStateOf(0) }
-    selectedPredefinedImage = UserContextRepository.ofContext(context).getSelectedPredefinedImage()?:0
+    selectedPredefinedImage = UserContextRepository.ofContext(context).getSelectedPredefinedImage() ?: 0
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     val currentUserName = UserContextRepository.ofContext(context).getUserName() ?: "DefaultName"
@@ -113,57 +114,20 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
             .fillMaxSize()
 
     ) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp)
-                .background(color = Color(0xFFF3EDF7))
-
+        MyTopAppBar(
+            title = "내 정보",
+            actions = {
+                IconButton(onClick = { showDialog = true }) {
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = null,
+                    )
+                }
+            }
         )
-        Row(
-            modifier = Modifier
-                .height(54.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.KeyboardArrowLeft,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(46.dp)
-                    .clickable {
-                        if (context is Activity) {
-                            context.finish()
-                        }
-                    }
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-
-
-            Text(
-                modifier = Modifier,
-
-                text = "내 정보",
-                style = TextStyle(
-                    fontSize = 22.sp,
-                    lineHeight = 28.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFF1D1B20)
-                )
-            )
-            Spacer(modifier = Modifier.weight(0.4f))
-            Icon(
-                imageVector = Icons.Outlined.Settings,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clickable {
-                        showDialog = true
-                    }
-            )
-        }
 
         Spacer(modifier = Modifier.height(20.dp))
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -172,7 +136,6 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 .padding(end = 30.dp)
 
         ) {
-
             if (selectedPredefinedImage != 0) {
                 selectedPredefinedImage.let { image ->
                     Image(
