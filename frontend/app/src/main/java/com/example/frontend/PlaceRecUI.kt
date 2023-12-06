@@ -4,8 +4,12 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+
+
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,11 +24,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +55,7 @@ import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun PlaceRecUI(
-    selectedName: String,
+    selectedName: MutableState<String>,
     userIds: LongArray,
     currentLocation: LatLng,
     modifier: Modifier = Modifier,
@@ -127,9 +133,9 @@ fun PlaceRecUI(
             } else {
                 PlaceList(
                     placeModels = places,
-                    onPlaceSelected = {
-                        selectedPlace = it
-                    }
+                    onPlaceSelected = { selectedPlace = it },
+                    selectedPlace = selectedPlace,
+                    onSelectionChange = { selectedPlace = it }
                 )
             }
 
@@ -146,78 +152,96 @@ fun PlaceRecUI(
             ) {
                 MapUI(currentLocation, emptyList(), onClick = {})
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                selectedPlace?.let { place ->
+                    Text(
+                        text = "선택한 장소: ${place.name}",
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight(400),
+                            color = Color(0xFF000000),
+                        ),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    selectedPlaceName = place.name
+                }
+                if (selectedPlace == null) {
+                    Text(
+                        text = "선택한 장소:",
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight(400),
+                            color = Color(0xFF000000),
+                        ),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                Button(
+                    onClick = {
+                        selectedName.value = selectedPlaceName?:""
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier
+                      //  .align(Alignment.End)
 
-            selectedPlace?.let { place ->
-                Text(
-                    text = "Selected Place: ${place.name}",
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight(400),
-                        color = Color(0xFF000000),
-                    ),
-                    modifier = Modifier.padding(16.dp)
-                )
+                ) {
+                    Text("완료")
+                }
             }
         }
 
     }
 
 }
-
 @Composable
-fun ConfirmationDialog(
-    onConfirm: () -> Unit,
-    onCancel: () -> Unit
+fun PlaceList(
+    placeModels: List<PlaceModel>,
+    onPlaceSelected: (PlaceModel) -> Unit,
+    selectedPlace: PlaceModel?,
+    onSelectionChange: (PlaceModel?) -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onCancel,
-        title = { Text("Confirmation") },
-        text = { Text("Do you want to confirm your selection?") },
-        confirmButton = {
-            TextButton(onClick = {
-                onConfirm()
-            }) {
-                Text("Yes")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = {
-                onCancel()
-            }) {
-                Text("No")
-            }
-        }
-    )
-}
-
-@Composable
-fun PlaceList(placeModels: List<PlaceModel>, onPlaceSelected: (PlaceModel) -> Unit) {
-    LazyRow {
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 8.dp)
+    ) {
         items(placeModels) { place ->
             PlaceItem(
                 place = place,
-                onPlaceSelected = onPlaceSelected
+                onPlaceSelected = onPlaceSelected,
+                isSelected = selectedPlace == place,
+                onSelectionChange = onSelectionChange
             )
         }
     }
 }
 
 @Composable
-fun PlaceItem(place: PlaceModel, onPlaceSelected: (PlaceModel) -> Unit) {
-    var isSelected by remember { mutableStateOf(false) }
-
+fun PlaceItem(
+    place: PlaceModel,
+    onPlaceSelected: (PlaceModel) -> Unit,
+    isSelected: Boolean,
+    onSelectionChange: (PlaceModel?) -> Unit
+) {
     Box(
         modifier = Modifier
             .width(200.dp)
-            .height(300.dp)
+            .height(200.dp)
             .background(
-                color = if (isSelected) Color.Magenta else Color.Gray,
+                color = if (isSelected) Color.DarkGray else Color.LightGray,
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(10.dp)
+            .padding(top = 30.dp, start = 10.dp)
             .clickable {
-                isSelected = !isSelected
-                onPlaceSelected(place)
+                if (isSelected) {
+                    onSelectionChange(null)
+                } else {
+                    onSelectionChange(place)
+                    onPlaceSelected(place)
+                }
             }
     ) {
         Text(text = place.name ?: "", modifier = Modifier)
@@ -228,7 +252,7 @@ fun PlaceItem(place: PlaceModel, onPlaceSelected: (PlaceModel) -> Unit) {
 @Composable
 fun PlaceRecUIPreview() {
     FrontendTheme {
-        PlaceRecUI("",defaultfriendIdsList.toLongArray(), LatLng(10.1,1.2), modifier = Modifier, navController = NavController(LocalContext.current), LocalContext.current)
+        PlaceRecUI(mutableStateOf("A"),defaultfriendIdsList.toLongArray(), LatLng(10.1,1.2), modifier = Modifier, navController = NavController(LocalContext.current), LocalContext.current)
 
     }
 }

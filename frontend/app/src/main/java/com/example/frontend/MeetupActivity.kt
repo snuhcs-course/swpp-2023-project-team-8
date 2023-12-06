@@ -96,12 +96,12 @@ class MeetupActivity : ComponentActivity() {
                 }
 
                 NavHost(navController = navController, startDestination = "meetupUI") {
-                    composable("meetupUI") { MeetupUI(navController, selectedFriends) }
+                    composable("meetupUI") { MeetupUI(navController, selectedFriends, selectedName) }
                     composable("friendListUI") {
                         FriendListUI(selectedFriends, {},viewModelCheck, friendsList, navController)
                     }
                     composable("placeRecUI"){
-                      PlaceRecUI(selectedName.value, userIds.value,currentLocation, Modifier, navController, LocalContext.current)
+                      PlaceRecUI(selectedName, userIds.value,currentLocation, Modifier, navController, LocalContext.current)
                     }
                 }
             }
@@ -113,7 +113,7 @@ class MeetupActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Long>>) {
+fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Long>>, selectedName: MutableState<String>) {
 
     var title by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
@@ -123,7 +123,6 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -158,67 +157,81 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
                 ) {
                     Text(text = "취소")
                 }
+
+                Button(
+                    onClick = {
+
+                    },
+
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(50.dp)
+                        .padding(end = 16.dp, top = 16.dp),
+                    colors = ButtonDefaults.buttonColors(Purple80)
+                ) {
+                    Text(text = "완료")
+                }
             }
 
         }
         Spacer(modifier = Modifier.height(15.dp))
 
-        OutlinedTextField(
-            value = title,
-            onValueChange = { title = it },
-            label = { Text("제목") },
-            modifier = Modifier.width(310.dp)
-        )
-        Spacer(modifier = Modifier.height(5.dp))
+//        OutlinedTextField(
+//            value = title,
+//            onValueChange = { title = it },
+//            label = { Text("제목") },
+//            modifier = Modifier.width(310.dp)
+//        )
+//        Spacer(modifier = Modifier.height(5.dp))
+//
+//        OutlinedTextField(
+//            value = description,
+//            onValueChange = { description = it },
+//            label = { Text("설명") },
+//            modifier = Modifier.width(310.dp)
+//        )
 
-        OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("설명") },
-            modifier = Modifier.width(310.dp)
-        )
-
-        val datePickerState =
-            rememberDatePickerState(
-                initialSelectedDateMillis = System.currentTimeMillis(),
-                initialDisplayMode = DisplayMode.Input
-            )
-        Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
-        }
-
-        val timePickerState = rememberTimePickerState()
-        TimeInput(timePickerState)
-
-        Spacer(modifier = Modifier.height(30.dp))
+//        val datePickerState =
+//            rememberDatePickerState(
+//                initialSelectedDateMillis = System.currentTimeMillis(),
+//                initialDisplayMode = DisplayMode.Input
+//            )
+//        Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+//            DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
+//        }
+//
+//        val timePickerState = rememberTimePickerState()
+//        TimeInput(timePickerState)
+//
+//        Spacer(modifier = Modifier.height(30.dp))
 
         Row {
 
-            Text(
-                text = "친구 초대: ${selectedFriends.value.size}명",
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFF000000),
-
-                    ),
-
-                modifier = Modifier
-                    .width(180.dp)
-                    .height(64.dp)
-                    .padding(start = 40.dp)
-            )
-
-            Button(
-                onClick = {
-                    navController.navigate("friendListUI")
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically) // Center the button vertically inside the Row
-                    .offset(y = (-19).dp), colors = ButtonDefaults.buttonColors(Purple80)
-            ) {
-                Text(text = "초대하기")
-            }
+//            Text(
+//                text = "친구 초대: ${selectedFriends.value.size}명",
+//                style = TextStyle(
+//                    fontSize = 18.sp,
+//                    fontWeight = FontWeight(400),
+//                    color = Color(0xFF000000),
+//
+//                    ),
+//
+//                modifier = Modifier
+//                    .width(180.dp)
+//                    .height(64.dp)
+//                    .padding(start = 40.dp)
+//            )
+//
+//            Button(
+//                onClick = {
+//                    navController.navigate("friendListUI")
+//                },
+//                modifier = Modifier
+//                    .align(Alignment.CenterVertically) // Center the button vertically inside the Row
+//                    .offset(y = (-19).dp), colors = ButtonDefaults.buttonColors(Purple80)
+//            ) {
+//                Text(text = "초대하기")
+//            }
 
         }
         CustomButton(
@@ -226,6 +239,16 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
             onClickHandler = {
                 navController.navigate("placeRecUI")
             }
+        )
+
+        Text(
+            text = "선택된 장소: ${selectedName.value}",
+            style = TextStyle(
+                fontSize = 18.sp,
+                fontWeight = FontWeight(400),
+                color = Color(0xFF000000),
+            ),
+            modifier = Modifier.padding(16.dp)
         )
     }
 }
