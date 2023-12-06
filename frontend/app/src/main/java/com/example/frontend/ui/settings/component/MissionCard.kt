@@ -35,7 +35,6 @@ fun MissionCard() {
         ),
         modifier = Modifier
             .padding(top = 50.dp)
-            .size(width = 300.dp, height = 500.dp)
             .fillMaxWidth()
     ) {
         Column(
