@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
@@ -37,7 +36,6 @@ import com.example.frontend.usecase.login.RegisterUseCase
 import com.example.frontend.usecase.login.SendVerificationCodeUseCase
 import com.example.frontend.utilities.isValidSnuMail
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterUI(onSwitchToLogin: () -> Unit) {
     val context = LocalContext.current
@@ -53,18 +51,6 @@ fun RegisterUI(onSwitchToLogin: () -> Unit) {
     Column(
         modifier = Modifier.padding(20.dp)
     ) {
-
-        // TODO(heka1024): 키보드 입력 창에서 '다음' 버튼 등으로 넘어갈 수 있게 하기
-        // TODO(heka1024): 터치할 때 키보드 내려가게 하게
-        // 눌러서 내려가는 건
-        // 다음을 띄우려면
-        // imeAction = ImeAction.Next
-//        EmailAuthenticationField(
-//            email = email,
-//            onEmailChanged = { newEmail -> email = newEmail },
-//            onSendClicked = { sendButtonHandler(context, email, response) },
-//        )
-
         OutlinedTextField(
             value = email,
             onValueChange = { newEmail -> email = newEmail },
