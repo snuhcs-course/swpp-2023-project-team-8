@@ -1,6 +1,7 @@
 package com.example.frontend.usecase
 
 import android.content.Context
+import android.util.Log
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.repository.UsersRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -13,6 +14,8 @@ class SaveMyInfoUseCase @Inject constructor(
     private val userContextRepository = UserContextRepository.ofContext(context)
 
     suspend fun execute() {
+        Log.i("SaveMyInfoUseCase", "execute")
+
         repository.getMyInfo().apply {
             userContextRepository.saveUserName(name)
             userContextRepository.saveUserMail(email)
