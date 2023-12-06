@@ -11,7 +11,7 @@ import retrofit2.Response
 
 class ListMissionUseCase(
     private val context: Context,
-    private val missionService: MissionService = MissionService.create()
+    private val missionService: MissionService = MissionService.create(context)
 ) {
     fun fetch(onMissionsFetched: (List<MissionModel>) -> Unit) {
         val call = missionService.getMissionList()
