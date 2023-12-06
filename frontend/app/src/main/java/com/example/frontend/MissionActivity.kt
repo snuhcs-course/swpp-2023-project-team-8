@@ -96,7 +96,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
         } else {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = Color(0xFFDFD5EC)
+                color = MaterialTheme.colorScheme.background
             ) {
                 GridItems(items = indexedMissions) { indexedMission ->
                     val (index, mission) = indexedMission
