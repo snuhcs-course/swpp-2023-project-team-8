@@ -48,6 +48,10 @@ class UserContextRepository(
         store.putBoolean(IS_LOGGED_IN, isLoggedIn)
     }
 
+    fun getIsLoggedIn(): Boolean {
+        return store.getBoolean(IS_LOGGED_IN) ?: false
+    }
+
     companion object {
         /*
          * Returns UserContextRepository instance backed by SharedPreferenceKVStore.
