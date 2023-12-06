@@ -28,7 +28,7 @@ object GsonProvider {
 
     @RequiresApi(Build.VERSION_CODES.O)
     val localDateTimeSerializer = JsonSerializer<LocalDateTime> { src, _, _ ->
-        val zonedDateTime = src.atOffset(ZoneOffset.UTC)
+        val zonedDateTime = src.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC)
         JsonPrimitive(zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
     }
 
