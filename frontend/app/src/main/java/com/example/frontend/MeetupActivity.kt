@@ -89,6 +89,7 @@ class MeetupActivity : ComponentActivity() {
                 val viewModel: FriendsViewModel = viewModel()
                 val friendsList by viewModel.friendsList.observeAsState(emptyList())
                 val userIds = rememberSaveable { mutableStateOf(LongArray(0)) }
+                val selectedName = rememberSaveable { mutableStateOf("") }
 
                 LaunchedEffect(Unit) {
                     viewModel.fetchFriends()
@@ -100,7 +101,7 @@ class MeetupActivity : ComponentActivity() {
                         FriendListUI(selectedFriends, {},viewModelCheck, friendsList, navController)
                     }
                     composable("placeRecUI"){
-                      PlaceRecUI(userIds.value,currentLocation, Modifier, navController, LocalContext.current)
+                      PlaceRecUI(selectedName.value, userIds.value,currentLocation, Modifier, navController, LocalContext.current)
                     }
                 }
             }

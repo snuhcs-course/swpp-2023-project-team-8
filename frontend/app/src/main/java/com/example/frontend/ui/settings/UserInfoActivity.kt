@@ -176,7 +176,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
 
         ) {
 
-            if (selectedPredefinedImage != null) {
+            if (selectedPredefinedImage != 0) {
                 selectedPredefinedImage.let { image ->
                     Image(
                         painter = painterResource(id = image?:0),

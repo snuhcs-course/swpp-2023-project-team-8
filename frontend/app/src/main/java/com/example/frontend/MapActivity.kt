@@ -327,13 +327,14 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomEnd
         ) {
+            MapUI(currentLocation, friendsList, onClick = { onClick() }, modifier = Modifier.fillMaxSize())
             FloatingActionButton(
                 onClick = { onClick() },
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(Icons.Filled.Add, contentDescription = null)
             }
-            MapUI(currentLocation, friendsList, onClick = { onClick() }, modifier = Modifier.fillMaxSize())
+
         }
 
     }
@@ -395,11 +396,8 @@ fun BottomBar(currentLocation: LatLng?) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             icons.forEach { icon ->
-
                 IconToggleButton(icon = icon) {
-                    // Implement icon button click action here
                     when (icon) {
-
                         icons[0] -> {
                             // MeetUp 생성으로 이동
                             val nextIntent = Intent(context, MeetupActivity::class.java)

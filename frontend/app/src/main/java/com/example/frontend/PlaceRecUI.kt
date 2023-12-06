@@ -19,8 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,7 +48,7 @@ import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun PlaceRecUI(
-
+    selectedName: String,
     userIds: LongArray,
     currentLocation: LatLng,
     modifier: Modifier = Modifier,
@@ -58,6 +60,9 @@ fun PlaceRecUI(
 
     val placeUseCase = remember { ListPlaceUseCase(context, currentLocation, userIds) }
     var selectedPlace by remember { mutableStateOf<PlaceModel?>(null) } // Added state for selected place
+
+    var isConfirmationDialogVisible by remember { mutableStateOf(false) }
+    var selectedPlaceName by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         placeUseCase.fetch { fetchedPlaces ->
@@ -116,12 +121,16 @@ fun PlaceRecUI(
                 modifier = Modifier
                     .padding(start = 8.dp)
             )
-            PlaceList(
-                placeModels = places,
-                onPlaceSelected = {
-                    selectedPlace = it
-                }
-            )
+            if (places.isEmpty()) {
+                LoadingIndicator()
+            } else {
+                PlaceList(
+                    placeModels = places,
+                    onPlaceSelected = {
+                        selectedPlace = it
+                    }
+                )
+            }
 
             Box(
                 modifier = Modifier
@@ -137,10 +146,9 @@ fun PlaceRecUI(
                 MapUI(currentLocation, emptyList(), onClick = {})
             }
 
-            // Display the selected place information
             selectedPlace?.let { place ->
                 Text(
-                    text = "Selected Place: ${place.name}", // Display selected place information
+                    text = "Selected Place: ${place.name}",
                     style = TextStyle(
                         fontSize = 18.sp,
                         fontWeight = FontWeight(400),
@@ -155,6 +163,31 @@ fun PlaceRecUI(
 
 }
 
+@Composable
+fun ConfirmationDialog(
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onCancel,
+        title = { Text("Confirmation") },
+        text = { Text("Do you want to confirm your selection?") },
+        confirmButton = {
+            TextButton(onClick = {
+                onConfirm()
+            }) {
+                Text("Yes")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                onCancel()
+            }) {
+                Text("No")
+            }
+        }
+    )
+}
 
 @Composable
 fun PlaceList(placeModels: List<PlaceModel>, onPlaceSelected: (PlaceModel) -> Unit) {
@@ -170,15 +203,23 @@ fun PlaceList(placeModels: List<PlaceModel>, onPlaceSelected: (PlaceModel) -> Un
 
 @Composable
 fun PlaceItem(place: PlaceModel, onPlaceSelected: (PlaceModel) -> Unit) {
+    var isSelected by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .width(200.dp)
             .height(300.dp)
-            .background(color = Color.Gray, shape = RoundedCornerShape(8.dp))
+            .background(
+                color = if (isSelected) Color.Magenta else Color.Gray,
+                shape = RoundedCornerShape(8.dp)
+            )
             .padding(10.dp)
-            .clickable { onPlaceSelected(place) } // Invoke onPlaceSelected when the item is clicked
+            .clickable {
+                isSelected = !isSelected
+                onPlaceSelected(place)
+            }
     ) {
-        Text(text = place.name?:"", modifier = Modifier)
+        Text(text = place.name ?: "", modifier = Modifier)
     }
 }
 
@@ -186,7 +227,7 @@ fun PlaceItem(place: PlaceModel, onPlaceSelected: (PlaceModel) -> Unit) {
 @Composable
 fun PlaceRecUIPreview() {
     FrontendTheme {
-        PlaceRecUI("tittle","2023-12-25", defaultfriendIdsList.toLongArray(), LatLng(10.1,1.2), modifier = Modifier, navController = NavController(LocalContext.current), LocalContext.current)
+        PlaceRecUI("",defaultfriendIdsList.toLongArray(), LatLng(10.1,1.2), modifier = Modifier, navController = NavController(LocalContext.current), LocalContext.current)
 
     }
 }
