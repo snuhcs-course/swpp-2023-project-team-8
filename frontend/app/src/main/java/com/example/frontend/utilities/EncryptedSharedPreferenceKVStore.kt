@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.example.frontend.repository.UserContextRepository.Companion.DEFAULT_LONG
 
 /*
  * KVStore implementation using SharedPreference, which is encrypted

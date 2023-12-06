@@ -1,5 +1,7 @@
 package com.example.frontend.utilities
 
+import com.example.frontend.repository.UserContextRepository
+
 class InMemoryKVStore : KVStore {
     private val store = HashMap<String, Any>()
 
@@ -25,6 +27,13 @@ class InMemoryKVStore : KVStore {
 
     override fun putBoolean(key: String, value: Boolean) {
         store[key] = value
+    }
+    override fun putLong(key: String, value: Long) {
+        store[key] = value
+    }
+
+    override fun getLong(key: String): Long {
+        return store[key] as Long
     }
 
     override fun clear() {

@@ -77,6 +77,7 @@ import com.example.frontend.model.UserModel
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
 import com.example.frontend.repository.InviteFriendViewModel
+import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.repository.UsersViewModel
 import com.example.frontend.usecase.CreateMeetUpUseCase
 import com.example.frontend.usecase.ListFriendUseCase
@@ -102,7 +103,7 @@ class MeetupActivity : ComponentActivity() {
                 val viewModel: FriendsViewModel = viewModel()
                 val friendsList by viewModel.friendsList.observeAsState(emptyList())
                 val userviewModel: UsersViewModel = viewModel()
-                val userIds = rememberSaveable { mutableStateOf(LongArray(0)) }
+                val userIds = rememberSaveable { mutableStateOf(listOf<Long>(0)) }
                 val selectedName = rememberSaveable { mutableStateOf("") }
                 val meetUpPlaceId = rememberSaveable{mutableStateOf<Long>(0)}
                 val dateTime = rememberSaveable{ mutableStateOf<LocalDateTime>( LocalDateTime.MIN) }
@@ -117,7 +118,7 @@ class MeetupActivity : ComponentActivity() {
                         FriendListUI(selectedFriends, {},viewModelCheck, userviewModel, friendsList, navController)
                     }
                     composable("placeRecUI"){
-                      PlaceRecUI(meetUpPlaceId, selectedName, userIds.value,currentLocation, Modifier, navController, LocalContext.current)
+                      PlaceRecUI(meetUpPlaceId, selectedName, selectedFriends.value,currentLocation, Modifier, navController, LocalContext.current)
                     }
                 }
             }
@@ -179,6 +180,8 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
                     onClick = {
                         var meetup = MeetupModel(title, description, selectedFriends.value, meetAt.value, true, meetUpPlace.value)
                         CreateMeetUpUseCase(context).send(meetup)
+                        Log.d("CreateMeet", meetup.meetAt.toString())
+                        Log.d("CreateMeet", meetup.userIds.toString())
                         activity?.finish()
                     },
 
@@ -248,7 +251,6 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
         Spacer(modifier = Modifier.height(30.dp))
 
         Row {
-
             Text(
                 text = "친구 초대: ${selectedFriends.value.size}명",
                 style = TextStyle(
@@ -311,20 +313,13 @@ fun FriendListUI(
     val friendUseCase = ListFriendUseCase(LocalContext.current)
     val friendlist = remember { mutableStateOf<List<UserModel>>(emptyList()) }
     val checkedStates = remember { mutableStateMapOf<Long, Boolean>() }
-
     val friends by friendsviewModel.friends.observeAsState(initial = emptyList())
+
     friendlist.value = friends
     LaunchedEffect(key1 = true) {
         friendsviewModel.getFriends()
     }
 
-//    LaunchedEffect(Unit) {
-//        if (friendlist.value.isEmpty()) {
-//            friendUseCase.fetch { fetchedFriends ->
-//                friendlist.value = fetchedFriends
-//            }
-//        }
-//    }
     val filteredFriends = if (isSearchClicked) {
         friendlist.value.filter { it.name.contains(searchQuery, ignoreCase = true) }
     } else {

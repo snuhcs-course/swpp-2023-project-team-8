@@ -2,6 +2,7 @@ package com.example.frontend.utilities
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.frontend.repository.UserContextRepository
 
 /*
  * KVStore implementation using SharedPreference
@@ -18,6 +19,13 @@ open class SharedPreferenceKVStore(context: Context) : KVStore {
         val editor = appPrefs.edit()
         editor.putString(key, value)
         editor.apply()
+    }
+    override fun putLong(key: String, value: Long) {
+        appPrefs.edit().putLong(key, value).apply()
+    }
+
+    override fun getLong(key: String): Long {
+        return appPrefs.getLong(key, UserContextRepository.DEFAULT_LONG)
     }
 
     override fun getInt(key: String): Int? {
@@ -45,6 +53,7 @@ open class SharedPreferenceKVStore(context: Context) : KVStore {
         editor.clear()
         editor.apply()
     }
+
 
     companion object {
         const val APP_PREFS = "app_prefs"

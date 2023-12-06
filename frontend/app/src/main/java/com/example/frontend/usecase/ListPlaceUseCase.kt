@@ -12,12 +12,11 @@ import retrofit2.Response
 
 class ListPlaceUseCase(
     private val context: Context,
-    private val currentLocation: LatLng,
-    private val firendsId: LongArray,
+    private val friendsId: List<Long>,
     private val placeService: PlaceService = PlaceService.create()
 ) {
     fun fetch(onPlaceFetched: (List<PlaceModel>) -> Unit) {
-        val call = placeService.recommend(currentLocation, firendsId)
+        val call = placeService.recommend(friendsId)
         call.enqueue(object : Callback<List<PlaceModel>> {
             override fun onResponse(
                 call: Call<List<PlaceModel>>,

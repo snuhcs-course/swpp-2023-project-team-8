@@ -76,8 +76,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlin.random.Random
-
-
+import com.google.maps.android.compose.Polygon
+import com.example.frontend.data.defaultLocationMarkers
 @AndroidEntryPoint
 class MapActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -273,6 +273,10 @@ fun MapUI(
                             .fillMaxSize(),
                         cameraPositionState = cameraPositionState
                     ) {
+                        Polygon(
+                            points = defaultLocationMarkers,
+                            fillColor = Color(0x89CFF0FF)
+                        )
                         Marker(
                             state = MarkerState(position = location),
                             title = "Current Location",

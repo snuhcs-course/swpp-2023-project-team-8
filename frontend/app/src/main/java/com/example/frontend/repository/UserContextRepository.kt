@@ -47,6 +47,12 @@ class UserContextRepository(
     fun saveIsLoggedIn(isLoggedIn: Boolean) {
         store.putBoolean(IS_LOGGED_IN, isLoggedIn)
     }
+    fun saveUserId(userId: Long) {
+        store.putLong(USER_ID, userId)
+    }
+    fun getUserId():Long{
+        return store.getLong(USER_ID)
+    }
 
     fun getIsLoggedIn(): Boolean {
         return store.getBoolean(IS_LOGGED_IN) ?: false
@@ -71,6 +77,8 @@ class UserContextRepository(
         private const val USERNAME = "USERNAME"
         const val DEFAULT_USERNAME = "User0"
         private const val USER_MAIL = "USER_MAIL"
+        private const val USER_ID = "USER_ID"
+        const val DEFAULT_LONG = 1L
         const val DEFAULT_USER_MAIL = "shaf@snu.ac.kr"
         private const val AUTH_TOKEN = "AUTH_TOKEN"
         private const val SELECTED_PREDEFINED_IMAGE = "SELECTED_PREDEFINED_IMAGE"

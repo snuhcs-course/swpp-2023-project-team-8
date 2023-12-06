@@ -64,7 +64,6 @@ class MissionActivity : ComponentActivity() {
             }
             FrontendTheme {
                 ShowMissionUI(missions = missions) {
-                    // Handle switch to register
                 }
             }
         }
@@ -77,7 +76,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
     var showMoreDescriptions by remember { mutableStateOf(mutableMapOf<String, Boolean>()) }
     var context = LocalContext.current
     Column {
-        // Header with Back button and title
+
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
@@ -212,7 +211,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                                             remove(mission.title)
                                         }
                                 },
-                                showMore = mission.showMore // Pass the showMore value here
+                                showMore = mission.showMore
                             )
                         }
                     }
@@ -226,7 +225,6 @@ fun getMoreDescription(missionTitle: String, missions: List<MissionModel>): Stri
     val mission = missions.find { it.title == missionTitle }
     return mission?.showMore ?: "$missionTitle 상세 설명 업데이트 필요"
 }
-
 
 @Composable
 fun ShowMoreDescriptionDialog(
@@ -243,6 +241,7 @@ fun ShowMoreDescriptionDialog(
         Box(
             modifier = Modifier
                 .padding(16.dp)
+                .width(300.dp)
                 .background(MaterialTheme.colorScheme.background, shape = MaterialTheme.shapes.medium)
         ) {
             Column {
@@ -257,8 +256,8 @@ fun ShowMoreDescriptionDialog(
                         letterSpacing = 0.15.sp,
                     ),
                     modifier = Modifier
-                        .width(250.dp)
-                        .height(30.dp)
+                        .fillMaxWidth()
+                        .height(50.dp)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
@@ -268,11 +267,12 @@ fun ShowMoreDescriptionDialog(
                         lineHeight = 24.sp,
                         fontWeight = FontWeight(400),
                         color = Color(0xFF1D1B20),
-                        textAlign = TextAlign.Center,
+                        //textAlign = TextAlign.Center,
                         letterSpacing = 0.5.sp,
                     ),
                     modifier = Modifier
-                        .width(250.dp)
+                        .padding(start = 10.dp, end = 10.dp)
+                        .fillMaxWidth()
                         .height(60.dp)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -280,7 +280,7 @@ fun ShowMoreDescriptionDialog(
                     onClick = { onDismissRequest.invoke() },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(40.dp)
                 ) {
                     Text(text = "닫기")
                 }
@@ -294,7 +294,6 @@ fun ShowMoreDescriptionDialog(
 @Preview(showBackground = true)
 @Composable
 fun ShowMissionUIPreview() {
-
     FrontendTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),

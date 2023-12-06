@@ -58,7 +58,7 @@ import com.google.android.gms.maps.model.LatLng
 fun PlaceRecUI(
     meetUpPlace: MutableState<Long>,
     selectedName: MutableState<String>,
-    userIds: LongArray,
+    userIds: List<Long>,
     currentLocation: LatLng,
     modifier: Modifier = Modifier,
     navController: NavController,
@@ -67,7 +67,7 @@ fun PlaceRecUI(
     var userName by remember { mutableStateOf(UserContextRepository.ofContext(context).getUserName()) }
     var places by remember { mutableStateOf<List<PlaceModel>>(emptyList()) }
 
-    val placeUseCase = remember { ListPlaceUseCase(context, currentLocation, userIds) }
+    val placeUseCase = remember { ListPlaceUseCase(context, userIds) }
     var selectedPlace by remember { mutableStateOf<PlaceModel?>(null) }
     var selectedPlaceName by remember { mutableStateOf<String?>(null) }
 
@@ -253,7 +253,6 @@ fun PlaceItem(
 @Composable
 fun PlaceRecUIPreview() {
     FrontendTheme {
-        PlaceRecUI(mutableStateOf(0),mutableStateOf("A"),defaultfriendIdsList.toLongArray(), LatLng(10.1,1.2), modifier = Modifier, navController = NavController(LocalContext.current), LocalContext.current)
-
+        PlaceRecUI(mutableStateOf(0),mutableStateOf("A"),defaultfriendIdsList, LatLng(10.1,1.2), modifier = Modifier, navController = NavController(LocalContext.current), LocalContext.current)
     }
 }

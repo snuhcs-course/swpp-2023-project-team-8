@@ -15,6 +15,9 @@ interface KVStore {
 
     fun clear()
 
+    fun putLong(key: String, value: Long)
+    fun getLong(key: String): Long
+
     companion object {
         const val DEFAULT_INT = -1
     }

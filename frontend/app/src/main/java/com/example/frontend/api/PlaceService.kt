@@ -20,8 +20,7 @@ interface PlaceService {
     fun send(@Body placeModel: PlaceModel?): Call<PlaceModel>?
 
     @GET("/recommend")
-    fun recommend(@Query("averagedLocation") averagedLocation: LatLng?,
-                  @Query("friendIds") friendIds: LongArray?): Call<List<PlaceModel>>
+    fun recommend(@Query("friendIds") friendIds: List<Long>): Call<List<PlaceModel>>
     companion object {
         fun create(): PlaceService {
             val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
