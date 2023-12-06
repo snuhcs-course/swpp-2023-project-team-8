@@ -89,26 +89,21 @@ class PlaceRecActivity() : ComponentActivity() {
                     {
                         Spacer(modifier = Modifier.padding(10.dp))
                         // PlaceRecUI
-                        Column() {
-                            PlaceRecUI(
-                                userName,
-                                modifier = Modifier,
-                                places
-                            )
+                        PlaceRecUI(userName, modifier = Modifier.align(Alignment.TopCenter), places)
+                        Spacer(modifier = Modifier.padding(top = 200.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.9f)
+                                .align(Alignment.BottomCenter)
+                                .height(300.dp)
+                                .padding(bottom = 20.dp)
+                                .background(
+                                    color = Color.Gray,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                        ) {
+                            MapUI(currentLocation, emptyList(), onClick = {})
 
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(0.8f)
-                                    .height(300.dp)
-                                    .padding(top = 250.dp)
-                                    .background(
-                                        color = Color.Gray,
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                            ) {
-                                MapUI(currentLocation, emptyList(), onClick = {})
-
-                            }
                         }
 
 
@@ -130,10 +125,10 @@ fun PlaceList(placeModels: List<PlaceModel>, modifier: Modifier = Modifier) {
         items(placeModels) { placeModel ->
             Box(
                 modifier = Modifier
-                    .width(100.dp)
-                    .height(100.dp)
+                    .width(200.dp)
+                    .height(300.dp)
                     .background(color = Color.Gray, shape = RoundedCornerShape(8.dp))
-                    .padding(3.dp)
+                    .padding(10.dp)
             ) {
                 Text(
                     text = placeModel.name ?: "장소",
