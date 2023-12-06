@@ -11,9 +11,7 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -36,31 +34,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
 import com.example.frontend.ui.component.BottomBar
+import com.example.frontend.ui.component.MapWithMarker
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlin.random.Random
 
 
 @AndroidEntryPoint
@@ -233,59 +223,6 @@ class MapActivity : ComponentActivity() {
 }
 
 @Composable
-fun MapUI(
-    currentLocation: LatLng?,
-    friends: List<UserWithLocationModel>
-) {
-
-    MaterialTheme {
-        Column {
-            // The map takes up all the space minus the bottom bar
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                currentLocation?.let { location ->
-                    val cameraPositionState = rememberCameraPositionState {
-                        position = CameraPosition.fromLatLngZoom(location, 15f)
-                    }
-
-                    GoogleMap(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        cameraPositionState = cameraPositionState
-                    ) {
-                        Marker(
-                            state = MarkerState(position = location),
-                            title = "Current Location",
-                            snippet = "You are here"
-                        )
-
-                        // Friends location markers
-                        friends.forEach { friend ->
-                            Marker(
-                                state = MarkerState(
-                                    position = LatLng(
-                                        friend.latitude,
-                                        friend.longitude
-                                    )
-                                ),
-                                title = friend.name,
-                                snippet = friend.email,
-                                icon = BitmapDescriptorFactory.defaultMarker(Random.nextFloat() * 360)
-                            )
-                        }
-                    }
-                }
-
-            }
-
-        }
-    }
-}
-
-@Composable
 fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
     val viewModel: FriendsViewModel = viewModel()
     val friendsList by viewModel.friendsList.observeAsState(emptyList())
@@ -311,7 +248,7 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomEnd
         ) {
-            MapUI(currentLocation, friendsList)
+            MapWithMarker(currentLocation, friendsList)
             FloatingActionButton(
                 onClick = { onClick() },
                 modifier = Modifier.padding(16.dp)
@@ -326,12 +263,4 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
 
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun MapUIPreview() {
-    FrontendTheme {
-        MapUI(LatLng(1.35, 103.87), emptyList())
-    }
-}
 
