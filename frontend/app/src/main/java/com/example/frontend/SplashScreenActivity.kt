@@ -17,7 +17,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         if (userContextRepository.getIsLoggedIn()) {
             // User is already logged in, skip the login activity
-            startActivity(Intent(this, MapActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
         } else {
             // User is not logged in, go to the login activity
             startActivity(Intent(this, LoginActivity::class.java))

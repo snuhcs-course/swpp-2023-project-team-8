@@ -54,7 +54,7 @@ import kotlinx.coroutines.isActive
 
 
 @AndroidEntryPoint
-class MapActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var currentLocation by mutableStateOf<LatLng?>(null)
 
