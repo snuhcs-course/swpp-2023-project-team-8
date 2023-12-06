@@ -27,7 +27,6 @@ class LoginUseCase(
 ) {
     fun execute() {
         val loginModel = LoginModel(email, password)
-        val call = authService.login(loginModel)
 
         if (BYPASS_LOGIN) { // TODO(heka1024): Remove this flag
             val nextIntent = Intent(context, MapActivity::class.java)
@@ -36,15 +35,13 @@ class LoginUseCase(
                 context.finish()
             }
         }
-        call!!.enqueue(object : Callback<AuthResponse?> {
+
+        authService.login(loginModel)!!.enqueue(object : Callback<AuthResponse?> {
             override fun onResponse(call: Call<AuthResponse?>, response: Response<AuthResponse?>) {
                 if (response.isSuccessful && response.body() != null) {
                     val authToken = response.body()?.token ?: throw Exception("authToken is null")
-                    val userName = response.body()?.userName ?: throw Exception("userName is null")
-                    val userMail = response.body()?.userMail ?: throw Exception("userMail is null")
-                    val userProfile = response.body()?.userProfile
 
-                    saveAuthToken(authToken, userName, userMail, userProfile ?: -1)
+                    saveAuthToken(authToken)
                     result.value = "Logged in successfully"
 
                     val nextIntent = Intent(context, MapActivity::class.java)
@@ -70,16 +67,9 @@ class LoginUseCase(
 
 
     // To save the auth token securely when logging in
-    private fun saveAuthToken(authToken: String, userName: String, userMail: String, userProfile: Int) {
+    private fun saveAuthToken(authToken: String) {
         UserContextRepository
             .ofContext(context, secure = true)
             .saveAuthToken(authToken)
-
-        UserContextRepository.ofContext(context, secure = false).apply {
-            saveUserName(userName)
-            saveUserMail(userMail)
-            saveSelectedPredefinedImage(userProfile)
-            saveIsLoggedIn(true)
-        }
     }
 }
