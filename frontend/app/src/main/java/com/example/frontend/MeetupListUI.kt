@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.data.defaultMeetups
 import com.example.frontend.model.MeetupModel
+import com.example.frontend.ui.component.LoadingIndicator
 import com.example.frontend.usecase.ListMeetUpUseCase
 
 
@@ -92,7 +93,7 @@ class MeetupListUI : ComponentActivity() {
                 }
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.padding(top =54.dp),
+                    modifier = Modifier.padding(top = 54.dp),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     if (meetups.isEmpty()) {
@@ -107,8 +108,6 @@ class MeetupListUI : ComponentActivity() {
     }
 
 }
-
-
 
 
 @Composable
@@ -223,7 +222,7 @@ fun ShowMeetUpUIPreview() {
         }
         // A surface container using the 'background' color from the theme
         Surface(
-            modifier = Modifier.padding(top =54.dp),
+            modifier = Modifier.padding(top = 54.dp),
             color = MaterialTheme.colorScheme.background
         ) {
             if (meetups.isEmpty()) {

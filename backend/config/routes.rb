@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :verification_mails, only: [:create]
   post '/auth/login', to: 'authentication#create'
 
-  resources :users, only: [:show, :create, :destroy] do
+  resources :users, only: [:index, :show, :create, :destroy] do
     resources :pending_requests, controller: "users/pending_requests", only: [:index]
   end
 
@@ -19,13 +19,13 @@ Rails.application.routes.draw do
     get :recommend, on: :collection
   end
 
-  resources :missions, only: [:index] do
-    post :mark_completed, on: :member
-    end
+  resources :missions, only: [:index]
 
   get "up" => "rails/health#show", as: :rails_health_check
 
   resources :check_ins, only: [:index, :create]
 
   resources :meet_ups, only: [:create, :index, :show]
+
+  resources :access, only: [:create]
 end

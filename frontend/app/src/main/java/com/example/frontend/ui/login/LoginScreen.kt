@@ -80,7 +80,7 @@ fun LoginScreen() {
 
         when (currentComponent.value) {
             LoginComponent.LOGIN -> LoginUI()
-            LoginComponent.REGISTER -> RegisterUI(onRegisterClick)
+            LoginComponent.REGISTER -> RegisterUI(onLoginClick)
         }
     }
 }

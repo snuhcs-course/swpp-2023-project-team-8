@@ -2,6 +2,11 @@ class UsersController < ApplicationController
   skip_before_action :require_login, only: [:create]
   before_action :set_user, only: [:show]
 
+  def index
+    @users = User.where.not(id: current_user.id)
+    render json: @users
+  end
+
   def show
     render json: @user
   end

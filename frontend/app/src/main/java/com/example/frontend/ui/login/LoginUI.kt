@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -21,20 +23,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.component.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.usecase.LoginUseCase
+import com.example.frontend.usecase.login.LoginUseCase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginUI() {
-    var context = LocalContext.current
+    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var response = remember { mutableStateOf("") }
+    val response = remember { mutableStateOf("") }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -43,11 +46,12 @@ fun LoginUI() {
             value = email,
             onValueChange = { email = it },
             label = { Text("Email Address") },
-            leadingIcon = {
-                Icon(imageVector = Icons.Default.Email, contentDescription = null)
-            },
+            leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = null) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
         )
+
         Spacer(modifier = Modifier.height(20.dp))
+
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -55,9 +59,17 @@ fun LoginUI() {
             leadingIcon = {
                 Icon(imageVector = Icons.Default.Lock, contentDescription = null)
             },
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { LoginUseCase(context, email, password, response).execute() }
+            )
         )
+
         Spacer(modifier = Modifier.height(140.dp))
+
         CustomButton(
             buttonText = "Login",
             onClickHandler = { LoginUseCase(context, email, password, response).execute() }

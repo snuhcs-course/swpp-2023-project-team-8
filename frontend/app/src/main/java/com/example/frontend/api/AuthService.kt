@@ -27,7 +27,7 @@ interface AuthService {
     fun rename(@Body newName: String?)
 
     @POST("/verification_mails")
-    fun verifyEmail(@Body email: String): Call<EmailModel?>?
+    fun verifyEmail(@Body email: EmailModel): Call<EmailModel?>
 
     @POST("/users")
     fun register(@Body registerModel: RegisterModel?): Call<RegisterModel>
