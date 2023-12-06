@@ -58,9 +58,7 @@ import com.example.frontend.ui.component.MyTopAppBar
 import com.example.frontend.ui.login.LoginActivity
 import com.example.frontend.ui.settings.component.MissionCard
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.usecase.CheckInUseCase
 import com.example.frontend.usecase.LogOutUseCase
-import com.example.frontend.utilities.BUILDING_302
 
 class UserInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -258,17 +256,6 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                     if (context is Activity) {
                         context.finish()
                     }
-                }
-            )
-
-            // TODO(heka1024): remove this button
-            CustomButton(
-                buttonText = "수동 체크인 (디버깅)",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp),
-                onClickHandler = {
-                    CheckInUseCase(context).execute(BUILDING_302.latitude, BUILDING_302.longitude)
                 }
             )
         }
