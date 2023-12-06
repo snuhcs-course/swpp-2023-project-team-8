@@ -34,10 +34,10 @@ import com.example.frontend.usecase.login.LoginUseCase
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginUI() {
-    var context = LocalContext.current
+    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var response = remember { mutableStateOf("") }
+    val response = remember { mutableStateOf("") }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
