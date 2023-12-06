@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.frontend.MapActivity
 import com.example.frontend.ui.theme.LightPurple
 
@@ -52,5 +53,10 @@ fun MyTopAppBar(title: String) {
         },
         scrollBehavior = scrollBehavior,
     )
+}
 
+@Preview
+@Composable
+private fun PreviewMyTopAppBar() {
+    MyTopAppBar(title = "Meetup")
 }
