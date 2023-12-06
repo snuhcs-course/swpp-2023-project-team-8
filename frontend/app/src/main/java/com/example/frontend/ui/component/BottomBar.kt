@@ -32,8 +32,7 @@ import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun BottomBar(currentLocation: LatLng?) {
-    var context = LocalContext.current
-
+    val context = LocalContext.current
     val icons = listOf(
         Icons.Default.Star,
         Icons.Outlined.AccountBox,
