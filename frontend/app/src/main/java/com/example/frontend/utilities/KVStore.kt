@@ -13,6 +13,8 @@ interface KVStore {
     fun getBoolean(key: String): Boolean?
     fun putBoolean(key: String, value: Boolean)
 
+    fun clear()
+
     companion object {
         const val DEFAULT_INT = -1
     }

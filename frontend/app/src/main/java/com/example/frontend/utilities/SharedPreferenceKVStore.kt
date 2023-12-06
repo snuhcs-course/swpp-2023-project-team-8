@@ -40,6 +40,12 @@ open class SharedPreferenceKVStore(context: Context) : KVStore {
         editor.apply()
     }
 
+    override fun clear() {
+        val editor = appPrefs.edit()
+        editor.clear()
+        editor.apply()
+    }
+
     companion object {
         const val APP_PREFS = "app_prefs"
     }
