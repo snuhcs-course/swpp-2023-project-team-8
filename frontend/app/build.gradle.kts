@@ -73,6 +73,10 @@ dependencies {
     implementation("androidx.test.ext:junit-ktx:1.1.5")
     implementation("androidx.compose.foundation:foundation-layout-android:1.5.4")
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    implementation("androidx.work:work-runtime-ktx:2.8.0")
+    androidTestImplementation("androidx.work:work-testing:2.8.0")
+
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.11.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
