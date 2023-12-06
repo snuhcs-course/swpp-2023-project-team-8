@@ -10,11 +10,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,8 +44,22 @@ fun UserListUI(viewModel: UsersViewModel, context: Context = LocalContext.curren
         }
     }
 
+    var searchQuery by remember { mutableStateOf("") }
+
+    val filteredUsers = users.filter { it.name.contains(searchQuery, ignoreCase = true) }
+
+    // Search bar
+    OutlinedTextField(
+        value = searchQuery,
+        onValueChange = { searchQuery = it },
+        label = { Text("검색") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    )
+
     LazyColumn {
-        items(users) { user ->
+        items(filteredUsers) { user ->
             UserItem(user) { selectedUser ->
                 viewModel.sendFriendRequest(selectedUser.id)
             }
