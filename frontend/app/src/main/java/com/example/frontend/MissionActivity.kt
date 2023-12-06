@@ -1,8 +1,6 @@
 package com.example.frontend
 
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -47,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.frontend.data.defaultMissions
 import com.example.frontend.model.MissionModel
+import com.example.frontend.ui.component.MyTopAppBar
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple40
 import com.example.frontend.usecase.ListMissionUseCase
@@ -85,38 +83,8 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                 .fillMaxWidth()
                 .background(color = Color(0xFFF3EDF7))
         )
-        Row(
-            modifier = Modifier
-                .height(54.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.KeyboardArrowLeft,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(46.dp)
-                    .clickable {
-                        val nextIntent = Intent(context, MapActivity::class.java)
-                        context.startActivity(nextIntent)
-                        if (context is Activity) {
-                            context.finish()
-                        }
-                    }
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+        MyTopAppBar(title = "달성 목록")
 
-            Text(
-                modifier = Modifier,
-                text = "달성 목록",
-                style = TextStyle(
-                    fontSize = 22.sp,
-                    lineHeight = 28.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFF1D1B20)
-                )
-            )
-        }
         if (missions.isEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             CircularProgressIndicator(

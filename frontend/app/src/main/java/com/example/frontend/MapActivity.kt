@@ -38,10 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.frontend.repository.FriendsViewModel
 import com.example.frontend.ui.component.BottomBar
 import com.example.frontend.ui.component.MapWithMarker
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.viewmodel.FriendsViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest

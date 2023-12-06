@@ -1,9 +1,10 @@
 package com.example.frontend.ui.component
 
 import android.app.Activity
-import android.content.Intent
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -15,12 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
-import com.example.frontend.MapActivity
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.frontend.ui.theme.LightPurple
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBar(title: String) {
+fun MyTopAppBar(
+    title: String,
+    actions: @Composable RowScope.() -> Unit = {},
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
 
@@ -38,8 +42,6 @@ fun MyTopAppBar(title: String) {
         },
         navigationIcon = {
             IconButton(onClick = {
-                val nextIntent = Intent(context, MapActivity::class.java)
-                context.startActivity(nextIntent)
                 if (context is Activity) {
                     context.finish()
                 }
@@ -51,6 +53,22 @@ fun MyTopAppBar(title: String) {
             }
         },
         scrollBehavior = scrollBehavior,
+        actions = actions,
     )
+}
 
+@Preview
+@Composable
+private fun PreviewMyTopAppBar() {
+    MyTopAppBar(
+        title = "Meetup",
+        actions = {
+            IconButton(onClick = {}) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Localized description"
+                )
+            }
+        }
+    )
 }
