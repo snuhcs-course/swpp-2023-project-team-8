@@ -62,7 +62,7 @@ class PlaceRecActivity() : ComponentActivity() {
         // averagedLocation 넘겨 받기
         val averagedLocation: LatLng = intent.getParcelableExtra("averagedLocation") ?: LatLng(10.1, 12.2)
 
-        var userName = UserContextRepository(this).getUserName()
+        var userName = UserContextRepository.ofContext(this).getUserName()
         var places by mutableStateOf<List<PlaceModel>>(emptyList())
         setContent {
             val placeUseCase = ListPlaceUseCase(this, averagedLocation)

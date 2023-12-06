@@ -1,46 +1,54 @@
 package com.example.frontend.repository
 
 import android.content.Context
-import com.example.frontend.R
-import com.example.frontend.model.MissionModel
+import com.example.frontend.utilities.KVStore
+import com.example.frontend.utilities.SharedPreferenceKVStore
 
 
 class UserContextRepository(
-    private val context: Context
+    private val store: KVStore
 ) {
-    private val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-
     fun getUserName(): String {
-        val defaultValue = "User0"
-        return appPrefs.getString("USERNAME", defaultValue) ?: defaultValue
+        return store.getString("USERNAME") ?: DEFAULT_USERNAME
     }
-    fun saveUserName(newName: String?) {
-        val editor = appPrefs.edit()
-        editor.putString("USERNAME", newName)
-        editor.apply()
+
+    fun saveUserName(newName: String) {
+        store.putString(USERNAME, newName)
     }
 
     fun getUserMail(): String {
-        val defaultValue = "sha@snu.ac.kr"
-        return appPrefs.getString("USER_MAIL", defaultValue) ?: defaultValue
+        return store.getString(USER_MAIL) ?: DEFAULT_USER_MAIL
     }
 
     fun getAuthToken(): String {
-        return appPrefs.getString("AUTH_TOKEN", "") ?: ""
+        return store.getString(AUTH_TOKEN) ?: ""
     }
-    fun saveSelectedPredefinedImage(imageId: Int?) {
-        val editor = appPrefs.edit()
-        if(imageId != null && imageId != -1) {
-            editor.putInt("SELECTED_PREDEFINED_IMAGE", imageId)
-            editor.apply()
-        }
 
+    fun saveSelectedPredefinedImage(imageId: Int?) {
+        if (imageId != null && imageId != KVStore.DEFAULT_INT) {
+            store.putInt(SELECTED_PREDEFINED_IMAGE, imageId)
+        }
     }
 
     fun getSelectedPredefinedImage(): Int? {
-        val imageId = appPrefs.getInt("SELECTED_PREDEFINED_IMAGE", -1)
-        return if (imageId != -1) imageId else null
+        val imageId = store.getInt(SELECTED_PREDEFINED_IMAGE)
+        return if (imageId != KVStore.DEFAULT_INT) imageId else null
     }
 
+    companion object {
+        /*
+         * Returns UserContextRepository instance backed by SharedPreferenceKVStore.
+         */
+        fun ofContext(context: Context): UserContextRepository {
+            val sharedPreferencesKVStore = SharedPreferenceKVStore(context)
+            return UserContextRepository(sharedPreferencesKVStore)
+        }
 
+        private const val USERNAME = "USERNAME"
+        const val DEFAULT_USERNAME = "User0"
+        private const val USER_MAIL = "USER_MAIL"
+        const val DEFAULT_USER_MAIL = "shaf@snu.ac.kr"
+        private const val AUTH_TOKEN = "AUTH_TOKEN"
+        private const val SELECTED_PREDEFINED_IMAGE = "SELECTED_PREDEFINED_IMAGE"
+    }
 }

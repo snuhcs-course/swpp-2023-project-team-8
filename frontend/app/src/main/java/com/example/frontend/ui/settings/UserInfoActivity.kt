@@ -2,15 +2,10 @@ package com.example.frontend.ui.settings
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -55,14 +50,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import coil.compose.AsyncImagePainter.State.Empty.painter
-import coil.compose.rememberImagePainter
 import com.example.frontend.MapActivity
 import com.example.frontend.MissionActivity
-import com.example.frontend.R
 import com.example.frontend.data.predefinedImages
 import com.example.frontend.repository.UserContextRepository
-
 import com.example.frontend.ui.settings.component.MissionCard
 import com.example.frontend.ui.theme.FrontendTheme
 
@@ -86,17 +77,17 @@ class UserInfoActivity : ComponentActivity() {
 @Composable
 fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
     var context = LocalContext.current
-    var selectedPredefinedImage = UserContextRepository(context).getSelectedPredefinedImage()
+    var selectedPredefinedImage = UserContextRepository.ofContext(context).getSelectedPredefinedImage()
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
-    val currentUserName = UserContextRepository(context).getUserName() ?: "DefaultName"
+    val currentUserName = UserContextRepository.ofContext(context).getUserName() ?: "DefaultName"
 
     if (showDialog) {
         ProfileEditDialog(
             currentName = currentUserName,
             onClose = { showDialog = false },
             onProfileUpdated = { newName ->
-                UserContextRepository(context).saveUserName(newName)
+                UserContextRepository.ofContext(context).saveUserName(newName)
             }
         )
     }
@@ -108,7 +99,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 arrayOf("Gray Cat with Sunglass", "Yellow Cat with Sunglass", "Dog with Sunglass", "Hamster")
             ) { _, which ->
                 selectedPredefinedImage = predefinedImages[which]
-                UserContextRepository(context).saveSelectedPredefinedImage(selectedPredefinedImage)
+                UserContextRepository.ofContext(context).saveSelectedPredefinedImage(selectedPredefinedImage)
             }
 
             .show()
@@ -235,7 +226,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = UserContextRepository(context).getUserName()?: "김샤프",
+                    text = UserContextRepository.ofContext(context).getUserName()?: "김샤프",
                     //text = "김사프",
                     style = TextStyle(
                         fontSize = 16.sp,
@@ -262,7 +253,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = UserContextRepository(context).getUserMail()?:"sha@snu.ac.kr",
+                    text = UserContextRepository.ofContext(context).getUserMail()?:"sha@snu.ac.kr",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
