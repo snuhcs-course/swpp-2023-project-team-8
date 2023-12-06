@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import com.example.frontend.MapActivity
 import com.example.frontend.api.AuthService
 import com.example.frontend.model.AuthResponse
@@ -41,14 +39,12 @@ class LoginUseCase(
         call!!.enqueue(object : Callback<AuthResponse?> {
             override fun onResponse(call: Call<AuthResponse?>, response: Response<AuthResponse?>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val authToken = response.body()?.token
-                    val userName = response.body()?.userName
-                    val userMail = response.body()?.userMail
+                    val authToken = response.body()?.token ?: throw Exception("authToken is null")
+                    val userName = response.body()?.userName ?: throw Exception("userName is null")
+                    val userMail = response.body()?.userMail ?: throw Exception("userMail is null")
                     val userProfile = response.body()?.userProfile
 
-                    if (authToken != null) {
-                        saveAuthToken(authToken, userName, userMail, userProfile ?: -1)
-                    }
+                    saveAuthToken(authToken, userName, userMail, userProfile ?: -1)
                     result.value = "Logged in successfully"
 
                     val nextIntent = Intent(context, MapActivity::class.java)
@@ -74,38 +70,16 @@ class LoginUseCase(
 
 
     // To save the auth token securely when logging in
-    private fun saveAuthToken(authToken: String, userName: String?, userMail: String?, userProfile: Int) {
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
+    private fun saveAuthToken(authToken: String, userName: String, userMail: String, userProfile: Int) {
+        UserContextRepository
+            .ofContext(context, secure = true)
+            .saveAuthToken(authToken)
 
-        val encryptedUserRepo = UserContextRepository.ofContext(context, secure = true)
-        val userRepo = UserContextRepository.ofContext(context, secure = false)
-
-        val sharedPreferences = EncryptedSharedPreferences.create(
-            context,
-            "secure_app_prefs",
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-
-        encryptedUserRepo.saveAuthToken(authToken)
-
-        // Save auth token securely
-        with(sharedPreferences.edit()) {
-            putString("USERNAME", userName)
-            putString("USER_MAIL", userMail)
-            putInt("SELECTED_PREDEFINED_IMAGE", userProfile)
-            apply()
-        }
-
-        // Update login state
-        val appPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        with(appPrefs.edit()) {
-            putBoolean("IS_LOGGED_IN", true)
-            putString("USERNAME", userName)
-            apply()
+        UserContextRepository.ofContext(context, secure = false).apply {
+            saveUserName(userName)
+            saveUserMail(userMail)
+            saveSelectedPredefinedImage(userProfile)
+            saveIsLoggedIn(true)
         }
     }
 }

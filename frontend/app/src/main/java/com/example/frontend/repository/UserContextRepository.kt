@@ -40,6 +40,14 @@ class UserContextRepository(
         return if (imageId != KVStore.DEFAULT_INT) imageId else null
     }
 
+    fun saveUserMail(userMail: String) {
+        store.putString(USER_MAIL, userMail)
+    }
+
+    fun saveIsLoggedIn(isLoggedIn: Boolean) {
+        store.putBoolean(IS_LOGGED_IN, isLoggedIn)
+    }
+
     companion object {
         /*
          * Returns UserContextRepository instance backed by SharedPreferenceKVStore.
@@ -58,5 +66,6 @@ class UserContextRepository(
         const val DEFAULT_USER_MAIL = "shaf@snu.ac.kr"
         private const val AUTH_TOKEN = "AUTH_TOKEN"
         private const val SELECTED_PREDEFINED_IMAGE = "SELECTED_PREDEFINED_IMAGE"
+        private cosnt val IS_LOGGED_IN = "IS_LOGGED_IN"
     }
 }
