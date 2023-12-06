@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.example.frontend.data.defaultPlaces
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.repository.UserContextRepository
+import com.example.frontend.ui.map.MapUI
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.usecase.ListPlaceUseCase
 import com.google.android.gms.maps.model.LatLng
