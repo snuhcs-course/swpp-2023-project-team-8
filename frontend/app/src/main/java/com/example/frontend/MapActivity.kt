@@ -294,14 +294,7 @@ fun MapUI(
                         }
                     }
                 }
-                FloatingActionButton(
-                    onClick = { onClick() },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(50.dp, 50.dp, 50.dp, 100.dp)
-                ) {
-                    Icon(Icons.Filled.Add, contentDescription = null)
-                }
+
             }
 
         }
@@ -328,8 +321,23 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
             BottomBar(currentLocation)
         }
     ) { paddingValues ->
-        MapUI(currentLocation, friendsList, onClick = { onClick() }, modifier = Modifier.padding(paddingValues))
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            FloatingActionButton(
+                onClick = { onClick() },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = null)
+            }
+            MapUI(currentLocation, friendsList, onClick = { onClick() }, modifier = Modifier.fillMaxSize())
+        }
+
     }
+
 
 }
 

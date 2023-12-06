@@ -72,12 +72,8 @@ import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
 import com.example.frontend.repository.InviteFriendViewModel
 import com.example.frontend.usecase.ListFriendUseCase
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
 
 @AndroidEntryPoint
 class MeetupActivity : ComponentActivity() {
@@ -85,13 +81,14 @@ class MeetupActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val currentLocation = this.intent.getParcelableExtra("currentLocation")?: LatLng(10.1, 23.1)
         setContent {
             FrontendTheme {
                 val navController = rememberNavController()
                 val selectedFriends = rememberSaveable { mutableStateOf(listOf<Long>()) }
                 val viewModel: FriendsViewModel = viewModel()
                 val friendsList by viewModel.friendsList.observeAsState(emptyList())
+                val userIds = rememberSaveable { mutableStateOf(LongArray(0)) }
 
                 LaunchedEffect(Unit) {
                     viewModel.fetchFriends()
@@ -102,11 +99,15 @@ class MeetupActivity : ComponentActivity() {
                     composable("friendListUI") {
                         FriendListUI(selectedFriends, {},viewModelCheck, friendsList, navController)
                     }
+                    composable("placeRecUI"){
+                      PlaceRecUI(userIds.value,currentLocation, Modifier, navController, LocalContext.current)
+                    }
                 }
             }
         }
     }
 }
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -218,28 +219,13 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
                 Text(text = "초대하기")
             }
 
-
         }
-
         CustomButton(
             buttonText = "장소 선택",
             onClickHandler = {
-                val nextIntent = Intent(context, PlaceRecActivity::class.java)
-                nextIntent.putExtra("title", title)
-                nextIntent.putExtra("description", description)
-                val selectedDate: LocalDate =
-                    Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
-                        ZoneId.systemDefault()
-                    ).toLocalDate()
-                val selectedTime: LocalTime =
-                    LocalTime.of(timePickerState.hour, timePickerState.minute)
-                val selectedDateTime: LocalDateTime = LocalDateTime.of(selectedDate, selectedTime)
-                val dateTimeString = selectedDateTime.toString()
-                nextIntent.putExtra("meetAt", dateTimeString)
-                val userIds = selectedFriends.value.toLongArray()
-                nextIntent.putExtra("userIds", userIds)
-                context.startActivity(nextIntent)
-            })
+                navController.navigate("placeRecUI")
+            }
+        )
     }
 }
 
@@ -336,7 +322,8 @@ fun FriendListItem(friendName: String, isSelected: Boolean, onItemSelected: (Boo
             .clickable(onClick = {
                 val updatedState = !rememberedSelectedState.value
                 rememberedSelectedState.value = updatedState
-                onItemSelected(updatedState) })
+                onItemSelected(updatedState)
+            })
             .padding(16.dp)
     ) {
         Text(friendName, modifier = Modifier.weight(1f))
