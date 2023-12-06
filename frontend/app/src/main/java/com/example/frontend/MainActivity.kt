@@ -40,6 +40,9 @@ class MainActivity : ComponentActivity() {
     lateinit var fusedLocationClient: FusedLocationProviderClient
     var currentLocation by mutableStateOf<LatLng?>(null)
 
+    @Inject
+    lateinit var checkInUseCase: CheckInUseCase
+
     private fun hasBackgroundLocationPermission(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             ContextCompat.checkSelfPermission(
@@ -110,7 +113,7 @@ class MainActivity : ComponentActivity() {
         checkAndRequestLocationPermissions()
 
         currentLocation?.let {
-            CheckInUseCase(this).execute(it.latitude, it.longitude)
+            checkInUseCase.execute(it.latitude, it.longitude)
         }
     }
 
