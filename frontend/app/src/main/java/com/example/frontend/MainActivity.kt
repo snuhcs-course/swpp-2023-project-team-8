@@ -24,18 +24,20 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.frontend.ui.map.FriendsMapUI
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.usecase.CheckInUseCase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    @Inject
+    lateinit var fusedLocationClient: FusedLocationProviderClient
     var currentLocation by mutableStateOf<LatLng?>(null)
 
     private fun hasBackgroundLocationPermission(context: Context): Boolean {
@@ -88,7 +90,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         setContent {
             FrontendTheme {
@@ -107,11 +108,14 @@ class MainActivity : ComponentActivity() {
         }
 
         checkAndRequestLocationPermissions()
+
+        currentLocation?.let {
+            CheckInUseCase(this).execute(it.latitude, it.longitude)
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         setContent {
             FrontendTheme {
