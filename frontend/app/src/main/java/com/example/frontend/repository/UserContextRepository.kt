@@ -1,6 +1,7 @@
 package com.example.frontend.repository
 
 import android.content.Context
+import com.example.frontend.utilities.EncryptedSharedPreferenceKVStore
 import com.example.frontend.utilities.KVStore
 import com.example.frontend.utilities.SharedPreferenceKVStore
 
@@ -39,9 +40,12 @@ class UserContextRepository(
         /*
          * Returns UserContextRepository instance backed by SharedPreferenceKVStore.
          */
-        fun ofContext(context: Context): UserContextRepository {
-            val sharedPreferencesKVStore = SharedPreferenceKVStore(context)
-            return UserContextRepository(sharedPreferencesKVStore)
+        fun ofContext(context: Context, secure: Boolean = false): UserContextRepository {
+            val store = if (secure)
+                EncryptedSharedPreferenceKVStore(context)
+            else
+                SharedPreferenceKVStore(context)
+            return UserContextRepository(store)
         }
 
         private const val USERNAME = "USERNAME"
