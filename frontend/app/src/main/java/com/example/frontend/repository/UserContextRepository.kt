@@ -1,8 +1,6 @@
 package com.example.frontend.repository
 
 import android.content.Context
-import com.example.frontend.R
-import com.example.frontend.model.MissionModel
 
 
 class UserContextRepository(
@@ -14,6 +12,7 @@ class UserContextRepository(
         val defaultValue = "User0"
         return appPrefs.getString("USERNAME", defaultValue) ?: defaultValue
     }
+
     fun saveUserName(newName: String?) {
         val editor = appPrefs.edit()
         editor.putString("USERNAME", newName)
@@ -28,9 +27,10 @@ class UserContextRepository(
     fun getAuthToken(): String {
         return appPrefs.getString("AUTH_TOKEN", "") ?: ""
     }
+
     fun saveSelectedPredefinedImage(imageId: Int?) {
         val editor = appPrefs.edit()
-        if(imageId != null && imageId != -1) {
+        if (imageId != null && imageId != -1) {
             editor.putInt("SELECTED_PREDEFINED_IMAGE", imageId)
             editor.apply()
         }
@@ -41,6 +41,4 @@ class UserContextRepository(
         val imageId = appPrefs.getInt("SELECTED_PREDEFINED_IMAGE", -1)
         return if (imageId != -1) imageId else null
     }
-
-
 }
