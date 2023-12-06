@@ -1,5 +1,7 @@
 package com.example.frontend.api
 
+import android.content.Context
+import com.example.frontend.interceptor.AuthInterceptor
 import com.example.frontend.model.CheckInModel
 import com.example.frontend.utilities.BASE_URL
 import com.example.frontend.utilities.GsonProvider
@@ -20,11 +22,12 @@ interface CheckInService {
     fun login(@Body checkInModel: CheckInModel): Call<CheckInModel?>?
 
     companion object {
-        fun create(): CheckInService {
+        fun create(context: Context): CheckInService {
             val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 
             val client = OkHttpClient.Builder()
                 .addInterceptor(logger)
+                .addInterceptor(AuthInterceptor(context))
                 .build()
 
             return Retrofit.Builder()
