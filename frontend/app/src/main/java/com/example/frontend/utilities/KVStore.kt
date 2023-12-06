@@ -1,4 +1,4 @@
-package com.example.frontend.repository
+package com.example.frontend.utilities
 
 /*
  * Abstract interface for KV store
