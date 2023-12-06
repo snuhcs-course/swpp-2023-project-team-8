@@ -6,8 +6,8 @@ import android.content.SharedPreferences
 /*
  * KVStore implementation using SharedPreference
  */
-class SharedPreferenceKVStore(context: Context) : KVStore {
-    private val appPrefs: SharedPreferences =
+open class SharedPreferenceKVStore(context: Context) : KVStore {
+    protected open val appPrefs: SharedPreferences =
         context.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE)
 
     override fun getString(key: String): String? {
