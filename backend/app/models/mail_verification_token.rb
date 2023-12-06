@@ -6,6 +6,7 @@ class MailVerificationToken < ApplicationRecord
 
   validates :email, presence: true, snu_mail: true
   validates :code, presence: true, uniqueness: true
+  validate :email_is_unoccupied, on: :create
 
   def too_old?
     created_at < VALID_TIME.ago
@@ -31,5 +32,9 @@ class MailVerificationToken < ApplicationRecord
   # Like "AF38A9"
   def set_code
     self.code = SecureRandom.hex(3).upcase if code.blank?
+  end
+
+  def email_is_unoccupied
+    errors.add(:email, "이미 가입된 이메일이에요.") if User.exists?(email: email)
   end
 end
