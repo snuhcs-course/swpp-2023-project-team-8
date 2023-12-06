@@ -1,36 +1,33 @@
 package com.example.frontend.usecase
 
 import android.content.Context
+import android.util.Log
 import com.example.frontend.api.MeetUpService
 import com.example.frontend.data.defaultMeetups
 import com.example.frontend.model.MeetupModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
+import java.io.IOException
+import okhttp3.Request
 
 class CreateMeetUpUseCase(
-    private val context: Context,
     private val meetUpService: MeetUpService = MeetUpService.create()
 ) {
-    fun fetch(onMeetUpsFetched: (List<MeetupModel>) -> Unit) {
-        val call = meetUpService.getMeetUps()
+    fun send(meetup: MeetupModel) {
+        val call = meetUpService.createMeetUp(meetup)
 
-        call.enqueue(object : Callback<List<MeetupModel>> {
-            override fun onResponse(
-                call: Call<List<MeetupModel>>,
-                response: Response<List<MeetupModel>>
-            ) {
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    val missions = response.body() ?: emptyList()
-                    onMeetUpsFetched(missions)
+                    Log.d("CreateMeetUpUseCase", "Meetup created successfully")
                 } else {
-                    onMeetUpsFetched(defaultMeetups)
+
                 }
             }
 
-            override fun onFailure(call: Call<List<MeetupModel>>, t: Throwable) {
-                onMeetUpsFetched(defaultMeetups)
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+
             }
         })
     }

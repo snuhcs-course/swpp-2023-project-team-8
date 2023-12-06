@@ -1,11 +1,14 @@
 package com.example.frontend.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.frontend.R
 import com.example.frontend.model.MeetupModel
 import com.example.frontend.model.MissionModel
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.model.UserWithLocationModel
 import com.google.android.gms.maps.model.LatLng
+import java.time.LocalDateTime
 
 interface data {
 
@@ -41,9 +44,10 @@ val defaultSearchedList = listOf(
 
 
 val defaultPlaces = listOf(
-    PlaceModel(LatLng(11.1,123.4), "자하연"),
-            PlaceModel(LatLng(121.1,103.4), "중도")
+    PlaceModel(LatLng(11.1,123.4), "자하연",1),
+            PlaceModel(LatLng(121.1,103.4), "중도",3)
 )
+@RequiresApi(Build.VERSION_CODES.O)
 val defaultMeetups = listOf(
-    MeetupModel("카페", listOf("친구1", "친구2", "친구3"), "14:00", "2023-12-01", LatLng(13.1, 23.1))
+    MeetupModel("카페", "카페 약속입니다.", listOf(1L, 2L, 3L, 4L, 5L), LocalDateTime.MIN, 22)
 )

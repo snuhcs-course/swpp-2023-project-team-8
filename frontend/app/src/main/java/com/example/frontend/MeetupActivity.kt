@@ -3,6 +3,7 @@ package com.example.frontend
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -68,12 +69,21 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.frontend.data.defaultPlaces
+import com.example.frontend.model.MeetupModel
+import com.example.frontend.model.PlaceModel
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
 import com.example.frontend.repository.InviteFriendViewModel
+import com.example.frontend.usecase.CreateMeetUpUseCase
 import com.example.frontend.usecase.ListFriendUseCase
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
 
 @AndroidEntryPoint
 class MeetupActivity : ComponentActivity() {
@@ -90,18 +100,20 @@ class MeetupActivity : ComponentActivity() {
                 val friendsList by viewModel.friendsList.observeAsState(emptyList())
                 val userIds = rememberSaveable { mutableStateOf(LongArray(0)) }
                 val selectedName = rememberSaveable { mutableStateOf("") }
+                val meetUpPlaceId = rememberSaveable{mutableStateOf<Long>(0)}
+                val dateTime = rememberSaveable{ mutableStateOf<LocalDateTime>( LocalDateTime.MIN) }
 
                 LaunchedEffect(Unit) {
                     viewModel.fetchFriends()
                 }
 
                 NavHost(navController = navController, startDestination = "meetupUI") {
-                    composable("meetupUI") { MeetupUI(navController, selectedFriends, selectedName) }
+                    composable("meetupUI") { MeetupUI(navController, selectedFriends, selectedName, meetUpPlaceId, dateTime) }
                     composable("friendListUI") {
                         FriendListUI(selectedFriends, {},viewModelCheck, friendsList, navController)
                     }
                     composable("placeRecUI"){
-                      PlaceRecUI(selectedName, userIds.value,currentLocation, Modifier, navController, LocalContext.current)
+                      PlaceRecUI(meetUpPlaceId, selectedName, userIds.value,currentLocation, Modifier, navController, LocalContext.current)
                     }
                 }
             }
@@ -113,12 +125,13 @@ class MeetupActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Long>>, selectedName: MutableState<String>) {
+fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Long>>, selectedName: MutableState<String>, meetUpPlace :MutableState<Long>, meetAt:MutableState<LocalDateTime>) {
 
     var title by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
     var context = LocalContext.current
     val activity = LocalContext.current as? ComponentActivity
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -160,12 +173,16 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
 
                 Button(
                     onClick = {
+                        var meetup = MeetupModel(title, description, selectedFriends.value, meetAt.value, meetUpPlace.value)
+                        CreateMeetUpUseCase().send(meetup)
 
+                        activity?.finish()
                     },
 
                     modifier = Modifier
                         .width(100.dp)
                         .height(50.dp)
+                        .align(Alignment.TopEnd)
                         .padding(end = 16.dp, top = 16.dp),
                     colors = ButtonDefaults.buttonColors(Purple80)
                 ) {
@@ -176,62 +193,69 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
         }
         Spacer(modifier = Modifier.height(15.dp))
 
-//        OutlinedTextField(
-//            value = title,
-//            onValueChange = { title = it },
-//            label = { Text("제목") },
-//            modifier = Modifier.width(310.dp)
-//        )
-//        Spacer(modifier = Modifier.height(5.dp))
-//
-//        OutlinedTextField(
-//            value = description,
-//            onValueChange = { description = it },
-//            label = { Text("설명") },
-//            modifier = Modifier.width(310.dp)
-//        )
+        OutlinedTextField(
+            value = title,
+            onValueChange = { title = it },
+            label = { Text("제목") },
+            modifier = Modifier.width(310.dp)
+        )
+        Spacer(modifier = Modifier.height(5.dp))
 
-//        val datePickerState =
-//            rememberDatePickerState(
-//                initialSelectedDateMillis = System.currentTimeMillis(),
-//                initialDisplayMode = DisplayMode.Input
-//            )
-//        Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-//            DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
-//        }
-//
-//        val timePickerState = rememberTimePickerState()
-//        TimeInput(timePickerState)
-//
-//        Spacer(modifier = Modifier.height(30.dp))
+        OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text("설명") },
+            modifier = Modifier.width(310.dp)
+        )
+
+        val datePickerState =
+            rememberDatePickerState(
+                initialSelectedDateMillis = System.currentTimeMillis(),
+                initialDisplayMode = DisplayMode.Input
+            )
+        Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+            DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
+        }
+
+        val timePickerState = rememberTimePickerState()
+        TimeInput(timePickerState)
+        val selectedDate: LocalDate =
+            Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
+                ZoneId.systemDefault()
+            ).toLocalDate()
+        val selectedTime: LocalTime =
+            LocalTime.of(timePickerState.hour, timePickerState.minute)
+        val selectedDateTime: LocalDateTime = LocalDateTime.of(selectedDate, selectedTime)
+        meetAt.value = selectedDateTime
+        Spacer(modifier = Modifier.height(30.dp))
 
         Row {
 
-//            Text(
-//                text = "친구 초대: ${selectedFriends.value.size}명",
-//                style = TextStyle(
-//                    fontSize = 18.sp,
-//                    fontWeight = FontWeight(400),
-//                    color = Color(0xFF000000),
-//
-//                    ),
-//
-//                modifier = Modifier
-//                    .width(180.dp)
-//                    .height(64.dp)
-//                    .padding(start = 40.dp)
-//            )
-//
-//            Button(
-//                onClick = {
-//                    navController.navigate("friendListUI")
-//                },
-//                modifier = Modifier
-//                    .align(Alignment.CenterVertically) // Center the button vertically inside the Row
-//                    .offset(y = (-19).dp), colors = ButtonDefaults.buttonColors(Purple80)
-//            ) {
-//                Text(text = "초대하기")
-//            }
+            Text(
+                text = "친구 초대: ${selectedFriends.value.size}명",
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFF000000),
+
+                    ),
+
+                modifier = Modifier
+                    .width(180.dp)
+                    .height(64.dp)
+                    .padding(start = 40.dp)
+            )
+
+            Button(
+                onClick = {
+                    navController.navigate("friendListUI")
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterVertically) // Center the button vertically inside the Row
+                    .offset(y = (-19).dp), colors = ButtonDefaults.buttonColors(Purple80)
+            ) {
+                Text(text = "초대하기")
+            }
 
         }
         CustomButton(

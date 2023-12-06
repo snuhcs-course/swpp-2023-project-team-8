@@ -16,10 +16,9 @@ import retrofit2.http.Path
 interface MeetUpService {
     @GET("/meet_ups")
     fun getMeetUps(): Call<List<MeetupModel>>
-    @GET("/meet_ups/{id}")
-    fun getMeetUpById(@Path("id") meetUpId: Int): Call<MeetupModel>
+
     @POST("/meet_ups")
-    fun createMeetUp(@Body meetUp: MeetupModel): Call<MeetupModel>
+    fun createMeetUp(@Body meetUp: MeetupModel): Call<Void>
 
     companion object {
         fun create(): MeetUpService {

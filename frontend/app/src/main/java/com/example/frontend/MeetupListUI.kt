@@ -2,9 +2,11 @@ package com.example.frontend
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -124,6 +126,7 @@ fun MeetUpList(meetups: List<MeetupModel>) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MeetUpItem(meetup: MeetupModel) {
     Column(
@@ -152,7 +155,7 @@ fun MeetUpItem(meetup: MeetupModel) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(imageVector = Icons.Default.Person, contentDescription = null)
-                Text(meetup.friends.joinToString(", "))
+                Text(meetup.userIds.joinToString(", "))
             }
 
 
@@ -161,7 +164,7 @@ fun MeetUpItem(meetup: MeetupModel) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
-                Text("${meetup.date} ${meetup.time}")
+                Text("${meetup.meetAt}")
             }
         }
 

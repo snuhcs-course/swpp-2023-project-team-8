@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.frontend.data.defaultPlaces
 import com.example.frontend.data.defaultfriendIdsList
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.repository.UserContextRepository
@@ -55,6 +56,7 @@ import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun PlaceRecUI(
+    meetUpPlace: MutableState<Long>,
     selectedName: MutableState<String>,
     userIds: LongArray,
     currentLocation: LatLng,
@@ -66,9 +68,7 @@ fun PlaceRecUI(
     var places by remember { mutableStateOf<List<PlaceModel>>(emptyList()) }
 
     val placeUseCase = remember { ListPlaceUseCase(context, currentLocation, userIds) }
-    var selectedPlace by remember { mutableStateOf<PlaceModel?>(null) } // Added state for selected place
-
-    var isConfirmationDialogVisible by remember { mutableStateOf(false) }
+    var selectedPlace by remember { mutableStateOf<PlaceModel?>(null) }
     var selectedPlaceName by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
@@ -169,6 +169,7 @@ fun PlaceRecUI(
                         modifier = Modifier.padding(16.dp)
                     )
                     selectedPlaceName = place.name
+                    meetUpPlace.value = place.id
                 }
                 if (selectedPlace == null) {
                     Text(
@@ -252,7 +253,7 @@ fun PlaceItem(
 @Composable
 fun PlaceRecUIPreview() {
     FrontendTheme {
-        PlaceRecUI(mutableStateOf("A"),defaultfriendIdsList.toLongArray(), LatLng(10.1,1.2), modifier = Modifier, navController = NavController(LocalContext.current), LocalContext.current)
+        PlaceRecUI(mutableStateOf(0),mutableStateOf("A"),defaultfriendIdsList.toLongArray(), LatLng(10.1,1.2), modifier = Modifier, navController = NavController(LocalContext.current), LocalContext.current)
 
     }
 }
