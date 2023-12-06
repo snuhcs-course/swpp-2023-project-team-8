@@ -235,9 +235,7 @@ class MapActivity : ComponentActivity() {
 @Composable
 fun MapUI(
     currentLocation: LatLng?,
-    friends: List<UserWithLocationModel>,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    friends: List<UserWithLocationModel>
 ) {
 
     MaterialTheme {
@@ -313,7 +311,7 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomEnd
         ) {
-            MapUI(currentLocation, friendsList, onClick = { onClick() }, modifier = Modifier.fillMaxSize())
+            MapUI(currentLocation, friendsList)
             FloatingActionButton(
                 onClick = { onClick() },
                 modifier = Modifier.padding(16.dp)
@@ -333,7 +331,7 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
 @Composable
 fun MapUIPreview() {
     FrontendTheme {
-        MapUI(LatLng(1.35, 103.87), emptyList(), onClick = {})
+        MapUI(LatLng(1.35, 103.87), emptyList())
     }
 }
 

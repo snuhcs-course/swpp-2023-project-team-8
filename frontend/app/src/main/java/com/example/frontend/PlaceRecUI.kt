@@ -144,7 +144,7 @@ fun PlaceRecUI(
                         shape = RoundedCornerShape(16.dp)
                     )
             ) {
-                MapUI(currentLocation, emptyList(), onClick = {})
+                MapUI(currentLocation, emptyList())
             }
 
             selectedPlace?.let { place ->
