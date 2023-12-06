@@ -8,7 +8,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class CheckInUseCase(context: Context) {
+/*
+ * 체크인을 수행하는 메서드
+ */
+class CheckInUseCase(
+    context: Context
+) {
     private val checkInService = CheckInService.create(context)
 
     fun execute(latitude: Double, longitude: Double) {
