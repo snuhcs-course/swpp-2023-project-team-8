@@ -1,7 +1,6 @@
 package com.example.frontend.ui.component
 
 import android.app.Activity
-import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -16,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.frontend.MapActivity
 import com.example.frontend.ui.theme.LightPurple
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,8 +37,6 @@ fun MyTopAppBar(title: String) {
         },
         navigationIcon = {
             IconButton(onClick = {
-                val nextIntent = Intent(context, MapActivity::class.java)
-                context.startActivity(nextIntent)
                 if (context is Activity) {
                     context.finish()
                 }
