@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class RecommendPlaces
-  HOST = 'localhost'
-  PORT = 50051
+  HOST = ENV.fetch("PLACE_SERVICE_HOST") { "localhost" }
+  PORT = ENV.fetch("PLACE_SERVICE_PORT") { 50051 }
 
   def initialize(latitude:, longitude:)
     @latitude = latitude
