@@ -50,7 +50,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.frontend.MapActivity
 import com.example.frontend.MissionActivity
 import com.example.frontend.data.predefinedImages
 import com.example.frontend.repository.UserContextRepository
@@ -133,9 +132,6 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(46.dp)
                     .clickable {
-                        val nextIntent = Intent(context, MapActivity::class.java)
-                        context.startActivity(nextIntent)
-                        // finish current activity
                         if (context is Activity) {
                             context.finish()
                         }
