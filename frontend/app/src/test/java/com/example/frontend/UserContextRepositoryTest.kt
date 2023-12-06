@@ -64,4 +64,12 @@ class UserContextRepositoryTest {
         val imageId = userContextRepository.getSelectedPredefinedImage()
         assertNull(imageId)
     }
+
+    @Test
+    fun `saveAuthToken should save token to store`() {
+        val expectedToken = "testToken"
+        userContextRepository.saveAuthToken(expectedToken)
+        val token = userContextRepository.getAuthToken()
+        assertEquals(expectedToken, token)
+    }
 }

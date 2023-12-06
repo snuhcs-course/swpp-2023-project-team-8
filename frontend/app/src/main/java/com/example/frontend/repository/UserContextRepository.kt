@@ -1,6 +1,7 @@
 package com.example.frontend.repository
 
 import android.content.Context
+import com.example.frontend.utilities.EncryptedSharedPreferenceKVStore
 import com.example.frontend.utilities.KVStore
 import com.example.frontend.utilities.SharedPreferenceKVStore
 
@@ -24,6 +25,10 @@ class UserContextRepository(
         return store.getString(AUTH_TOKEN) ?: ""
     }
 
+    fun saveAuthToken(token: String) {
+        store.putString(AUTH_TOKEN, token)
+    }
+
     fun saveSelectedPredefinedImage(imageId: Int?) {
         if (imageId != null && imageId != KVStore.DEFAULT_INT) {
             store.putInt(SELECTED_PREDEFINED_IMAGE, imageId)
@@ -35,13 +40,28 @@ class UserContextRepository(
         return if (imageId != KVStore.DEFAULT_INT) imageId else null
     }
 
+    fun saveUserMail(userMail: String) {
+        store.putString(USER_MAIL, userMail)
+    }
+
+    fun saveIsLoggedIn(isLoggedIn: Boolean) {
+        store.putBoolean(IS_LOGGED_IN, isLoggedIn)
+    }
+
+    fun getIsLoggedIn(): Boolean {
+        return store.getBoolean(IS_LOGGED_IN) ?: false
+    }
+
     companion object {
         /*
          * Returns UserContextRepository instance backed by SharedPreferenceKVStore.
          */
-        fun ofContext(context: Context): UserContextRepository {
-            val sharedPreferencesKVStore = SharedPreferenceKVStore(context)
-            return UserContextRepository(sharedPreferencesKVStore)
+        fun ofContext(context: Context, secure: Boolean = false): UserContextRepository {
+            val store = if (secure)
+                EncryptedSharedPreferenceKVStore(context)
+            else
+                SharedPreferenceKVStore(context)
+            return UserContextRepository(store)
         }
 
         private const val USERNAME = "USERNAME"
@@ -50,5 +70,6 @@ class UserContextRepository(
         const val DEFAULT_USER_MAIL = "shaf@snu.ac.kr"
         private const val AUTH_TOKEN = "AUTH_TOKEN"
         private const val SELECTED_PREDEFINED_IMAGE = "SELECTED_PREDEFINED_IMAGE"
+        private const val IS_LOGGED_IN = "IS_LOGGED_IN"
     }
 }

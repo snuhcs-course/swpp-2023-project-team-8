@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import com.example.frontend.api.AuthService
 import com.example.frontend.model.AuthResponse
-import com.example.frontend.usecase.LoginUseCase
+import com.example.frontend.usecase.login.LoginUseCase
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

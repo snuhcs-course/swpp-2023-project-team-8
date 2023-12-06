@@ -6,8 +6,8 @@ import android.content.SharedPreferences
 /*
  * KVStore implementation using SharedPreference
  */
-class SharedPreferenceKVStore(context: Context) : KVStore {
-    private val appPrefs: SharedPreferences =
+open class SharedPreferenceKVStore(context: Context) : KVStore {
+    protected open val appPrefs: SharedPreferences =
         context.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE)
 
     override fun getString(key: String): String? {
@@ -27,6 +27,16 @@ class SharedPreferenceKVStore(context: Context) : KVStore {
     override fun putInt(key: String, value: Int) {
         val editor = appPrefs.edit()
         editor.putInt(key, value)
+        editor.apply()
+    }
+
+    override fun getBoolean(key: String): Boolean? {
+        return appPrefs.getBoolean(key, false)
+    }
+
+    override fun putBoolean(key: String, value: Boolean) {
+        val editor = appPrefs.edit()
+        editor.putBoolean(key, value)
         editor.apply()
     }
 

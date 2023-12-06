@@ -10,6 +10,9 @@ interface KVStore {
     fun getInt(key: String): Int?
     fun putInt(key: String, value: Int)
 
+    fun getBoolean(key: String): Boolean?
+    fun putBoolean(key: String, value: Boolean)
+
     companion object {
         const val DEFAULT_INT = -1
     }
