@@ -20,3 +20,5 @@ val SNU_POLYGON = listOf(
     LatLng(37.467095, 126.960976),
     LatLng(37.468567, 126.957310),
 )
+
+val BUILDING_302 = LatLng(37.466967, 126.950302)
