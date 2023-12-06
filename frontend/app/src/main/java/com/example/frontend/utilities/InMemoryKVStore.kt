@@ -26,4 +26,8 @@ class InMemoryKVStore : KVStore {
     override fun putBoolean(key: String, value: Boolean) {
         store[key] = value
     }
+
+    override fun clear() {
+        store.clear()
+    }
 }
