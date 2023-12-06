@@ -22,15 +22,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.frontend.ui.map.FriendsMapUI
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.usecase.CheckInUseCase
+import com.example.frontend.usecase.SaveMyInfoUseCase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -42,6 +45,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var checkInUseCase: CheckInUseCase
+
+    @Inject
+    lateinit var saveMyInfoUseCase: SaveMyInfoUseCase
 
     private fun hasBackgroundLocationPermission(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -114,6 +120,10 @@ class MainActivity : ComponentActivity() {
 
         currentLocation?.let {
             checkInUseCase.execute(it.latitude, it.longitude)
+        }
+
+        lifecycleScope.launch {
+            saveMyInfoUseCase.execute()
         }
     }
 
