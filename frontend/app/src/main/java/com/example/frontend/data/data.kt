@@ -1,11 +1,14 @@
 package com.example.frontend.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.frontend.R
-import com.example.frontend.model.MeetupModel
+import com.example.frontend.model.MeetUpResponse
 import com.example.frontend.model.MissionModel
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.model.UserWithLocationModel
 import com.google.android.gms.maps.model.LatLng
+import java.time.LocalDateTime
 
 interface data {
 
@@ -38,6 +41,8 @@ val defaultPlaces = listOf(
     PlaceModel(LatLng(11.1, 123.4), "자하연"),
     PlaceModel(LatLng(121.1, 103.4), "중도")
 )
+
+@RequiresApi(Build.VERSION_CODES.O)
 val defaultMeetups = listOf(
-    MeetupModel("카페", listOf("친구1", "친구2", "친구3"), "14:00", "2023-12-01", LatLng(13.1, 23.1))
+    MeetUpResponse("카페", "팀 미팅", LocalDateTime.now(), emptyList(), PlaceModel(LatLng(0.0, 0.0), ""))
 )
