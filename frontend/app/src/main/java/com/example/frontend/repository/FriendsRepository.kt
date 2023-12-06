@@ -70,7 +70,7 @@ class FriendsViewModel @Inject constructor(private val repository: FriendsReposi
     }
 }
 
-class MeetupViewModel : ViewModel() {
+class InviteFriendViewModel : ViewModel() {
 
     private val _checkedStates = mutableStateMapOf<Long, Boolean>()
     private val _checkedStatesFlow = MutableStateFlow<Map<Long, Boolean>>(_checkedStates)

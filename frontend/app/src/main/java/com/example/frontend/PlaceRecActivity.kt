@@ -3,12 +3,14 @@ package com.example.frontend
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +20,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Settings
@@ -41,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.data.defaultPlaces
+import com.example.frontend.data.defaultfriendIdsList
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.theme.FrontendTheme
@@ -57,23 +62,20 @@ class PlaceRecActivity() : ComponentActivity() {
         val title = intent.getStringExtra("title")
         val meetAtString = intent.getStringExtra("meetAt")
         val meetAt = LocalDateTime.parse(meetAtString)
-        val userIds = intent.getLongArrayExtra("userIds")
-        val currentLocation: LatLng? = intent.getParcelableExtra("currentLocation")
+        val userIds = intent.getLongArrayExtra("userIds")?: defaultfriendIdsList.toLongArray()
+        val currentLocation: LatLng = intent.getParcelableExtra("currentLocation")?:LatLng(10.1, 23.1)
 
-        // averagedLocation 넘겨 받기
-        val averagedLocation: LatLng = intent.getParcelableExtra("averagedLocation") ?: LatLng(10.1, 12.2)
 
         var userName = UserContextRepository(this).getUserName()
         var places by mutableStateOf<List<PlaceModel>>(emptyList())
-        setContent {
-            val placeUseCase = ListPlaceUseCase(this, averagedLocation)
 
+        setContent {
+            val placeUseCase = ListPlaceUseCase(this, currentLocation, userIds)
             LaunchedEffect(Unit) {
                 placeUseCase.fetch { fetchedPlaces ->
                     places = fetchedPlaces
                 }
             }
-
             FrontendTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -85,21 +87,30 @@ class PlaceRecActivity() : ComponentActivity() {
                             .fillMaxSize()
                     )
                     {
+                        Spacer(modifier = Modifier.padding(10.dp))
                         // PlaceRecUI
-                        PlaceRecUI(userName, modifier = Modifier.align(Alignment.TopCenter))
+                        Column() {
+                            PlaceRecUI(
+                                userName,
+                                modifier = Modifier,
+                                places
+                            )
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .height(300.dp)
-                                .padding(top = 250.dp)
-                        ) {
-                            MapUI(currentLocation, emptyList(), onClick = {})
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.8f)
+                                    .height(300.dp)
+                                    .padding(top = 250.dp)
+                                    .background(
+                                        color = Color.Gray,
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                            ) {
+                                MapUI(currentLocation, emptyList(), onClick = {})
 
+                            }
                         }
-                        LaunchedEffect(places) {
-                            // Nothing to do here, just being used to trigger recomposition
-                        }
+
 
                     }
                 }
@@ -113,24 +124,30 @@ class PlaceRecActivity() : ComponentActivity() {
 
 @Composable
 fun PlaceList(placeModels: List<PlaceModel>, modifier: Modifier = Modifier) {
-    LazyColumn(
+    LazyRow(
         modifier = modifier
     ) {
         items(placeModels) { placeModel ->
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .width(100.dp)
                     .height(100.dp)
-                    .background(color = Color.Gray)
+                    .background(color = Color.Gray, shape = RoundedCornerShape(8.dp))
+                    .padding(3.dp)
             ) {
-                Text(text = placeModel.name ?: "장소", color = Color.White)
+                Text(
+                    text = placeModel.name ?: "장소",
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp)
+                )
             }
         }
     }
 }
-
 @Composable
-fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
+fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier, places : List<PlaceModel>) {
     var context = LocalContext.current
 
     Box(
@@ -145,65 +162,58 @@ fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
                 .background(color = Color(0xFFF3EDF7))
 
         )
-        Row(
-            modifier = Modifier
-                .height(54.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.KeyboardArrowLeft,
-                contentDescription = null,
+        Column() {
+            Row(
                 modifier = Modifier
-                    .size(46.dp)
-                    .clickable {
-                        val nextIntent = Intent(context, MapActivity::class.java)
-                        context.startActivity(nextIntent)
-                    }
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                modifier = Modifier,
-
-                text = "장소 추천",
-                style = TextStyle(
-                    fontSize = 22.sp,
-                    lineHeight = 28.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFF1D1B20)
+                    .height(54.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.KeyboardArrowLeft,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(46.dp)
+                        .clickable {
+                            val nextIntent = Intent(context, MapActivity::class.java)
+                            context.startActivity(nextIntent)
+                        }
                 )
-            )
-
-
-            Spacer(modifier = Modifier.weight(0.4f))
-            Icon(
-                imageVector = Icons.Outlined.Settings,
-                contentDescription = null,
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    modifier = Modifier,
+                    text = "장소 추천",
+                    style = TextStyle(
+                        fontSize = 22.sp,
+                        lineHeight = 28.sp,
+                        fontWeight = FontWeight(400),
+                        color = Color(0xFF1D1B20)
+                    )
+                )
+            }
+            Text(
+                text = userName?.let { "$userName 님, 이런 장소는 어때요?" } ?: "알 수 없는 사용자",
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    lineHeight = 24.sp,
+                    fontWeight = FontWeight(800),
+                    color = Color(0xFF000000),
+                    letterSpacing = 0.5.sp,
+                ),
                 modifier = Modifier
-                    .size(40.dp)
+                    .padding(start = 8.dp)
+            )
+            PlaceList(
+                placeModels = places,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+            )
+            Spacer(
+                modifier = Modifier
+                    .height(200.dp)
+                    .width(300.dp)
             )
         }
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Text(
-            text = userName?.let { "$userName 님, 이런 장소는 어때요?" } ?: "알 수 없는 사용자",
-            style = TextStyle(
-                fontSize = 18.sp,
-                lineHeight = 24.sp,
-                fontWeight = FontWeight(700),
-                color = Color(0xFF000000),
-                letterSpacing = 0.5.sp,
-            ),
-            modifier = Modifier
-                .padding(top = 70.dp)
-                .padding(start = 8.dp)
-        )
-
-        Spacer(
-            modifier = Modifier
-                .height(200.dp)
-                .width(300.dp)
-        )
     }
 }
 
@@ -211,7 +221,7 @@ fun PlaceRecUI(userName: String?, modifier: Modifier = Modifier) {
 @Composable
 fun PlaceRecUIPreview() {
     FrontendTheme {
-        PlaceRecUI("김민수")
-        PlaceList(defaultPlaces)
+        PlaceRecUI("김민수",modifier = Modifier, defaultPlaces)
+
     }
 }

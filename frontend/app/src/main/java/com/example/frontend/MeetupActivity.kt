@@ -1,10 +1,8 @@
 package com.example.frontend
 
-
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -64,7 +62,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -73,7 +70,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.repository.FriendsViewModel
-import com.example.frontend.repository.MeetupViewModel
+import com.example.frontend.repository.InviteFriendViewModel
 import com.example.frontend.usecase.ListFriendUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
@@ -84,7 +81,7 @@ import java.time.ZoneId
 
 @AndroidEntryPoint
 class MeetupActivity : ComponentActivity() {
-    private val viewModelCheck: MeetupViewModel by viewModels()
+    private val viewModelCheck: InviteFriendViewModel by viewModels()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -251,7 +248,7 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
 fun FriendListUI(
     selectedFriends: MutableState<List<Long>>,
     onSelectionComplete: () -> Unit,
-    viewModel: MeetupViewModel,
+    viewModel: InviteFriendViewModel,
     friendsList: List<UserWithLocationModel>,
     navController: NavController
 ) {
