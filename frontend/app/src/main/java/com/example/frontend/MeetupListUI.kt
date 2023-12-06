@@ -2,9 +2,11 @@ package com.example.frontend
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -17,10 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,15 +30,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.data.defaultMeetups
+import com.example.frontend.model.MeetUpResponse
 import com.example.frontend.model.MeetupModel
 import com.example.frontend.ui.component.LoadingIndicator
 import com.example.frontend.usecase.ListMeetUpUseCase
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 
 class MeetupListUI : ComponentActivity() {
 
-    var meetups by mutableStateOf<List<MeetupModel>>(emptyList())
+    var meetups by mutableStateOf<List<MeetUpResponse>>(emptyList())
     var context = this
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -101,7 +104,6 @@ class MeetupListUI : ComponentActivity() {
                     } else {
                         MeetUpList(meetups)
                     }
-                    MeetUpList(meetups)
                 }
             }
         }
@@ -110,8 +112,9 @@ class MeetupListUI : ComponentActivity() {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MeetUpList(meetups: List<MeetupModel>) {
+fun MeetUpList(meetups: List<MeetUpResponse>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -124,58 +127,37 @@ fun MeetUpList(meetups: List<MeetupModel>) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MeetUpItem(meetup: MeetupModel) {
-    Column(
+fun MeetUpItem(meetup: MeetUpResponse) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp)
+            .padding(8.dp),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Icon(imageVector = Icons.Default.Menu, contentDescription = null)
-                Text(meetup.title)
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = meetup.title, style = MaterialTheme.typography.titleLarge)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = meetup.meetAt.format(
+                    DateTimeFormatter.ofLocalizedDateTime(
+                        FormatStyle.MEDIUM
+                    )
+                ), style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = meetup.description, style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "Participants:", style = MaterialTheme.typography.titleSmall)
+            meetup.users.forEach { user ->
+                Text(text = "- ${user.name}", style = MaterialTheme.typography.bodySmall)
             }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Icon(imageVector = Icons.Default.Person, contentDescription = null)
-                Text(meetup.friends.joinToString(", "))
-            }
-
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
-                Text("${meetup.date} ${meetup.time}")
-            }
-        }
-
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Icon(imageVector = Icons.Default.Place, contentDescription = null)
-            //Text(promise.location)
         }
     }
 }
 
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun ShowMeetUpUIPreview() {
