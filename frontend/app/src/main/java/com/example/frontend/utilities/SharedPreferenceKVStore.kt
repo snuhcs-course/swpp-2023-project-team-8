@@ -30,6 +30,16 @@ open class SharedPreferenceKVStore(context: Context) : KVStore {
         editor.apply()
     }
 
+    override fun getBoolean(key: String): Boolean? {
+        return appPrefs.getBoolean(key, false)
+    }
+
+    override fun putBoolean(key: String, value: Boolean) {
+        val editor = appPrefs.edit()
+        editor.putBoolean(key, value)
+        editor.apply()
+    }
+
     companion object {
         const val APP_PREFS = "app_prefs"
     }

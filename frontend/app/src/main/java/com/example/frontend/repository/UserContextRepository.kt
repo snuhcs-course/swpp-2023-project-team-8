@@ -66,6 +66,6 @@ class UserContextRepository(
         const val DEFAULT_USER_MAIL = "shaf@snu.ac.kr"
         private const val AUTH_TOKEN = "AUTH_TOKEN"
         private const val SELECTED_PREDEFINED_IMAGE = "SELECTED_PREDEFINED_IMAGE"
-        private cosnt val IS_LOGGED_IN = "IS_LOGGED_IN"
+        private const val IS_LOGGED_IN = "IS_LOGGED_IN"
     }
 }

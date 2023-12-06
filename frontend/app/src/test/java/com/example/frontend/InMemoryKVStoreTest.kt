@@ -48,4 +48,15 @@ class InMemoryKVStoreTest {
         kvStore.putInt("key", 123)
         assertEquals(123, kvStore.getInt("key"))
     }
+
+    @Test
+    fun `getBoolean returns null when key does not exist`() {
+        assertNull(kvStore.getBoolean("nonexistentKey"))
+    }
+
+    @Test
+    fun `getBoolean returns value when key exists`() {
+        kvStore.putBoolean("key", true)
+        assertEquals(true, kvStore.getBoolean("key"))
+    }
 }

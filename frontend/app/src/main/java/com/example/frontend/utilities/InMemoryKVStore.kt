@@ -18,4 +18,12 @@ class InMemoryKVStore : KVStore {
     override fun putInt(key: String, value: Int) {
         store[key] = value
     }
+
+    override fun getBoolean(key: String): Boolean? {
+        return store[key] as? Boolean
+    }
+
+    override fun putBoolean(key: String, value: Boolean) {
+        store[key] = value
+    }
 }
