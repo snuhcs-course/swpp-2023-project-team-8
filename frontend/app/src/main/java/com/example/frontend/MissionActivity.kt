@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,28 +44,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.frontend.api.MissionAPI
+import com.example.frontend.data.defaultMissions
 import com.example.frontend.model.MissionModel
-import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.theme.FrontendTheme
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.frontend.usecase.ListMissionUseCase
 
 class MissionActivity : ComponentActivity() {
-    val userContextRepository = UserContextRepository(this)
-    val authToken: String = userContextRepository.getAuthToken()
-    val missionApi: MissionAPI by lazy { defaultMissionAPI(authToken) }
-
+    var missions by mutableStateOf<List<MissionModel>>(emptyList())
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            //val authToken = getAuthtoken(this)
-            val missionApi = defaultMissionAPI(authToken)
-            //var missions by remember { mutableStateOf(emptyList<MissionModel>()) }
-            fetchMissions()
+            val missionUseCase = ListMissionUseCase(this)
 
+            LaunchedEffect(Unit) {
+                missionUseCase.fetch { fetchedMissions ->
+                    missions = fetchedMissions
+                }
+            }
             FrontendTheme {
                 ShowMissionUI(missions = missions) {
                     // Handle switch to register
@@ -72,38 +69,6 @@ class MissionActivity : ComponentActivity() {
             }
         }
     }
-
-    var missions by mutableStateOf<List<MissionModel>>(emptyList())
-    private fun fetchMissions() {
-        val call = missionApi.getMissionList()
-
-        call.enqueue(object : Callback<List<MissionModel>> {
-            override fun onResponse(
-                call: Call<List<MissionModel>>,
-                response: Response<List<MissionModel>>
-            ) {
-                if (response.isSuccessful) {
-                    runOnUiThread {
-                        missions = response.body() ?: emptyList()
-                    }
-                } else {
-
-                }
-            }
-
-            override fun onFailure(call: Call<List<MissionModel>>, t: Throwable) {
-                runOnUiThread {
-                    missions = defaultMissions
-                }
-            }
-        })
-    }
-}
-
-
-fun defaultMissionAPI(authToken: String): MissionAPI {
-    val retrofit = createAuthenticatedRetrofit(authToken)
-    return retrofit.create(MissionAPI::class.java)
 }
 
 @Composable
@@ -132,7 +97,6 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                     .clickable {
                         val nextIntent = Intent(context, MapActivity::class.java)
                         context.startActivity(nextIntent)
-                        // finish current activity
                         if (context is Activity) {
                             context.finish()
                         }
@@ -151,7 +115,6 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                 )
             )
         }
-
         if (missions.isEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             CircularProgressIndicator(
@@ -260,10 +223,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
 }
 
 fun getMoreDescription(missionTitle: String, missions: List<MissionModel>): String {
-    // Find the MissionModel for the given missionTitle
     val mission = missions.find { it.title == missionTitle }
-
-    // Provide different descriptions based on the mission title
     return mission?.showMore ?: "$missionTitle 상세 설명 업데이트 필요"
 }
 
@@ -330,16 +290,6 @@ fun ShowMoreDescriptionDialog(
     }
 }
 
-val defaultMissions = listOf(
-    MissionModel("미션1", "친구와 우연히 만나기", false, "예상치 못한 장소에서 친구와 마주쳐 보세요!"),
-    MissionModel("미션2", "친구와 약속 잡기", false, "친구와 약속을 잡아 보세요!"),
-    MissionModel("미션3", "친구와 약속 장소 정하기", false, "3명 이상의 친구와 약속을 잡아 보세요!"),
-    MissionModel("미션4", "자하연 근처에서 친구 마주치기", false, "자하연에서 친구와 마주쳐 보세요!"),
-    MissionModel("미션5", "관악산 등산하기", false, "관악산에 올라가 보세요!"),
-    MissionModel("미션6", "도서관에 한 시간 머물기", false, "도서관에 머물며 책을 읽는 시간을 가져 보세요!"),
-    MissionModel("미션7", "친구 세 명과 만나기", false, "친구 세 명과 약속을 잡아 보세요!"),
-    MissionModel("미션8", "친구 스무 명 추가하기", false, "친구 20 명을 추가해 보세요!")
-)
 
 @Preview(showBackground = true)
 @Composable
@@ -366,10 +316,10 @@ fun GridItems(items: List<MissionModel>, itemContent: @Composable (MissionModel)
             Row {
                 for (mission in rowItems) {
                     itemContent(mission)
-                    Spacer(modifier = Modifier.width(16.dp)) // Adjust spacing as needed
+                    Spacer(modifier = Modifier.width(16.dp))
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp)) // Adjust spacing as needed
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

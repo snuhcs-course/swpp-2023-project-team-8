@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.frontend.api.FriendService
+import com.example.frontend.api.UserService
 import com.example.frontend.callback.FriendLocationCallback
 import com.example.frontend.interceptor.AuthInterceptor
 import com.example.frontend.model.UserWithLocationModel
@@ -21,6 +22,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
+
 
 class FriendsRepository(private val friendService: FriendService) {
 
@@ -65,6 +67,7 @@ class FriendsViewModel @Inject constructor(private val repository: FriendsReposi
     }
 }
 
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -93,4 +96,10 @@ object AppModule {
     fun provideFriendAPI(retrofit: Retrofit): FriendService {
         return retrofit.create(FriendService::class.java)
     }
+
+    @Provides
+    fun provideUserService(retrofit: Retrofit): UserService {
+        return retrofit.create(UserService::class.java)
+    }
+
 }
