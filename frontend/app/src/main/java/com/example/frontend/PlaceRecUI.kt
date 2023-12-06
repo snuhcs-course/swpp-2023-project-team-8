@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import com.example.frontend.data.defaultfriendIdsList
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.repository.UserContextRepository
+import com.example.frontend.ui.component.LoadingIndicator
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.usecase.ListPlaceUseCase
 import com.google.android.gms.maps.model.LatLng
@@ -55,7 +56,7 @@ fun PlaceRecUI(
     navController: NavController,
     context: Context
 ) {
-    var userName by remember { mutableStateOf(UserContextRepository(context).getUserName()) }
+    var userName by remember { mutableStateOf(UserContextRepository.ofContext(context).getUserName()) }
     var places by remember { mutableStateOf<List<PlaceModel>>(emptyList()) }
 
     val placeUseCase = remember { ListPlaceUseCase(context, currentLocation, userIds) }
