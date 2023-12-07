@@ -2,6 +2,7 @@ package com.example.frontend.usecase
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.example.frontend.api.MeetUpService
 import com.example.frontend.data.defaultMeetups
 import com.example.frontend.model.MeetupModel
@@ -21,14 +22,17 @@ class CreateMeetUpUseCase(
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Log.d("meetup", "SUcces!!")
+                    var result = "Create MeetUp Success!!!!: "
+                    Toast.makeText(context, result, Toast.LENGTH_LONG).show()
                 } else {
-                    Log.d("meetup", "no success!!")
+                    var result = "Create MeetUp failed: " + response.errorBody()?.string()
+                    Toast.makeText(context, result, Toast.LENGTH_LONG).show()
                 }
             }
-
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.d("meetup", "fail!!")
+                var result = "Create MeetUp error: " + t.message
+                Toast.makeText(context, result, Toast.LENGTH_LONG).show()
             }
         })
     }
