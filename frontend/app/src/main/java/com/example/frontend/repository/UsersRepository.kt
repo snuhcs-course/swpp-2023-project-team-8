@@ -1,6 +1,7 @@
 package com.example.frontend.repository
 
 import com.example.frontend.api.UserService
+import com.example.frontend.model.ImageChangeRequest
 import com.example.frontend.model.UserModel
 import retrofit2.Response
 import javax.inject.Inject
@@ -28,6 +29,10 @@ class UsersRepository @Inject constructor(private val userService: UserService) 
 
     suspend fun confirmRequest(friendId: Long) {
         return userService.confirmRequest(friendId)
+    }
+
+    suspend fun changeImageId(imageId: Int): Response<Unit> {
+        return userService.changeImageId(ImageChangeRequest(imageId))
     }
 }
 

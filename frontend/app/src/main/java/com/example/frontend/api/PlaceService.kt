@@ -1,5 +1,7 @@
 package com.example.frontend.api
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.utilities.BASE_URL
 import com.example.frontend.utilities.GsonProvider
@@ -23,6 +25,7 @@ interface PlaceService {
     fun recommend(@Query("averagedLocation") averagedLocation: LatLng?,
                   @Query("friendIds") friendIds: LongArray?): Call<List<PlaceModel>>
     companion object {
+        @RequiresApi(Build.VERSION_CODES.O)
         fun create(): PlaceService {
             val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 

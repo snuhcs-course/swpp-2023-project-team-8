@@ -1,10 +1,12 @@
 package com.example.frontend.api
 
+import com.example.frontend.model.ImageChangeRequest
 import com.example.frontend.model.UserModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface UserService {
@@ -25,4 +27,7 @@ interface UserService {
 
     @POST("/friends/{id}/confirm")
     suspend fun confirmRequest(@Path("id") friendId: Long)
+
+    @PUT("/users/me/change_image_id")
+    suspend fun changeImageId(@Body imageId: ImageChangeRequest): Response<Unit>
 }
