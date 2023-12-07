@@ -23,6 +23,7 @@ class SaveMyInfoUseCase @Inject constructor(
             userContextRepository.saveUserName(name)
             userContextRepository.saveUserMail(email)
             userContextRepository.saveUserId(id.toInt())
+            userContextRepository.saveSelectedPredefinedImage(imageId)
         }
     }
 }

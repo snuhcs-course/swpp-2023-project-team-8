@@ -16,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -43,7 +44,9 @@ fun MissionCard() {
                 .padding(16.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            Row() {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Icon(
                     imageVector = Icons.Outlined.CheckCircle,
                     contentDescription = null,
@@ -65,11 +68,9 @@ fun MissionCard() {
                         lineHeight = 20.sp,
                         fontWeight = FontWeight(500),
                         color = Color(0xFF000000),
-                        letterSpacing = 0.1.sp,
                     ),
                     modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .padding(top = 3.dp)
+                        .padding(start = 10.dp)
                         .clickable {
                             val nextIntent = Intent(context, MissionActivity::class.java)
                             context.startActivity(nextIntent)

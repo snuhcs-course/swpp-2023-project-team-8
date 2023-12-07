@@ -36,6 +36,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,9 +59,19 @@ import com.example.frontend.ui.component.MyTopAppBar
 import com.example.frontend.ui.login.LoginActivity
 import com.example.frontend.ui.settings.component.MissionCard
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.usecase.ChangeImageIdUseCase
 import com.example.frontend.usecase.LogOutUseCase
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class UserInfoActivity : ComponentActivity() {
+    @Inject
+    lateinit var changeImageIdUseCase: ChangeImageIdUseCase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -70,7 +81,7 @@ class UserInfoActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    UserInfoUI("Android")
+                    UserInfoUI(onImageIdChanged = { changeImageIdUseCase.execute(it) })
                 }
             }
         }
@@ -78,11 +89,13 @@ class UserInfoActivity : ComponentActivity() {
 }
 
 @Composable
-fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
+fun UserInfoUI(onImageIdChanged: suspend (imageId: Int) -> Unit = {}) {
     var context = LocalContext.current
     var selectedPredefinedImage by rememberSaveable { mutableStateOf(0) }
     selectedPredefinedImage = UserContextRepository.ofContext(context).getSelectedPredefinedImage() ?: 0
     var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    val coroutineScope = rememberCoroutineScope()
 
     val currentUserName = UserContextRepository.ofContext(context).getUserName() ?: "DefaultName"
     if (showDialog) {
@@ -103,7 +116,14 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 arrayOf("Gray Cat with Sunglass", "Yellow Cat with Sunglass", "Dog with Sunglass", "Hamster")
             ) { _, which ->
                 selectedPredefinedImage = predefinedImages[which]
+
                 UserContextRepository.ofContext(context).saveSelectedPredefinedImage(selectedPredefinedImage)
+
+                coroutineScope.launch {
+                    withContext(Dispatchers.IO) {
+                        onImageIdChanged(which)
+                    }
+                }
             }
 
             .show()
@@ -321,6 +341,6 @@ fun ProfileEditDialog(
 @Composable
 fun UserInfoPreview() {
     FrontendTheme {
-        UserInfoUI("Android")
+        UserInfoUI()
     }
 }

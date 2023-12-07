@@ -27,14 +27,16 @@ interface PlaceService {
 
     @GET("places/recommend")
     fun recommend(@Query("user_ids[]") friendIds: List<Long>): Call<PlaceResponseWrapper>
+
     companion object {
         @RequiresApi(Build.VERSION_CODES.O)
         fun create(context: Context): PlaceService {
-            val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
+            val logger =
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 
             val client = OkHttpClient.Builder()
                 .addInterceptor(AuthInterceptor(context))
-            //    .addInterceptor(logger)
+                //    .addInterceptor(logger)
                 .build()
 
             return Retrofit.Builder()
