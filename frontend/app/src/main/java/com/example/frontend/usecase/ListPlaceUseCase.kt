@@ -23,8 +23,7 @@ class ListPlaceUseCase @RequiresApi(Build.VERSION_CODES.O) constructor(
 ) {
     fun fetch(onPlaceFetched: (List<PlaceResponse>) -> Unit) {
         val call = placeService.recommend(friendsId)
-        Log.d("Please", "try!!")
-        Log.d("Please", friendsId.toString())
+
         call.enqueue(object : Callback<PlaceResponseWrapper> {
 
             override fun onResponse(
@@ -34,15 +33,13 @@ class ListPlaceUseCase @RequiresApi(Build.VERSION_CODES.O) constructor(
                 if (response.isSuccessful) {
                     val places = response.body()!!
                     onPlaceFetched(places.places)
-                    Log.d("Please", "successful!")
+
                 } else {
                     onPlaceFetched(defaultPlaceResponse)
-                    Log.d("Please", "${response.errorBody()?.string()}not successful!")
                 }
             }
             override fun onFailure(call: Call<PlaceResponseWrapper>, t: Throwable) {
                 onPlaceFetched(defaultPlaceResponse)
-                Log.d("Please", t.message?:"Fail")
             }
         })
     }
