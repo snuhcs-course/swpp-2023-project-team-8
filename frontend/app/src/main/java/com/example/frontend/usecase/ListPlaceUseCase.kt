@@ -1,38 +1,42 @@
 package com.example.frontend.usecase
 
 import android.content.Context
-import android.util.Log
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.example.frontend.api.PlaceService
-import com.example.frontend.data.defaultPlaces
-import com.example.frontend.model.PlaceModel
-import com.google.android.gms.maps.model.LatLng
+import com.example.frontend.model.PlaceResponse
+import com.example.frontend.model.PlaceResponseWrapper
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ListPlaceUseCase(
+class ListPlaceUseCase @RequiresApi(Build.VERSION_CODES.O) constructor(
     private val context: Context,
-    private val currentLocation: LatLng,
-    private val firendsId: LongArray,
-    private val placeService: PlaceService = PlaceService.create()
+    private val friendsId: List<Long>,
+    private val placeService: PlaceService = PlaceService.create(context)
 ) {
-    fun fetch(onPlaceFetched: (List<PlaceModel>) -> Unit) {
-        val call = placeService.recommend(currentLocation, firendsId)
-        call.enqueue(object : Callback<List<PlaceModel>> {
+    fun fetch(onPlaceFetched: (List<PlaceResponse>) -> Unit) {
+        val call = placeService.recommend(friendsId)
+
+        call.enqueue(object : Callback<PlaceResponseWrapper> {
+
             override fun onResponse(
-                call: Call<List<PlaceModel>>,
-                response: Response<List<PlaceModel>>
+                call: Call<PlaceResponseWrapper>,
+                response: Response<PlaceResponseWrapper>
             ) {
                 if (response.isSuccessful) {
-                    val places = response.body() ?: emptyList()
-                    onPlaceFetched(places)
+                    val places = response.body()!!
+                    onPlaceFetched(places.places)
+
                 } else {
-                    onPlaceFetched(defaultPlaces)
+                    var result = "List Place failed: " + response.errorBody()?.string()
+                    Toast.makeText(context, result, Toast.LENGTH_LONG).show()
                 }
             }
-            override fun onFailure(call: Call<List<PlaceModel>>, t: Throwable) {
-                onPlaceFetched(defaultPlaces)
-                Log.d("Place", defaultPlaces.toString())
+            override fun onFailure(call: Call<PlaceResponseWrapper>, t: Throwable) {
+                var result = "List Place failed: " + t.message
+                Toast.makeText(context, result, Toast.LENGTH_LONG).show()
             }
         })
     }

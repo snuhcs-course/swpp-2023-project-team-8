@@ -1,8 +1,12 @@
 package com.example.frontend.api
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.frontend.interceptor.AuthInterceptor
 import com.example.frontend.model.PlaceModel
+import com.example.frontend.model.PlaceResponse
+import com.example.frontend.model.PlaceResponseWrapper
 import com.example.frontend.utilities.BASE_URL
 import com.example.frontend.utilities.GsonProvider
 import com.google.android.gms.maps.model.LatLng
@@ -21,16 +25,18 @@ interface PlaceService {
     @POST("/sendlocation")
     fun send(@Body placeModel: PlaceModel?): Call<PlaceModel>?
 
-    @GET("/recommend")
-    fun recommend(@Query("averagedLocation") averagedLocation: LatLng?,
-                  @Query("friendIds") friendIds: LongArray?): Call<List<PlaceModel>>
+    @GET("places/recommend")
+    fun recommend(@Query("user_ids[]") friendIds: List<Long>): Call<PlaceResponseWrapper>
+
     companion object {
         @RequiresApi(Build.VERSION_CODES.O)
-        fun create(): PlaceService {
-            val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
+        fun create(context: Context): PlaceService {
+            val logger =
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 
             val client = OkHttpClient.Builder()
-                .addInterceptor(logger)
+                .addInterceptor(AuthInterceptor(context))
+                //    .addInterceptor(logger)
                 .build()
 
             return Retrofit.Builder()

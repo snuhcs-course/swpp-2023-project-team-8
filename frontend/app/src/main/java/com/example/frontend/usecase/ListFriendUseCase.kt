@@ -1,6 +1,7 @@
 package com.example.frontend.usecase
 
 import android.content.Context
+import android.widget.Toast
 import com.example.frontend.api.FriendService
 import com.example.frontend.data.defaultfriendList
 import com.example.frontend.model.UserWithLocationModel
@@ -25,12 +26,14 @@ class ListFriendUseCase (
                     val friends = response.body() ?: emptyList()
                     onFriendFetched(friends)
                 } else {
-                    onFriendFetched(defaultfriendList)
+                    var result = "List Friend failed: " + response.errorBody()?.string()
+                    Toast.makeText(context, result, Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<List<UserWithLocationModel>>, t: Throwable) {
-                onFriendFetched(defaultfriendList)
+                var result = "List Friend error: " + t.message
+                Toast.makeText(context, result, Toast.LENGTH_LONG).show()
             }
         })
     }
