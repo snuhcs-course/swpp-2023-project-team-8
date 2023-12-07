@@ -47,8 +47,8 @@ class UserContextRepository(
     fun saveIsLoggedIn(isLoggedIn: Boolean) {
         store.putBoolean(IS_LOGGED_IN, isLoggedIn)
     }
-    fun saveUserId(userId: Long) {
-        store.putLong(USER_ID, userId)
+    fun saveUserId(userId: Int) {
+        store.putInt(USER_ID, userId)
     }
     fun getUserId():Long{
         return store.getLong(USER_ID)
@@ -57,6 +57,8 @@ class UserContextRepository(
     fun getIsLoggedIn(): Boolean {
         return store.getBoolean(IS_LOGGED_IN) ?: false
     }
+
+
 
     fun clear() {
         store.clear()
@@ -83,5 +85,6 @@ class UserContextRepository(
         private const val AUTH_TOKEN = "AUTH_TOKEN"
         private const val SELECTED_PREDEFINED_IMAGE = "SELECTED_PREDEFINED_IMAGE"
         private const val IS_LOGGED_IN = "IS_LOGGED_IN"
+
     }
 }

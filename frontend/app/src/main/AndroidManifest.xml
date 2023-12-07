@@ -36,7 +36,7 @@
             android:theme="@style/Theme.Frontend" />
 
         <activity
-            android:name=".MapActivity"
+            android:name=".MainActivity"
             android:exported="false"
             android:label="@string/title_activity_map"
             android:theme="@style/Theme.Frontend" />

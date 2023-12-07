@@ -195,7 +195,7 @@ fun ShowMeetUpUIPreview() {
                 modifier = Modifier
                     .size(46.dp)
                     .clickable {
-                        val nextIntent = Intent(context, MapActivity::class.java)
+                        val nextIntent = Intent(context, MainActivity::class.java)
                         context.startActivity(nextIntent)
                         // finish current activity
                         if (context is Activity) {

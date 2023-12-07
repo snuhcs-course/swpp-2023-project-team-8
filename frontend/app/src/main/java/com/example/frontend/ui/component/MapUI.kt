@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polygon
@@ -23,7 +24,8 @@ import kotlin.random.Random
 @Composable
 fun MapWithMarker(
     currentLocation: LatLng?,
-    friends: List<UserWithLocationModel>
+    friends: List<UserWithLocationModel>,
+    polygon: List<LatLng>? = null
 ) {
     Box(
         modifier = Modifier
@@ -36,7 +38,8 @@ fun MapWithMarker(
 
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState
+                cameraPositionState = cameraPositionState,
+                uiSettings = MapUiSettings(zoomControlsEnabled = false)
             ) {
                 Polygon(
                     points = defaultLocationMarkers,
@@ -47,6 +50,13 @@ fun MapWithMarker(
                     title = "Current Location",
                     snippet = "You are here"
                 )
+
+                polygon?.let { locations ->
+                    Polygon(
+                        points = locations,
+                        fillColor = Color(0x89CFF0FF)
+                    )
+                }
 
                 friends.forEach { buildMarkerIcon(it) }
             }

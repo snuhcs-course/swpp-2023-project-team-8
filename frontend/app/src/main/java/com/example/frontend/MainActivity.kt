@@ -12,43 +12,30 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.frontend.ui.component.BottomBar
-import com.example.frontend.ui.component.MapWithMarker
+import androidx.lifecycle.lifecycleScope
+import com.example.frontend.ui.map.FriendsMapUI
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.viewmodel.FriendsViewModel
+import com.example.frontend.usecase.CheckInUseCase
+import com.example.frontend.usecase.PeriodicCheckInUseCase
+import com.example.frontend.usecase.SaveMyInfoUseCase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
+
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlin.random.Random
@@ -57,7 +44,25 @@ import com.example.frontend.data.defaultLocationMarkers
 import com.example.frontend.model.UserWithLocationModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.frontend.ui.component.BottomBar
+import com.example.frontend.ui.component.MapWithMarker
+import com.example.frontend.viewmodel.FriendsViewModel
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.GoogleMap
@@ -65,11 +70,20 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MapActivity : ComponentActivity() {
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var fusedLocationClient: FusedLocationProviderClient
     var currentLocation by mutableStateOf<LatLng?>(null)
+
+    @Inject
+    lateinit var checkInUseCase: CheckInUseCase
+
+    @Inject
+    lateinit var saveMyInfoUseCase: SaveMyInfoUseCase
 
     private fun hasBackgroundLocationPermission(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -121,7 +135,6 @@ class MapActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         setContent {
             FrontendTheme {
@@ -140,11 +153,16 @@ class MapActivity : ComponentActivity() {
         }
 
         checkAndRequestLocationPermissions()
+
+        PeriodicCheckInUseCase(this).execute()
+
+        lifecycleScope.launch {
+            saveMyInfoUseCase.execute()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         setContent {
             FrontendTheme {
@@ -235,6 +253,7 @@ class MapActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun MapUI(
     currentLocation: LatLng?,
@@ -311,7 +330,7 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
             SnackbarHost(hostState = snackbarHostState)
         },
         bottomBar = {
-            BottomBar(currentLocation)
+            BottomBar()
         }
     ) { paddingValues ->
         Box(
@@ -327,12 +346,9 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
             ) {
                 Icon(Icons.Filled.Add, contentDescription = null)
             }
-
         }
 
     }
 
-
 }
-
 

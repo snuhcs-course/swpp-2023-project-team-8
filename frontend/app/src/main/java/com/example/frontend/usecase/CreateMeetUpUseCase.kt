@@ -21,14 +21,14 @@ class CreateMeetUpUseCase(
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-
+Log.d("meetup", "SUcces!!")
                 } else {
-
+                    Log.d("meetup", "no success!!")
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-
+                Log.d("meetup", "fail!!")
             }
         })
     }

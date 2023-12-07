@@ -2,7 +2,8 @@ class MeetUpsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    @meet_ups = current_user.meet_ups
+    @meet_ups = current_user.meet_ups.where('meet_at > ?', Time.now)
+                            .order(meet_at: :asc)
     render json: @meet_ups
   end
 
