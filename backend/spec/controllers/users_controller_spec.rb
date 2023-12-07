@@ -38,7 +38,6 @@ RSpec.describe UsersController, type: :request do
       end
     end
 
-
     context "when request with too old code" do
       it "returns 422" do
         token = MailVerificationToken.create!(
@@ -55,6 +54,32 @@ RSpec.describe UsersController, type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(User.count).to eq(0)
+      end
+    end
+  end
+
+  describe "PUT /users/:id/change_image_id" do
+    let(:user) { User.create!(name: "test", email: mail, password: "1234") }
+    let(:new_image_id) { 1 }
+
+    context "when the request is valid" do
+      it "updates the user's image id" do
+        put "/users/#{user.id}/change_image_id",
+          params: {image_id: new_image_id},
+          headers: auth_header(user)
+
+        expect(response).to have_http_status(:ok)
+        expect(user.reload.image_id).to eq(new_image_id)
+      end
+    end
+
+    context "when the request is invalid" do
+      it "returns 404 when user is not found" do
+        put "/users/non_existent_id/change_image_id",
+          params: {image_id: new_image_id},
+          headers: auth_header(user)
+
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

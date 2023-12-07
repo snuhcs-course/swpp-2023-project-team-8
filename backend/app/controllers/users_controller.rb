@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   skip_before_action :require_login, only: [:create]
-  before_action :set_user, only: [:show]
+  before_action :set_user, only: [:show, :change_image_id]
 
   def index
     @users = User.where.not(id: current_user.id)
@@ -9,6 +9,11 @@ class UsersController < ApplicationController
 
   def show
     render json: @user
+  end
+
+  def change_image_id
+    current_user.update(image_id: params[:image_id])
+    render json: current_user
   end
 
   def create

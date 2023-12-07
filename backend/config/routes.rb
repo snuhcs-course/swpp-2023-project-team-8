@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   post '/auth/login', to: 'authentication#create'
 
   resources :users, only: [:index, :show, :create, :destroy] do
+    put "change_image_id", on: :member
     resources :pending_requests, controller: "users/pending_requests", only: [:index]
   end
 
