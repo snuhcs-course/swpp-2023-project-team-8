@@ -60,4 +60,22 @@ RSpec.describe User, type: :model do
       expect(user1.nearby_friends).not_to include(user4)
     end
   end
+
+  describe "#image_id" do
+    context "이미지가 없을 경우" do
+      let!(:user) { User.create!(email: "user1@snu.ac.kr", name: "user1", password: "1234") }
+
+      it "nil 이다" do
+        expect(user.image_id).to be_nil
+      end
+    end
+
+    context "이미지가 있을 경우" do
+      let!(:user) { User.create!(email: "user1@snu.ac.kr", name: "user1", password: "1234", image_id: 1) }
+
+      it "nil 이 아니다" do
+        expect(user.image_id).not_to be_nil
+      end
+    end
+  end
 end
