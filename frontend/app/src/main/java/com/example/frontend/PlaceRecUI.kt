@@ -64,9 +64,8 @@ fun PlaceRecUI(
     navController: NavController,
     context: Context
 ) {
-    var userName by remember { mutableStateOf(UserContextRepository.ofContext(context).getUserName()) }
+    var userName = UserContextRepository.ofContext(context).getUserName()
     var places by remember { mutableStateOf<List<PlaceModel>>(emptyList()) }
-
     val placeUseCase = remember { ListPlaceUseCase(context, userIds) }
     var selectedPlace by remember { mutableStateOf<PlaceModel?>(null) }
     var selectedPlaceName by remember { mutableStateOf<String?>(null) }
@@ -76,8 +75,6 @@ fun PlaceRecUI(
             places = fetchedPlaces
         }
     }
-    Log.d("place", places.toString())
-
     Box(
         modifier = modifier
             .fillMaxSize()

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.frontend.model.UserModel
 import com.example.frontend.repository.UsersViewModel
+import com.example.frontend.ui.component.LoadingIndicator
 
 @Composable
 fun FriendListUI(viewModel: UsersViewModel) {
@@ -25,9 +26,14 @@ fun FriendListUI(viewModel: UsersViewModel) {
         viewModel.getFriends()
     }
 
-    LazyColumn {
-        items(friends) { friend ->
-            FriendItem(friend)
+    if(friends.isEmpty()){
+        LoadingIndicator()
+    }
+    else {
+        LazyColumn {
+            items(friends) { friend ->
+                FriendItem(friend)
+            }
         }
     }
 }
