@@ -121,7 +121,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                                                 }
                                         }
                                 ) {
-                                    if (mission.userCompleted) {
+                                    if (mission.userCompleted == true) {
                                         Icon(
                                             imageVector = Icons.Filled.CheckCircle,
                                             contentDescription = "Completed",
@@ -193,7 +193,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                                             remove(index)
                                         }
                                 },
-                                showMore = if (!mission.userCompleted) "${mission.description} 현재: ${mission.userProgress}회" else mission.description
+                                showMore = if (mission.userCompleted == null || mission.userCompleted == false) "${mission.description} 현재: ${mission.userProgress}회" else mission.description
                             )
                         }
                     }
