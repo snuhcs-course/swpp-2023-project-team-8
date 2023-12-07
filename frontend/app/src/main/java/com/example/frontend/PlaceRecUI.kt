@@ -1,7 +1,9 @@
 package com.example.frontend
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +50,7 @@ import androidx.navigation.NavController
 import com.example.frontend.data.defaultPlaces
 import com.example.frontend.data.defaultfriendIdsList
 import com.example.frontend.model.PlaceModel
+import com.example.frontend.model.PlaceResponse
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.component.LoadingIndicator
 import com.example.frontend.ui.component.MapWithMarker
@@ -55,6 +58,7 @@ import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.usecase.ListPlaceUseCase
 import com.google.android.gms.maps.model.LatLng
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PlaceRecUI(
     meetUpPlace: MutableState<Long>,
@@ -66,9 +70,9 @@ fun PlaceRecUI(
     context: Context
 ) {
     var userName = UserContextRepository.ofContext(context).getUserName()
-    var places by remember { mutableStateOf<List<PlaceModel>>(emptyList()) }
-    val placeUseCase = remember { ListPlaceUseCase(context, userIds) }
-    var selectedPlace by remember { mutableStateOf<PlaceModel?>(null) }
+    var places by remember { mutableStateOf<List<PlaceResponse>>(emptyList()) }
+    val placeUseCase =  ListPlaceUseCase(context, userIds)
+    var selectedPlace by remember { mutableStateOf<PlaceResponse?>(null) }
     var selectedPlaceName by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
@@ -141,7 +145,7 @@ fun PlaceRecUI(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
                     .align(Alignment.CenterHorizontally)
-                    .height(300.dp)
+                    .height(200.dp)
                     .padding(bottom = 20.dp)
                     .background(
                         color = Color.Gray,
@@ -153,6 +157,7 @@ fun PlaceRecUI(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .align(Alignment.End)
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -199,10 +204,10 @@ fun PlaceRecUI(
 }
 @Composable
 fun PlaceList(
-    placeModels: List<PlaceModel>,
-    onPlaceSelected: (PlaceModel) -> Unit,
-    selectedPlace: PlaceModel?,
-    onSelectionChange: (PlaceModel?) -> Unit
+    placeModels: List<PlaceResponse>,
+    onPlaceSelected: (PlaceResponse) -> Unit,
+    selectedPlace: PlaceResponse?,
+    onSelectionChange: (PlaceResponse?) -> Unit
 ) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 8.dp)
@@ -220,10 +225,10 @@ fun PlaceList(
 
 @Composable
 fun PlaceItem(
-    place: PlaceModel,
-    onPlaceSelected: (PlaceModel) -> Unit,
+    place: PlaceResponse,
+    onPlaceSelected: (PlaceResponse) -> Unit,
     isSelected: Boolean,
-    onSelectionChange: (PlaceModel?) -> Unit
+    onSelectionChange: (PlaceResponse?) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -247,6 +252,7 @@ fun PlaceItem(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun PlaceRecUIPreview() {

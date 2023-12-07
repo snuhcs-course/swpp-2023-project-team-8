@@ -78,6 +78,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.frontend.model.MeetupModel
 import com.example.frontend.model.UserModel
 import com.example.frontend.model.UserWithLocationModel
+import com.example.frontend.ui.friend.FriendListUI
 import com.example.frontend.usecase.CreateMeetUpUseCase
 
 
@@ -218,91 +219,97 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
             modifier = Modifier.width(310.dp)
         )
 
-        val datePickerState =
-            rememberDatePickerState(
+        val datePickerState = rememberDatePickerState(
                 initialSelectedDateMillis = System.currentTimeMillis(),
                 initialDisplayMode = DisplayMode.Input
             )
+
         Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
+            DatePicker(state = datePickerState,
+                modifier = Modifier.padding(16.dp)
+                )
         }
 
-        val timePickerState = rememberTimePickerState()
-        TimeInput(timePickerState)
 
-//        val selectedDate: LocalDate =
-//            Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
-//                ZoneId.systemDefault()
-//            ).toLocalDate()
-//        val selectedTime: LocalTime =
-//            LocalTime.of(timePickerState.hour, timePickerState.minute)
-//        val selectedDateTime: LocalDateTime = LocalDateTime.of(selectedDate, selectedTime)
-//
-//        meetAt.value = selectedDateTime
-        LaunchedEffect(datePickerState, timePickerState) {
-            snapshotFlow {
-                val selectedDate: LocalDate =
-                    Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
-                        ZoneId.systemDefault()
-                    ).toLocalDate()
-                val selectedTime: LocalTime =
-                    LocalTime.of(timePickerState.hour, timePickerState.minute)
-                LocalDateTime.of(selectedDate, selectedTime)
-            }.collect { updatedDateTime ->
-                meetAt.value = updatedDateTime
+       // Spacer(modifier = Modifier.height(60.dp))
+
+            val timePickerState = rememberTimePickerState()
+
+            TimeInput(
+                timePickerState,
+                modifier = Modifier
+
+            )
+
+            LaunchedEffect(datePickerState, timePickerState) {
+                snapshotFlow {
+                    val selectedDate: LocalDate =
+                        Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(
+                            ZoneId.systemDefault()
+                        ).toLocalDate()
+                    val selectedTime: LocalTime =
+                        LocalTime.of(timePickerState.hour, timePickerState.minute)
+                    LocalDateTime.of(selectedDate, selectedTime)
+                }.collect { updatedDateTime ->
+                    meetAt.value = updatedDateTime
+                }
             }
-        }
-        Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
-        Row {
+            Row {
+                Text(
+                    text = "친구 초대: ${selectedFriends.value.size}명",
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight(400),
+                        color = Color(0xFF000000),
+                        ),
+
+                    modifier = Modifier
+                        .width(180.dp)
+                        .height(64.dp)
+                        .padding(start = 40.dp)
+                )
+
+                Button(
+                    onClick = {
+                        navController.navigate("friendListUI")
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically) // Center the button vertically inside the Row
+                        .offset(y = (-19).dp), colors = ButtonDefaults.buttonColors(Purple80)
+                ) {
+                    Text(text = "초대하기")
+                }
+
+            }
+
+            CustomButton(
+                buttonText = "장소 선택",
+                modifier = Modifier
+                    //   .align(Alignment.CenterVertically) // Center the button vertically inside the Row
+                    .offset(y = (-19).dp),
+                onClickHandler = {
+                    if (selectedFriends.value.isEmpty()) {
+                        Toast.makeText(context, "친구 초대 없이는 밋업을 생성할 수 없어요", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        navController.navigate("placeRecUI")
+                    }
+                }
+            )
             Text(
-                text = "친구 초대: ${selectedFriends.value.size}명",
+                text = "선택된 장소: ${selectedName.value}",
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontWeight = FontWeight(400),
                     color = Color(0xFF000000),
-
-                    ),
-
+                ),
                 modifier = Modifier
-                    .width(180.dp)
-                    .height(64.dp)
-                    .padding(start = 40.dp)
+                    .padding(start = 20.dp)
             )
 
-            Button(
-                onClick = {
-                    navController.navigate("friendListUI")
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically) // Center the button vertically inside the Row
-                    .offset(y = (-19).dp), colors = ButtonDefaults.buttonColors(Purple80)
-            ) {
-                Text(text = "초대하기")
-            }
 
-        }
-        CustomButton(
-            buttonText = "장소 선택",
-            onClickHandler = {
-                if (selectedFriends.value.isEmpty()) {
-                    Toast.makeText(context, "친구 초대 없이는 밋업을 생성할 수 없어요", Toast.LENGTH_SHORT).show()
-                } else {
-                    navController.navigate("placeRecUI")
-                }
-            }
-        )
-
-
-        Text(
-            text = "선택된 장소: ${selectedName.value}",
-            style = TextStyle(
-                fontSize = 18.sp,
-                fontWeight = FontWeight(400),
-                color = Color(0xFF000000),
-            ),
-            modifier = Modifier.padding(16.dp)
-        )
     }
 
 }
