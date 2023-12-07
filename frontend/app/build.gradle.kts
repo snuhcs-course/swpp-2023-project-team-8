@@ -77,6 +77,8 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.8.0")
     androidTestImplementation("androidx.work:work-testing:2.8.0")
 
+    implementation("com.squareup.picasso:picasso:2.8")
+
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.11.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
