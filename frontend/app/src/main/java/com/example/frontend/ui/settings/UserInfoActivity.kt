@@ -70,7 +70,7 @@ class UserInfoActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    UserInfoUI("Android")
+                    UserInfoUI()
                 }
             }
         }
@@ -78,7 +78,7 @@ class UserInfoActivity : ComponentActivity() {
 }
 
 @Composable
-fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
+fun UserInfoUI() {
     var context = LocalContext.current
     var selectedPredefinedImage by rememberSaveable { mutableStateOf(0) }
     selectedPredefinedImage = UserContextRepository.ofContext(context).getSelectedPredefinedImage() ?: 0
@@ -103,6 +103,7 @@ fun UserInfoUI(name: String, modifier: Modifier = Modifier) {
                 arrayOf("Gray Cat with Sunglass", "Yellow Cat with Sunglass", "Dog with Sunglass", "Hamster")
             ) { _, which ->
                 selectedPredefinedImage = predefinedImages[which]
+
                 UserContextRepository.ofContext(context).saveSelectedPredefinedImage(selectedPredefinedImage)
             }
 
@@ -321,6 +322,6 @@ fun ProfileEditDialog(
 @Composable
 fun UserInfoPreview() {
     FrontendTheme {
-        UserInfoUI("Android")
+        UserInfoUI()
     }
 }
