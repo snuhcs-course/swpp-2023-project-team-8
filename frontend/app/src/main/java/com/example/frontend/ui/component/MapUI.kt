@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.data.defaultLocationMarkers
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -14,6 +16,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlin.random.Random
 
@@ -35,6 +38,10 @@ fun MapWithMarker(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState
             ) {
+                Polygon(
+                    points = defaultLocationMarkers,
+                    fillColor = Color(0x89CFF0FF)
+                )
                 Marker(
                     state = MarkerState(position = location),
                     title = "Current Location",

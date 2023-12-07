@@ -12,6 +12,7 @@ import androidx.compose.material3.Surface
 import com.example.frontend.ui.theme.FrontendTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -113,7 +117,6 @@ fun MeetUpItem(meetup: MeetUpResponse) {
             .fillMaxWidth()
             .padding(8.dp),
     ) {
-<<<<<<< HEAD
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -134,7 +137,7 @@ fun MeetUpItem(meetup: MeetUpResponse) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(imageVector = Icons.Default.Person, contentDescription = null)
-                Text(meetup.userIds.joinToString(", "))
+                Text(meetup.users.joinToString(", "))
             }
 
 
@@ -144,24 +147,24 @@ fun MeetUpItem(meetup: MeetUpResponse) {
             ) {
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
                 Text("${meetup.meetAt}")
-=======
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = meetup.title, style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = meetup.meetAt.format(
-                    DateTimeFormatter.ofLocalizedDateTime(
-                        FormatStyle.MEDIUM
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(text = meetup.title, style = MaterialTheme.typography.titleLarge)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = meetup.meetAt.format(
+                            DateTimeFormatter.ofLocalizedDateTime(
+                                FormatStyle.MEDIUM
+                            )
+                        ), style = MaterialTheme.typography.bodySmall
                     )
-                ), style = MaterialTheme.typography.bodySmall
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = meetup.description, style = MaterialTheme.typography.bodyMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Participants:", style = MaterialTheme.typography.titleSmall)
-            meetup.users.forEach { user ->
-                Text(text = "- ${user.name}", style = MaterialTheme.typography.bodySmall)
->>>>>>> 7bd50ee32ea221baa2088386125f02a9aeae52d2
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = meetup.description, style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = "Participants:", style = MaterialTheme.typography.titleSmall)
+                    meetup.users.forEach { user ->
+                        Text(text = "- ${user.name}", style = MaterialTheme.typography.bodySmall)
+                    }
+                }
             }
         }
     }
@@ -169,8 +172,8 @@ fun MeetUpItem(meetup: MeetUpResponse) {
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
 @Composable
+@Preview(showBackground = true)
 fun ShowMeetUpUIPreview() {
     var context = LocalContext.current
     var meetups = defaultMeetups
@@ -226,6 +229,6 @@ fun ShowMeetUpUIPreview() {
             MeetUpList(meetups)
         }
     }
-
 }
+
 

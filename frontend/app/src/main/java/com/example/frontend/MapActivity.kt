@@ -54,6 +54,17 @@ import kotlinx.coroutines.isActive
 import kotlin.random.Random
 import com.google.maps.android.compose.Polygon
 import com.example.frontend.data.defaultLocationMarkers
+import com.example.frontend.model.UserWithLocationModel
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.graphics.Color
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
+
 
 @AndroidEntryPoint
 class MapActivity : ComponentActivity() {
