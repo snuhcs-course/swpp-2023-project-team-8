@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.frontend.model.UserWithLocationModel
 import com.example.frontend.ui.theme.FrontendTheme
@@ -12,15 +13,18 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlin.random.Random
 
 @Composable
 fun MapWithMarker(
     currentLocation: LatLng?,
-    friends: List<UserWithLocationModel>
+    friends: List<UserWithLocationModel>,
+    polygon: List<LatLng>? = null
 ) {
     Box(
         modifier = Modifier
@@ -33,13 +37,21 @@ fun MapWithMarker(
 
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState
+                cameraPositionState = cameraPositionState,
+                uiSettings = MapUiSettings(zoomControlsEnabled = false)
             ) {
                 Marker(
                     state = MarkerState(position = location),
                     title = "Current Location",
                     snippet = "You are here"
                 )
+
+                polygon?.let { locations ->
+                    Polygon(
+                        points = locations,
+                        fillColor = Color(0x89CFF0FF)
+                    )
+                }
 
                 friends.forEach { buildMarkerIcon(it) }
             }

@@ -10,6 +10,10 @@ class UsersRepository @Inject constructor(private val userService: UserService) 
         return userService.getAllUsers()
     }
 
+    suspend fun getMyInfo(): UserModel {
+        return userService.getMyInfo()
+    }
+
     suspend fun getFriends(): List<UserModel> {
         return userService.getAllFriends()
     }

@@ -11,6 +11,9 @@ interface UserService {
     @GET("/users")
     suspend fun getAllUsers(): List<UserModel>
 
+    @GET("/users/me")
+    suspend fun getMyInfo(): UserModel
+
     @GET("/friends")
     suspend fun getAllFriends(): List<UserModel>
 
