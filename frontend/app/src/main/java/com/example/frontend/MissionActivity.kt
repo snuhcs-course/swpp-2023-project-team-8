@@ -193,7 +193,7 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                                             remove(index)
                                         }
                                 },
-                                showMore = if (mission.userCompleted == null || mission.userCompleted == false) "${mission.description} 현재: ${mission.userProgress}회" else mission.description
+                                showMore = if (mission.userCompleted == null || mission.userCompleted == false) "${mission.description} 현재: ${mission.userProgress ?: 0}회" else mission.description
                             )
                         }
                     }
