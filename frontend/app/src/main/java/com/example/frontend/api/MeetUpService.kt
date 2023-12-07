@@ -24,7 +24,7 @@ interface MeetUpService {
     fun getMeetUpById(@Path("id") meetUpId: Int): Call<MeetupModel>
 
     @POST("/meet_ups")
-    fun createMeetUp(@Body meetUp: MeetupModel): Call<MeetupModel>
+    fun createMeetUp(@Body meetUp: MeetupModel): Call<Void>
 
     companion object {
         fun create(context: Context): MeetUpService {

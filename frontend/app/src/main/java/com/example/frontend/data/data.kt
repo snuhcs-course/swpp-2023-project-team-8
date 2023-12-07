@@ -38,11 +38,11 @@ val defaultSearchedList = listOf(
 
 
 val defaultPlaces = listOf(
-    PlaceModel(LatLng(11.1, 123.4), "자하연"),
-    PlaceModel(LatLng(121.1, 103.4), "중도")
+    PlaceModel(LatLng(11.1, 123.4), "자하연",1),
+    PlaceModel(LatLng(121.1, 103.4), "중도",2)
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
 val defaultMeetups = listOf(
-    MeetUpResponse("카페", "팀 미팅", LocalDateTime.now(), emptyList(), PlaceModel(LatLng(0.0, 0.0), ""))
+    MeetUpResponse("카페", "팀 미팅", LocalDateTime.now(), emptyList(), PlaceModel(LatLng(0.0, 0.0), "",3))
 )
