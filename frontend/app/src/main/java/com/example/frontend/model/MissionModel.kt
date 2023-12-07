@@ -5,8 +5,8 @@ import androidx.compose.ui.graphics.Color
 data class MissionModel(
     val name: String,
     val description: String,
-    val userCompleted: Boolean,
-    val userProgress: Int
+    val userCompleted: Boolean?,
+    val userProgress: Int?
 
 ) {
     val color: Color

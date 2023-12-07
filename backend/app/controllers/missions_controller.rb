@@ -1,12 +1,19 @@
 class MissionsController < ApplicationController
 
   def index
-    @missions = Mission.left_joins(:user_missions)
-                       .select('missions.*, user_missions.completed as user_completed, user_missions.progress as user_progress')
-                       .where('user_missions.user_id = ? OR user_missions.user_id IS NULL', current_user.id)
-                       .order('missions.id')
+    missions = Mission.order(:id)
+    @missions = missions.map do |mission|
+      user_mission = mission.user_missions.find_by(user_id: current_user.id)
+      {
+        id: mission.id,
+        name: mission.name,
+        description: mission.description,
+        user_completed: user_mission&.completed,
+        user_progress: user_mission&.progress
+      }
+    end
 
-    render json: @missions, each_serializer: MissionSerializer
+    render json: @missions
   end
 
 end
