@@ -81,8 +81,7 @@ class UserInfoActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    UserInfoUI(onImageIdChanged = { changeImageIdUseCase.execute(it) }
-                    )
+                    UserInfoUI(onImageIdChanged = { changeImageIdUseCase.execute(it) })
                 }
             }
         }
@@ -122,7 +121,7 @@ fun UserInfoUI(onImageIdChanged: suspend (imageId: Int) -> Unit = {}) {
 
                 coroutineScope.launch {
                     withContext(Dispatchers.IO) {
-                        onImageIdChanged(selectedPredefinedImage)
+                        onImageIdChanged(which)
                     }
                 }
             }
