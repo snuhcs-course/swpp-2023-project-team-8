@@ -1,6 +1,7 @@
 package com.example.frontend.usecase
 
 import android.content.Context
+import android.widget.Toast
 import com.example.frontend.api.MissionService
 import com.example.frontend.data.defaultMissions
 
@@ -25,12 +26,14 @@ class ListMissionUseCase(
                     val missions = response.body() ?: emptyList()
                     onMissionsFetched(missions)
                 } else {
-                    onMissionsFetched(defaultMissions)
+                    var result = "List Mission failed: " + response.errorBody()?.string()
+                    Toast.makeText(context, result, Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<List<MissionModel>>, t: Throwable) {
-                onMissionsFetched(defaultMissions)
+                var result = "List Mission error: " + t.message
+                Toast.makeText(context, result, Toast.LENGTH_LONG).show()
             }
         })
     }
