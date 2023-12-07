@@ -54,6 +54,7 @@ import com.example.frontend.model.PlaceResponse
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.component.LoadingIndicator
 import com.example.frontend.ui.component.MapWithMarker
+import com.example.frontend.ui.component.MyTopAppBar
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.usecase.ListPlaceUseCase
 import com.google.android.gms.maps.model.LatLng
@@ -91,33 +92,8 @@ fun PlaceRecUI(
                 .background(color = Color(0xFFF3EDF7))
         )
         Column() {
-            Row(
-                modifier = Modifier
-                    .height(54.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.KeyboardArrowLeft,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(46.dp)
-                        .clickable {
-                            navController.popBackStack()
-                        }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    modifier = Modifier,
-                    text = "장소 추천",
-                    style = TextStyle(
-                        fontSize = 22.sp,
-                        lineHeight = 28.sp,
-                        fontWeight = FontWeight(400),
-                        color = Color(0xFF1D1B20)
-                    )
-                )
-            }
+
+            MyTopAppBar ("장소 추천")
             Text(
                 text = userName?.let { "$userName 님, 이런 장소는 어때요?" } ?: "알 수 없는 사용자",
                 style = TextStyle(

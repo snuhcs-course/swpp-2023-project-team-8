@@ -2,6 +2,7 @@ package com.example.frontend.usecase
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.frontend.api.MeetUpService
@@ -18,7 +19,7 @@ class ListMeetUpUseCase(
 ) {
     fun fetch(onMeetUpsFetched: (List<MeetUpResponse>) -> Unit) {
         val call = meetUpService.getMeetUps()
-
+        Log.d("meetup", "try")
         call.enqueue(object : Callback<List<MeetUpResponse>> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
@@ -30,6 +31,7 @@ class ListMeetUpUseCase(
                     onMeetUpsFetched(missions)
                 } else {
                     var result = "List MeetUp failed: " + response.errorBody()?.string()
+                    Log.d("meetup", response.errorBody().toString())
                     Toast.makeText(context, result, Toast.LENGTH_LONG).show()
                 }
             }
@@ -37,6 +39,7 @@ class ListMeetUpUseCase(
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onFailure(call: Call<List<MeetUpResponse>>, t: Throwable) {
                 var result = "List MeetUp error: " + t.message
+                Log.d("meetup", t.message?:"")
                 Toast.makeText(context, result, Toast.LENGTH_LONG).show()
             }
         })

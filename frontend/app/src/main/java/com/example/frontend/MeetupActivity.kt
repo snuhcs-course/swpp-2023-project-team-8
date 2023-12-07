@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Checkbox
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -75,9 +76,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.frontend.data.defaultfriendIdsList
 import com.example.frontend.model.MeetupModel
 import com.example.frontend.model.UserModel
 import com.example.frontend.model.UserWithLocationModel
+import com.example.frontend.ui.component.MeetUpTopAppBar
+import com.example.frontend.ui.component.MyTopAppBar
 import com.example.frontend.ui.friend.FriendListUI
 import com.example.frontend.usecase.CreateMeetUpUseCase
 
@@ -146,41 +150,43 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .background(Color(0xFFF3EDF7))
-        ) {
-            Box {
-                Spacer(modifier = Modifier.height(15.dp))
-                Text(
-                    text = "밋업 생성",
-                    style = TextStyle(
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight(400),
-                        color = Color(0xFF000000),
-                        textAlign = TextAlign.Center,
-                    ),
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .width(400.dp)
-                        .height(64.dp)
-                )
-                Button(
-                    onClick = {
-                        activity?.finish()
-                    },
-
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(50.dp)
-                        .padding(start = 16.dp, top = 16.dp),
-                    colors = ButtonDefaults.buttonColors(Purple80)
-                ) {
-                    Text(text = "취소")
-                }
-
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(64.dp)
+//                .background(Color(0xFFF3EDF7))
+//        ) {
+//            Box {
+//                Spacer(modifier = Modifier.height(15.dp))
+//                Text(
+//                    text = "밋업 생성",
+//                    style = TextStyle(
+//                        fontSize = 22.sp,
+//                        fontWeight = FontWeight(400),
+//                        color = Color(0xFF000000),
+//                        textAlign = TextAlign.Center,
+//                    ),
+//                    modifier = Modifier
+//                        .padding(top = 16.dp)
+//                        .width(400.dp)
+//                        .height(64.dp)
+//                )
+//                Button(
+//                    onClick = {
+//                        activity?.finish()
+//                    },
+//
+//                    modifier = Modifier
+//                        .width(100.dp)
+//                        .height(50.dp)
+//                        .padding(start = 16.dp, top = 16.dp),
+//                    colors = ButtonDefaults.buttonColors(Purple80)
+//                ) {
+//                    Text(text = "취소")
+//                }
+        MeetUpTopAppBar(
+            title = "밋업 생성",
+            actions = {
                 Button(
                     onClick = {
                         var meetup = MeetupModel(title, description, selectedFriends.value, meetAt.value, true, meetUpPlace.value)
@@ -193,15 +199,14 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
                     modifier = Modifier
                         .width(100.dp)
                         .height(50.dp)
-                        .align(Alignment.TopEnd)
                         .padding(end = 16.dp, top = 16.dp),
                     colors = ButtonDefaults.buttonColors(Purple80)
                 ) {
                     Text(text = "완료")
                 }
             }
+        )
 
-        }
         Spacer(modifier = Modifier.height(15.dp))
 
         OutlinedTextField(
@@ -432,7 +437,7 @@ fun MeetupUIPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-//            MeetupUI()
+
         }
     }
 }
