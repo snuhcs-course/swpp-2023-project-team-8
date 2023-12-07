@@ -7,7 +7,7 @@ class MissionsController < ApplicationController
       {
         id: mission.id,
         name: mission.name,
-        # include other mission attributes as needed
+        description: mission.description,
         user_completed: user_mission&.completed,
         user_progress: user_mission&.progress
       }
