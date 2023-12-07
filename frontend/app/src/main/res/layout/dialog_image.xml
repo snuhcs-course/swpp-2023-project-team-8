@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:map="http://schemas.android.com/apk/res-auto"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--android:id="@+id/map"-->
+<!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent"-->
+<!--tools:context=".CheckInActivity" />-->
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gridLayout"
+    android:layout_width="200dp"
+    android:layout_height="200dp"
+    android:columnCount="2"
+    android:rowCount="2"
+    android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/imageGrayCat"
+            android:layout_width="60dp"
+            android:layout_height="100dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_gravity="fill"
+            android:src="@drawable/cat"
+            android:scaleType="centerCrop"
+            android:clickable="true"
+            android:onClick="onImageSelected"/>
+
+        <ImageView
+            android:id="@+id/imageYellowCat"
+            android:layout_width="60dp"
+            android:layout_height="100dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_gravity="fill"
+            android:src="@drawable/cat_sunglass"
+            android:scaleType="centerCrop"
+            android:clickable="true"
+            android:onClick="onImageSelected"/>
+
+        <ImageView
+            android:id="@+id/imageDog"
+            android:layout_width="60dp"
+            android:layout_height="100dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_gravity="fill"
+            android:src="@drawable/dog_sunglass"
+            android:scaleType="centerCrop"
+            android:clickable="true"
+            android:onClick="onImageSelected"/>
+
+        <ImageView
+            android:id="@+id/imageHam"
+            android:layout_width="60dp"
+            android:layout_height="100dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_gravity="fill"
+            android:src="@drawable/hamster"
+            android:scaleType="centerCrop"
+            android:clickable="true"
+            android:onClick="onImageSelected"/>
+
+</GridLayout>
