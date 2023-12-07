@@ -52,6 +52,14 @@ class UserContextRepository(
         return store.getBoolean(IS_LOGGED_IN) ?: false
     }
 
+    fun getUserId(): Int? {
+        return store.getInt(USER_ID)
+    }
+
+    fun saveUserId(userId: Int) {
+        store.putInt(USER_ID, userId)
+    }
+
     fun clear() {
         store.clear()
     }
@@ -75,5 +83,6 @@ class UserContextRepository(
         private const val AUTH_TOKEN = "AUTH_TOKEN"
         private const val SELECTED_PREDEFINED_IMAGE = "SELECTED_PREDEFINED_IMAGE"
         private const val IS_LOGGED_IN = "IS_LOGGED_IN"
+        private const val USER_ID = "USER_ID"
     }
 }

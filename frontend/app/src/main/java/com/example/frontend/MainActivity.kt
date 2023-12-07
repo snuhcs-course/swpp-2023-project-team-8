@@ -10,53 +10,45 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.frontend.ui.component.BottomBar
-import com.example.frontend.ui.component.MapWithMarker
+import androidx.lifecycle.lifecycleScope
+import com.example.frontend.ui.map.FriendsMapUI
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.viewmodel.FriendsViewModel
+import com.example.frontend.usecase.CheckInUseCase
+import com.example.frontend.usecase.PeriodicCheckInUseCase
+import com.example.frontend.usecase.SaveMyInfoUseCase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MapActivity : ComponentActivity() {
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var fusedLocationClient: FusedLocationProviderClient
     var currentLocation by mutableStateOf<LatLng?>(null)
+
+    @Inject
+    lateinit var checkInUseCase: CheckInUseCase
+
+    @Inject
+    lateinit var saveMyInfoUseCase: SaveMyInfoUseCase
 
     private fun hasBackgroundLocationPermission(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -108,7 +100,6 @@ class MapActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         setContent {
             FrontendTheme {
@@ -127,11 +118,16 @@ class MapActivity : ComponentActivity() {
         }
 
         checkAndRequestLocationPermissions()
+
+        PeriodicCheckInUseCase(this).execute()
+
+        lifecycleScope.launch {
+            saveMyInfoUseCase.execute()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         setContent {
             FrontendTheme {
@@ -221,46 +217,4 @@ class MapActivity : ComponentActivity() {
         private const val REQUEST_LOCATION_PERMISSION = 1
     }
 }
-
-@Composable
-fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
-    val viewModel: FriendsViewModel = viewModel()
-    val friendsList by viewModel.friendsList.observeAsState(emptyList())
-    val snackbarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(Unit) {
-        while (isActive) {
-            viewModel.fetchFriends()
-            delay(3000)
-        }
-    }
-
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
-        bottomBar = {
-            BottomBar(currentLocation)
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            MapWithMarker(currentLocation, friendsList)
-            FloatingActionButton(
-                onClick = { onClick() },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = null)
-            }
-
-        }
-
-    }
-
-
-}
-
 
