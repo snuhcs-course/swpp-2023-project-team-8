@@ -44,7 +44,7 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
             SnackbarHost(hostState = snackbarHostState)
         },
         bottomBar = {
-            BottomBar(currentLocation)
+            BottomBar()
         }
     ) { paddingValues ->
         Box(

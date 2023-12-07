@@ -22,15 +22,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.frontend.MeetupActivity
+import com.example.frontend.MainActivity
 import com.example.frontend.MeetupListUI
 import com.example.frontend.MissionActivity
 import com.example.frontend.ui.friend.FriendActivity
 import com.example.frontend.ui.settings.UserInfoActivity
-import com.google.android.gms.maps.model.LatLng
 
 @Composable
-fun BottomBar(currentLocation: LatLng?) {
+fun BottomBar() {
     val context = LocalContext.current
     val icons = listOf(
         Icons.Default.Star,
@@ -57,10 +56,14 @@ fun BottomBar(currentLocation: LatLng?) {
                 IconToggleButton(icon = icon) {
                     when (icon) {
                         icons[0] -> {
-                            // MeetUp 생성으로 이동
-                            val nextIntent = Intent(context, MeetupActivity::class.java)
-                            nextIntent.putExtra("currentLocation", currentLocation)
-                            context.startActivity(nextIntent)
+                            // If current activity is MainActivity, do nothing
+                            if (context.javaClass.simpleName == "MainActivity") {
+                                return@IconToggleButton
+                            } else {
+                                // MainActivity 이동
+                                val nextIntent = Intent(context, MainActivity::class.java)
+                                context.startActivity(nextIntent)
+                            }
                         }
 
                         icons[1] -> {
@@ -96,5 +99,5 @@ fun BottomBar(currentLocation: LatLng?) {
 @Composable
 @Preview
 private fun BottomBarPreview() {
-    BottomBar(null)
+    BottomBar()
 }
