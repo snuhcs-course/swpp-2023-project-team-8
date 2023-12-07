@@ -7,6 +7,9 @@ import com.example.frontend.repository.UsersRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/*
+ * users/me API를 바탕으로 사용자 정보를 저장하는 UseCase
+ */
 class SaveMyInfoUseCase @Inject constructor(
     private val repository: UsersRepository,
     @ApplicationContext context: Context
