@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -52,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.frontend.MissionActivity
+import com.example.frontend.R
 import com.example.frontend.data.predefinedImages
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.component.CustomButton
@@ -107,27 +110,73 @@ fun UserInfoUI(onImageIdChanged: suspend (imageId: Int) -> Unit = {}) {
             }
         )
     }
-
-
     fun showImageSelectionDialog() {
-        AlertDialog.Builder(context)
-            .setTitle("이미지 선택")
-            .setItems(
-                arrayOf("Gray Cat with Sunglass", "Yellow Cat with Sunglass", "Dog with Sunglass", "Hamster")
-            ) { _, which ->
-                selectedPredefinedImage = predefinedImages[which]
+        val builder = AlertDialog.Builder(context)
+        val inflater = LayoutInflater.from(context)
 
+        val dialogView = inflater.inflate(R.layout.dialog_image, null)
+        builder.setView(dialogView)
+
+        val alertDialog = builder.create()
+
+        val imageGrayCat = dialogView.findViewById<ImageView>(R.id.imageGrayCat)
+        val imageYellowCat = dialogView.findViewById<ImageView>(R.id.imageYellowCat)
+        val imageHam = dialogView.findViewById<ImageView>(R.id.imageHam)
+        val imageDog = dialogView.findViewById<ImageView>(R.id.imageDog)
+
+        val images = listOf(imageGrayCat, imageYellowCat, imageHam, imageDog)
+        val predefinedImages = listOf(R.drawable.cat, R.drawable.cat_sunglass, R.drawable.dog_sunglass, R.drawable.hamster)
+
+        images.forEachIndexed { index, imageView ->
+            imageView.setImageResource(predefinedImages[index])
+            imageView.setOnClickListener {
+                selectedPredefinedImage = predefinedImages[index]
                 UserContextRepository.ofContext(context).saveSelectedPredefinedImage(selectedPredefinedImage)
 
                 coroutineScope.launch {
                     withContext(Dispatchers.IO) {
-                        onImageIdChanged(which)
+                        onImageIdChanged(index)
                     }
                 }
-            }
 
-            .show()
+                alertDialog.dismiss()
+            }
+        }
+
+        alertDialog.show()
     }
+
+//    fun showImageSelectionDialog() {
+//        val builder = AlertDialog.Builder(context)
+//        val inflater = LayoutInflater.from(context)
+//
+//        val dialogView = inflater.inflate(R.layout.dialog_image, null)
+//        builder.setView(dialogView)
+//
+//        val alertDialog = builder.create()
+//
+//        val imageGrayCat = dialogView.findViewById<ImageView>(R.id.imageGrayCat)
+//        val imageYellowCat = dialogView.findViewById<ImageView>(R.id.imageYellowCat)
+//        val imageHam = dialogView.findViewById<ImageView>(R.id.imageHam)
+//        val imageDog = dialogView.findViewById<ImageView>(R.id.imageDog)
+//
+//        imageGrayCat.setOnClickListener {
+//            selectedPredefinedImage = predefinedImages[0]  // Adjust as needed
+//            UserContextRepository.ofContext(context).saveSelectedPredefinedImage(selectedPredefinedImage)
+//
+//            coroutineScope.launch {
+//                withContext(Dispatchers.IO) {
+//                    onImageIdChanged(0)  // Adjust as needed
+//                }
+//            }
+//
+//            alertDialog.dismiss()
+//        }
+//
+//
+//        alertDialog.show()
+//    }
+
 
     Box(
         modifier = Modifier
