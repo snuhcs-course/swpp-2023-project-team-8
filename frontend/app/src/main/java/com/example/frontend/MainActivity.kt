@@ -26,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.frontend.ui.map.FriendsMapUI
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.usecase.CheckInUseCase
+import com.example.frontend.usecase.PeriodicCheckInUseCase
 import com.example.frontend.usecase.SaveMyInfoUseCase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -118,9 +119,7 @@ class MainActivity : ComponentActivity() {
 
         checkAndRequestLocationPermissions()
 
-        currentLocation?.let {
-            checkInUseCase.execute(it.latitude, it.longitude)
-        }
+        PeriodicCheckInUseCase(this).execute()
 
         lifecycleScope.launch {
             saveMyInfoUseCase.execute()
