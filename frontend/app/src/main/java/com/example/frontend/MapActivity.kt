@@ -10,24 +10,11 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.AccountBox
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
@@ -47,37 +34,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.frontend.model.UserWithLocationModel
-import com.example.frontend.repository.FriendsViewModel
-import com.example.frontend.ui.friend.FriendActivity
-import com.example.frontend.ui.settings.UserInfoActivity
+import com.example.frontend.ui.component.BottomBar
+import com.example.frontend.ui.component.MapWithMarker
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.viewmodel.FriendsViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlin.random.Random
 import com.google.maps.android.compose.Polygon
 import com.example.frontend.data.defaultLocationMarkers
+
 @AndroidEntryPoint
 class MapActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -332,7 +309,7 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomEnd
         ) {
-            MapUI(currentLocation, friendsList, onClick = { onClick() }, modifier = Modifier.fillMaxSize())
+            MapWithMarker(currentLocation, friendsList)
             FloatingActionButton(
                 onClick = { onClick() },
                 modifier = Modifier.padding(16.dp)
@@ -348,95 +325,3 @@ fun FriendsMapUI(currentLocation: LatLng?, onClick: () -> Unit) {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun MapUIPreview() {
-    FrontendTheme {
-        MapUI(LatLng(1.35, 103.87), emptyList(), onClick = {})
-    }
-}
-
-@Composable
-fun IconToggleButton(
-    icon: ImageVector,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .size(36.dp)
-            .clickable { onClick() }
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-}
-
-@Composable
-fun BottomBar(currentLocation: LatLng?) {
-    var context = LocalContext.current
-
-    val icons = listOf(
-        Icons.Default.Star,
-        Icons.Outlined.AccountBox,
-        Icons.Outlined.DateRange,
-        Icons.Outlined.CheckCircle,
-        Icons.Outlined.Settings,
-
-        )
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .background(Color(0xFFF3EDF7))
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 37.dp, end = 37.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            icons.forEach { icon ->
-                IconToggleButton(icon = icon) {
-                    when (icon) {
-                        icons[0] -> {
-                            // MeetUp 생성으로 이동
-                            val nextIntent = Intent(context, MeetupActivity::class.java)
-                            nextIntent.putExtra("currentLocation", currentLocation)
-                            context.startActivity(nextIntent)
-                        }
-
-                        icons[1] -> {
-                            // Friend List 이동
-                            val nextIntent = Intent(context, FriendActivity::class.java)
-                            context.startActivity(nextIntent)
-                        }
-
-                        icons[2] -> {
-                            // 약속 list
-                            val nextIntent = Intent(context, MeetupListUI::class.java)
-                            context.startActivity(nextIntent)
-                        }
-
-                        icons[3] -> {
-                            // MissionActivity 이동
-                            val nextIntent = Intent(context, MissionActivity::class.java)
-                            context.startActivity(nextIntent)
-                        }
-
-                        icons[4] -> {
-                            // userInfo로 이동
-                            val nextIntent = Intent(context, UserInfoActivity::class.java)
-                            context.startActivity(nextIntent)
-
-                        }
-                    }
-                }
-            }
-        }
-    }
-}

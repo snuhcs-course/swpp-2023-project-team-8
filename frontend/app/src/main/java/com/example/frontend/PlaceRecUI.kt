@@ -50,6 +50,7 @@ import com.example.frontend.data.defaultfriendIdsList
 import com.example.frontend.model.PlaceModel
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.ui.component.LoadingIndicator
+import com.example.frontend.ui.component.MapWithMarker
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.usecase.ListPlaceUseCase
 import com.google.android.gms.maps.model.LatLng
@@ -147,7 +148,7 @@ fun PlaceRecUI(
                         shape = RoundedCornerShape(16.dp)
                     )
             ) {
-                MapUI(currentLocation, emptyList(), onClick = {})
+                MapWithMarker(currentLocation, emptyList())
             }
             Row(
                 modifier = Modifier

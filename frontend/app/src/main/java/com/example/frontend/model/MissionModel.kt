@@ -3,11 +3,12 @@ package com.example.frontend.model
 import androidx.compose.ui.graphics.Color
 
 data class MissionModel(
-    val title: String,
+    val name: String,
     val description: String,
-    val completed: Boolean,
-    val showMore: String,
+    val userCompleted: Boolean,
+    val userProgress: Int
 
-    ){    val color: Color
-        get() = if (completed) Color.Gray else Color(0xFFF3EDF7)
+) {
+    val color: Color
+        get() = Color(0xFFF3EDF7)
 }

@@ -1,9 +1,9 @@
 package com.example.frontend
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -28,15 +28,28 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+<<<<<<< HEAD
 import com.example.frontend.ui.component.CustomButton
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Purple80
@@ -80,7 +94,13 @@ import com.example.frontend.repository.InviteFriendViewModel
 import com.example.frontend.repository.UserContextRepository
 import com.example.frontend.repository.UsersViewModel
 import com.example.frontend.usecase.CreateMeetUpUseCase
+import com.example.frontend.ui.component.CustomButton
+import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.ui.theme.Purple80
+
 import com.example.frontend.usecase.ListFriendUseCase
+import com.example.frontend.viewmodel.FriendsViewModel
+import com.example.frontend.viewmodel.InviteFriendViewModel
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
@@ -281,10 +301,14 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
         CustomButton(
             buttonText = "장소 선택",
             onClickHandler = {
-                navController.navigate("placeRecUI")
+                if (selectedFriends.value.isEmpty()) {
+                    Toast.makeText(context, "친구 초대 없이는 밋업을 생성할 수 없어요", Toast.LENGTH_SHORT).show()
+                } else {
+                    navController.navigate("placeRecUI")
+                }
+            })
             }
         )
-
         Text(
             text = "선택된 장소: ${selectedName.value}",
             style = TextStyle(
@@ -294,6 +318,8 @@ fun MeetupUI(navController: NavController, selectedFriends: MutableState<List<Lo
             ),
             modifier = Modifier.padding(16.dp)
         )
+
+
     }
 }
 

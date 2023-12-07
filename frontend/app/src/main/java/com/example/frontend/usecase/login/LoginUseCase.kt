@@ -71,5 +71,8 @@ class LoginUseCase(
         UserContextRepository
             .ofContext(context, secure = true)
             .saveAuthToken(authToken)
+        UserContextRepository
+            .ofContext(context, secure = false)
+            .saveIsLoggedIn(true)
     }
 }
