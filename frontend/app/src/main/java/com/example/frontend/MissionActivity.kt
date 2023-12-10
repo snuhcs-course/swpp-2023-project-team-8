@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -98,12 +100,13 @@ fun ShowMissionUI(missions: List<MissionModel>, onSwitchToRegister: () -> Unit) 
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
-                GridItems(items = indexedMissions) { indexedMission ->
+                GridItems(items = indexedMissions) { indexedMission, itemModifier ->
                     val (index, mission) = indexedMission
                     Box(
                         modifier = Modifier
-                            .padding(top = 24.dp, start = 23.dp)
-                            .size(160.dp, 170.dp)
+                            .then(itemModifier)
+                            .height(195.dp)
+                            .padding(top = 24.dp)
                             .background(mission.color, shape = MaterialTheme.shapes.medium)
                     ) {
 
@@ -289,16 +292,24 @@ fun ShowMissionUIPreview() {
 @Composable
 fun GridItems(
     items: List<IndexedValue<MissionModel>>,
-    itemContent: @Composable (IndexedValue<MissionModel>) -> Unit
+    itemContent: @Composable (IndexedValue<MissionModel>, Modifier) -> Unit
 ) {
     val rows = items.chunked(2)
 
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val spacing = 16.dp
+    val padding = 24.dp
+    val itemWidth = (screenWidth - padding * 2 - spacing) / 2
+
     Column {
         for (rowItems in rows) {
-            Row {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(spacing),
+                modifier = Modifier.padding(horizontal = padding)
+            ) {
                 for (mission in rowItems) {
-                    itemContent(mission)
-                    Spacer(modifier = Modifier.width(16.dp))
+                    itemContent(mission, Modifier.width(itemWidth))
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
