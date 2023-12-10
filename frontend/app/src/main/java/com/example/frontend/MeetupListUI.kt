@@ -125,7 +125,7 @@ fun MeetUpItem(meetup: MeetUpResponse) {
                 ), style = MaterialTheme.typography.bodySmall
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = meetup.description, style = MaterialTheme.typography.bodyMedium)
+            Text(text = "장소: ${meetup.place.name}", style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "Participants:", style = MaterialTheme.typography.titleSmall)
             meetup.users.forEach { user ->
